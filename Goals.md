@@ -56,6 +56,8 @@ and provides strong foundation to learn other layers on top of this.
 + Hierarchy of data types and implicit coercion
 + Querying an object:  class, typeof, length, dim, names, str
 + Subsetting rules
+  + integer ndexing, negative indices, names, logical vectors, matrices, 2-column matrices
+  + partial name matching
 + Categorical data - factors
 + Vectorization and element-wise functions
 + Recycling
@@ -66,22 +68,24 @@ and provides strong foundation to learn other layers on top of this.
 + Data Frames
 + Matrices
 + Subsetting in 2-Dimensions
-+ Scoping Rules
 + Writing Functions
    + parameter default values 
    + lazy evaluation
-      + substitute(), deparse()
+      + substitute(), deparse() to get expression of an argument.
    + 'Hoisting'
    + Extensibility
    + Good Design
-   + 
 + on.exit
-+ Nested functions, Closures
++ Scoping Rules
+   + Nested functions, Closures
 + Debugging
-+ try/tryCatch() and errors, warnings and conditions 
++ try/tryCatch() and errors, warnings and conditions, withCallingHandlers, 
+  + 
 + code analysis and analytical meta-programming 
 + constructive meta programming
-
++ non-standard evaluation
+  + eval()
+  +
 
 
 + loops
@@ -99,3 +103,8 @@ and provides strong foundation to learn other layers on top of this.
 + Writing Packages
 + NAMESPACE files
 + S4 class system
+
+
+
+
+# Introduction
