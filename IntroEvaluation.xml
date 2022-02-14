@@ -1,0 +1,349 @@
+<section
+	 xmlns:r="http://www.r-project.org">
+<title>Introduction to the Evaluation Model</title>
+<!-- see Computing3.md and bring in material from there. -->
+
+<para>
+We've seen parsing and the very high-level idea of evaluation - finding variables and the associated value,
+calling functions. We'll now get into the details, incrementally introducing the different situations.
+</para>
+
+<section>
+<title>Literal Values</title>
+
+<para>
+Consider the very basic <r/> command
+<r:code>
+TRUE
+</r:code>
+Again, the REPL parses this and then evaluates it.
+Let's explicitly parse this ourselves so that we can see what <r/> sees:
+<r:code>
+e = parse(text = "TRUE")
+</r:code>
+Let's look at the class and length of this:
+<r:code>
+class(e)
+<r:output><![CDATA[
+[1] "expression"
+]]></r:output>
+length(e)
+<r:output><![CDATA[
+[1] 1
+]]></r:output>
+</r:code>
+This is like a list so, let's get the only element:
+<r:code>
+e = e[[1]]
+</r:code>
+Again, let's look at the class: 
+<r:code>
+class(e)
+<r:output><![CDATA[
+[1] "logical"
+]]></r:output>
+</r:code>
+and the length is 1. This is a regular <r/> logical vector.
+The parser - not the evaluator - has created this literal value as an <r/> logical vector.
+So now, let's evaluate this as <r/> would:
+<r:code>
+ans = eval(e)
+</r:code>
+and the result is identical to <r:var>e</r:var> itself.
+That is, the <r/> evaluator evaluates literal objects as themselves and that is the result.
+</para>
+</section>
+
+<section>
+<title>Evaluating Variable Names</title>
+
+<para>
+Now consider the seemingly very similar command to <r:expr>TRUE</r:expr>, but this time
+<r:code>
+T
+</r:code>
+which people often use instead of <r:true/>. (Don't, it will eventually trap you and be very hard to debug, and worse,
+you may just get wrong answers.)
+Again, let's parse this and see what <r/> sees, although for simplicity, we'll use <r:func>quote</r:func>:
+<r:code>
+e = quote(T)
+</r:code>
+What's the class of this?
+<r:code>
+class(e)
+<r:output><![CDATA[
+[1] "name"
+]]></r:output>
+</r:code>
+Have you encountered a <r:class>name</r:class> object in <r/> before?
+</para>
+<para>
+Now let's evaluate this command
+<r:code>
+eval(e)
+<r:output><![CDATA[
+[1] TRUE
+]]></r:output>
+</r:code>
+This doesn't return <r:var>T</r:var> which is a variable name, but instead it returns the <r:true/> object/value.
+</para>
+
+<para>
+Before we discuss the details of how the <r/> evaluator evaluated the command <r:var>T</r:var>, let's do an experiment:
+we'll set <r:var>T</r:var> to 0, perhaps the starting time for a simulation.
+<r:code>
+T = 0
+eval(e)
+<r:output><![CDATA[
+[1] 0
+]]></r:output>
+</r:code>
+This time, we don't  get back <r:true/> but 0, the new value for <r:var>T</r:var>.
+</para>
+<para>
+Let's look at the two situations - after we set the value of <r:var>T</r:var> and before we did.
+How does <r/> evaluate a <r:class>name</r:class> "expression"?
+We'll generalize this later, but for now, let's focus on top-level interactive commands at the <r/> prompt.
+<r/> searches along the elements of the <b>search path</b>.
+<r:code>
+search()
+<r:output><![CDATA[
+ [1] ".GlobalEnv"          "package:stats"       "package:graphics"   
+ [4] "package:grDevices"   "package:datasets"    "utility functions"  
+ [7] "package:RShellTools" "package:utils"       "package:methods"    
+[10] "Autoloads"           "package:base"       
+]]></r:output>
+</r:code>
+Each element is an <b>environment</b> which is a container for variable name - value  pairs.
+A value is assigned/bound to a variable name in a particular environment.
+The evaluator iterates over the elements of the search path, querying to see if there is a variable with the specified
+name.
+If there is, <r/> gets the value bound/associated to that variable name in that environment and stops the search,
+returning the resulting object.
+</para>
+<para>
+Sometimes <r/> will be looking for a value of a certain type, e.g., a function, and will continue the search
+even if finds a variable with the target name but the associated value is not of the correct type. We'll see this later.
+</para>
+<para>
+So, when we assigned 0 to <r:var>T</r:var>, <r/> created a new variable <r:var>T</r:var> in our
+<r:var>.GlobalEnv</r:var>
+element of the search path. This is the global environment, available as an object via <r:func>globalenv()</r:func>.
+It is our work space.  The other elements are typically packages, but we also have Autoloads and other elements in the
+search path. (See <r:func>attach</r:func> which you should use very, very carefully, if you really must use it at all.)
+Why did <r/> create a new variable <r:var>T</r:var> in the global environment when there was one in the
+<r:pkg>base</r:pkg> package:
+<r:code>
+find("T")
+<r:output><![CDATA[
+[1] ".GlobalEnv"   "package:base"
+]]></r:output>
+</r:code>
+Because that is part of the <r/> evaluation model that we will see soon. But key for now is that
+evaluating the name <r:var>T</r:var>, <r/> successively queried each element of the search path for a variable named
+<r:var>T</r:var>  and found it in the first element of the search path.  The value was 0 and that is the result of
+evaluating <r:var>T</r:var>.
+</para>
+<para>
+Now, let's pretend we had not assigned a value for  <r:var>T</r:var>.
+We'll remove the one in the global environment with<footnote><para>BTW, this is non-standard evaluation.</para></footnote>
+<r:code>
+rm(T)  # remove
+</r:code>
+So now when we look for <r:var>T</r:var>,
+<r:code>
+find("T")
+<r:output><![CDATA[
+[1] "package:base"
+]]></r:output>
+</r:code>
+So evaluating the expression <r:expr>T</r:expr>, <r/> will query the elements of the search path for a variable named
+<r:var>T</r:var>
+and find it only in the last element. This variable has the value <r:true/> assigned to it.
+</para>
+<para>
+So evaluating a <r:class>name</r:class> expression is equivalent to
+<r:code>
+get(varName,  find(varName)[1])
+</r:code>
+</para>
+</section>
+
+<section>
+<title>Environment Parents and Chain/Sequence of Environments</title>
+<para>
+To introduce the concept that we will see  generalizes this beyond the search path and top-level commands, note
+that each environment has a parent environment, except the special <r:func>emptyenv</r:func> environment.
+The <r:func>globalenv</r:func> environment's parent is
+<r:code>
+parent.env(globalenv())
+<r:output><![CDATA[
+<environment: package:stats>
+attr(,"name")
+[1] "package:stats"
+attr(,"path")
+[1] "/Users/duncan/R/R-new/build3/library/stats"
+]]></r:output>
+</r:code>
+That environment has a parent environment  which is
+<r:code>
+parent.env( parent.env( globalenv() ) )
+<r:output><![CDATA[
+<environment: package:graphics>
+attr(,"name")
+[1] "package:graphics"
+attr(,"path")
+[1] "/Users/duncan/R/R-new/build3/library/graphics"
+]]></r:output>
+</r:code>
+If we iterate over the parents (using <r:func>showEnv</r:func> from <file>showEnv.R</file> in the repository),
+we see the search path
+<r:code>
+showEnv(globalenv())
+<r:output><![CDATA[
+<environment: R_GlobalEnv>
+<environment: package:stats>
+attr(,"name")
+[1] "package:stats"
+attr(,"path")
+[1] "/Users/duncan/R/R-new/build3/library/stats"
+<environment: package:graphics>
+attr(,"name")
+[1] "package:graphics"
+attr(,"path")
+[1] "/Users/duncan/R/R-new/build3/library/graphics"
+<environment: package:grDevices>
+attr(,"name")
+[1] "package:grDevices"
+attr(,"path")
+[1] "/Users/duncan/R/R-new/build3/library/grDevices"
+<environment: package:datasets>
+attr(,"name")
+[1] "package:datasets"
+attr(,"path")
+[1] "/Users/duncan/R/R-new/build3/library/datasets"
+<environment: 0x7f9d32835f98>
+attr(,"name")
+[1] "utility functions"
+<environment: package:RShellTools>
+attr(,"name")
+[1] "package:RShellTools"
+attr(,"path")
+[1] "/Users/duncan/Rpackages4/RShellTools"
+<environment: package:utils>
+attr(,"name")
+[1] "package:utils"
+attr(,"path")
+[1] "/Users/duncan/R/R-new/build3/library/utils"
+<environment: package:methods>
+attr(,"name")
+[1] "package:methods"
+attr(,"path")
+[1] "/Users/duncan/R/R-new/build3/library/methods"
+<environment: 0x7f9d321c09b8>
+attr(,"name")
+[1] "Autoloads"
+<environment: base>
+]]></r:output>
+</r:code>
+So a more general way to describe how <r/> finds a variable by name is that
+it searches in the current environment (in our case, <r:func>globalenv</r:func>)
+and then its parent environment, and that environment's parent, and so on.
+</para>
+</section>
+
+
+
+<section>
+<title>Evaluating a Simple Function Call</title>
+
+<para>
+Consider a simple command <r:expr>1 + 2</r:expr>
+First, let's note that this is a function call, even though it does not  appear in the usual form of <r:expr>fun(1,
+2)</r:expr>.
+We'll look at the language object for this
+<r:code>
+e = quote(1 + 2)  # or parse(text = )
+class(e)
+<r:output><![CDATA[
+[1] "call"
+]]></r:output>
+</r:code>
+This is a function <r:class>call</r:class>, and as we mentioned, so many language objects in <r/> are function calls.
+</para>
+<para>
+The function is <r:expr>`+`</r:expr> as we can see from <r:expr>e[[1]]</r:expr>.
+While we don't necessarily need to know, the two arguments are in <r:expr>e[[2]]</r:expr> and <r:expr>e[[3]]</r:expr>
+and are of class
+<r:code>
+sapply(e[2:3], class)
+<r:output><![CDATA[
+[1] "numeric" "numeric"
+]]></r:output>
+</r:code>
+We're showing this so that you can explore the language objects generally.
+</para>
+
+
+<para>
+The <r/> evaluator starts evaluating this by find the function being called.
+In this case, the function is identified by a <r:class>name</r:class> language object, i.e.,
+<r:expr>class(e[[1]])</r:expr>.
+So <r/> evaluates <r:expr>e[[1]]</r:expr> using the rules we just saw for evaluating <r:class>name</r:class> objects.
+However, in this case, <r/> knows we are looking for a function, so it ignores any variables along the search path
+with the same name whose values are not function objects.  This is the mode we mentioned earlier.
+This allows us to "do the right thing" in cases such as
+<r:code>
+a = 1
+b = 2
+c = 3
+c(a, b, c)
+</r:code>
+Here, we have defined a variable <r:var>c</r:var>ith a value 3, but also are calling a function
+<r:func>c</r:func>.  <r/> doesn't consider the first instance of <r:var>c</r:var> when evaluating <r:expr>c(a, b,
+c)</r:expr>
+because it is not a function.
+</para>
+<para>
+In our call <r:expr>1 + 2</r:expr>, <r/> finds <r:expr>`+`</r:expr> in the base package:
+<r:code>
+get(as.character(e[[1]]), find(as.character(e[[1]])[1]))
+<r:output><![CDATA[
+function (e1, e2)  .Primitive("+")
+]]></r:output>
+</r:code>
+So now <r/> has the function being called and it can start implementing the specific call.
+</para>
+<para>
+In this example, <r:expr>`+`</r:expr> is a special function.
+We can see this as the body is a call to <r:func>.Primitive</r:func> and the <r:func>typeof</r:func> of the function
+object is
+<r:code>
+typeof(`+`)
+<r:output><![CDATA[
+[1] "builtin"
+]]></r:output>
+</r:code>
+So, let's look at a very similar call that does not involve a <literal>builtin</literal>  function, e.g.,
+<r:code>
+rnorm(1, 2)
+</r:code>
+Again, we'll get the language object just to show the similarity:
+<r:code>
+e = quote( rnorm(1, 2) )
+</r:code>
+The first element is a <r:class>name</r:class> and is <r:var>rnorm</r:var>.
+<r/> finds that in the <r:pkg>stats</r:pkg> package.
+It is a regular function of class <r:class>closure</r:class>:
+<r:code>
+fun = get(as.character(e[[1]]), find(as.character(e[[1]])[1]))
+class(fun)
+<r:output><![CDATA[
+[1] "closure"
+]]></r:output>
+</r:code>
+</para>
+
+</section>
+
+</section>

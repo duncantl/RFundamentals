@@ -1,0 +1,238 @@
+<section
+	 xmlns:r="http://www.r-project.org">
+<title>REPL - Read, Evaluate, Print, Loop - and Parsing</title>
+
+<para>
+A REPL is a  loop (the L part) that
+<ol>
+<li>Reads input and <b>parses</b> it into an R command(s),</li>
+<li><b>Evaluates</b> the command(s)</li>
+<li><b>Prints</b> the result</li>
+</ol>
+and starts over again.
+</para>
+
+<para>
+Why do we care? Partially because it helps to understand the nature of an error
+which might be a syntax error (at parse time) or run/evaluation-time semantic errors
+(e.g. no such variable, wrong input to a function).
+</para>
+
+<section>
+<title>Read/Parse</title>
+
+<para>
+We start an interactive interpreter (R, Python, MATLAB, etc.)
+and it gives us a prompt, waiting for our command.
+It is waiting and reading our input one character at a time.
+When we enter a character, it processes it potentially doing something such as suggesting
+auto-completion.
+The <b>R</b>ead part - really the parse stage - in the REPL comes in when we hit the <b>return</b> key.
+The REPL attempts to parse the text, that is,
+break the input into a sequence of tokens that hopefully make a syntactically correct command.
+The tokens can be literal values or variable names, or combinations that represent a  calls to a function,
+or an if-else statement, or a for/while loop.
+</para>
+<para>
+There are three possible outcomes from the parsing step in the REPL: the content
+<ol>
+<li>makes complete sense as a command, </li>
+<li>contains a syntax error, or </li>
+<li>forms an incomplete command that makes partial sense and that needs to be completed.</li>
+</ol>
+<R/> <b>parses</b> the text of the command to see if it is syntactically correct.
+If it is not, we get a syntax error.
+</para>
+<para>
+If the tokens do not form a grammatically correct command, R complains with a parsing error, e.g.,
+<r:code>
+2pi
+<r:output><![CDATA[
+Error: unexpected symbol in "2pi"
+]]></r:output>
+</r:code>
+This is because R variable/symbol names cannot start with a digit.
+So we get a syntax error.
+This is different from not being able to find a variable named 2pi.
+This error happens before looking for any variable/symbol.
+</para>
+
+<para>
+If the command makes sense but is incomplete, <r/> issues the continuation
+prompt (typically a <literal>+</literal>, but can be customized) and waits for more input from you.  When you hit the <b>return</b> key again,
+<r/> combines the new input with the previous incomplete input and parses the entire
+content again.
+</para>
+
+
+<para>
+Parser errors involve fixing the grammar of your code, e.g.,
+<ul>
+<li>missing commas between arguments,</li>
+<li>omitted [ or ] characters</li>
+<li>mismatched quote characters (e.g., start with " or end with ')</li>
+</ul>
+Commands such as <r:func>source</r:func> also parse the code and can raise parse errors.
+This and <r/>'s implicit parsing typically give you an informative error message identifying
+the location. However see below for how you can use <r:func>parse</r:func> to explicit parse <r/> code.
+Note here that <r/> tells us it is line 1, character 13 where the unexpected content is:
+<r:code><![CDATA[
+Error in parse(text = "x <- pi + 2 1") : 
+  <text>:1:13: unexpected numeric constant
+1: x <- pi + 2 1
+]]></r:code>
+</para>
+
+
+<para>
+What happens with 
+<r:code>
+lapply(x mean)   # missing , between to arguments
+2pi = 1          # variable names can't start with a digit
+x[[2][1]         # missing the closing second ] in x[[2]]
+lapply(x mean na.rm = TRUE)   # missing , between arguments
+</r:code>
+</para>
+</section>
+
+<section>
+<title>Evaluation Step</title>
+
+<para>
+If the command is syntatically complete and legitimate, i.e., makes sense syntactically, R tries to
+evaluate the <b>expression</b>.
+We'll discuss the rules for evaluation very soon, but 
+basically we find variables along the <ulink url="SearchPath.html">search path</ulink>,
+and we make function calls.
+That's an awful lot of the <r/> language.
+</para>
+<para>
+It may seem that there is a lot more to the language, e.g.  math operators, logic operators,
+sequence operator (a:b), subsetting
+([, [[, $), assignments, for and while loops, if statements.  But in fact, these are all function calls.  That is one of the elegant aspects of the <r/> language. Master function calls and you master the language. However, function calls are rich.
+</para>
+
+</section>
+
+
+<section>
+<title>Print in the REPL</title>
+
+<para>
+By default, <r/> will print the <r/> object returned by evaluating the top-level command.
+However, it does not do this if
+<ul>
+<li>the top-level command is an assignment, i.e.,  a call to <r:keyword>=</r:keyword> or
+<r:keyword><![CDATA[<<-]]></r:keyword> (regardless of whether it is to a variable or an element within a variable), or </li>
+<li>the function returning the value has marked it as non-printing by wrapping the return value in a call to <r:func>invisible</r:func></li>
+</ul>
+</para>
+<para>
+If we are assigning a value to a variable, the idea is that we will be using it in a future computation.
+However, if we don't assign the result, we typically want to see the result as part of our interactive exploration.
+</para>
+<para>
+Functions mark their return value as <r:func>invisible</r:func> if they may be large and they are unlikely to provide
+useful information when displayed directly, e.g.,
+<r:code>
+invisible(x)
+</r:code>
+or
+<r:code>
+return(invisible(x))
+</r:code>
+(but not <r:expr>invisible(return(x))</r:expr>.)
+</para>
+
+<para>
+Note that this automatic printing is used to display plots, e.g. <r:pkg>ggplot2</r:pkg>, <r:pkg>lattice</r:pkg> or <r:pkg>grid</r:pkg> plots.
+This can be quite confusing when a plot does not appear, all because it was assigned and not
+printed,
+e.g.
+<r:code>
+p = lattice::xyplot(mpg ~ wt, mtcars)
+</r:code>
+But
+<r:code>
+print(p)
+</r:code>
+shows the plot.
+We'll see later that this is because of an <s3/> method for <r:func>print</r:func> that displays the plot.
+</para>
+
+
+</section>
+
+
+<section>
+<title>The <r:func>parse</r:func> and <r:func>eval</r:func> functions</title>
+
+<para>
+The REPL steps happen somewhat transparently. R reads and parses the input, 
+and then evaluates the command and prints.
+The REPL doesn't mention parsing.
+Sometimes, however,  it can be useful to actually parse the command explicitly.
+We can parse code from a file (or any connection), e.g.,
+<r:code>
+e = parse("nameOfFile")
+</r:code>
+or directly from text in an <r/> character vector, e.g.,
+<r:code><![CDATA[
+e = parse(text = "x <- pi + 1")
+]]></r:code>
+This can help us verify the code is syntactically correct
+and also we can examine and manipulate the parsed language object.
+This is another very powerful feature of <r/> - language objects as data.
+They allow us to do a lot of static code analysis, meta-programming and non-standard evaluation.
+</para>
+
+<para>
+We can evaluate the parsed expressions with the <r:func>eval</r:func> function, e.g.,
+<r:code>
+eval(e)
+</r:code>
+We can also control the environment in which it is evaluated, e.g.,
+<r:code>
+env = new.env()
+env$pi = 2
+env$x = 1:10
+eval(e, env)
+</r:code>
+</para>
+
+<para>
+Similarly, we can source into a different environment
+<r:code>
+source("myCode.R", env)
+</r:code>
+but we'll come back to this later.
+</para>
+
+
+
+<para>
+Sometimes we want to just parse and not evaluate code because we want the language
+object.
+In addition to <r:func>parse</r:func>, there is the function <r:func>quote</r:func>
+which just returns its argument as a language object. For example,
+<r:code>
+e = quote(1 + 2)
+</r:code>
+doesn't return 3, but the call to + with two arguments, 1 and 2.
+We'll see why sometimes we want this, e.g., for use in calls to <r:func>trace</r:func>
+to specify code to run at a later time in a specific context.
+</para>
+
+<!-- 
+One might think one should do something lie
+  e = quote(lm(y ~ ., data)
+and then loop over a bunch of data sets, e.g. l
+ lapply(list.files(pattern = "csv"), function(f) { data = read.csv(f); eval(e, thisFrame) })
+but one is much better doing
+ lapply(list.files(pattern = "csv"), function(f) { data = read.csv(f); lm(y ~ ., d)})
+and not doing any unnecessary NSE.
+ -->
+
+</section>
+
+</section>
