@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>R Fundamentals 2022</title>
+    <meta charset="utf-8">
+    <style>
+      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+      body { font-family: 'Droid Serif'; }
+      h1, h2, h3 {
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: normal;
+      }
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center, middle
+
+# R Fundamentals 2022
+
+
+## [https://github.com/duncantl/RFundamentals](https://github.com/duncantl/RFundamentals)
+
+### Duncan Temple Lang
+### Professor, Statistics
+### Associate Dean, Graduate Studies
+
+<div style="clear: both"/>
+
+<!-- <hr width="50%"/> -->
+<img src="datalab-logo-full-color-rgb.png" height="30%" width="30%"></img>
+
+---
+layout: true
+<img style="float: right" src="datalab-logo-full-color-rgb.png" height="15%" width="15%"></img>
+
+---
+# R Fundamentals
+
++ Mastering R's computational model
++ Makes writing/reading/debugging R code easier, more productive
++ Focus on language/computational model, not specific functions in packages
++ Core computational model, less non-standard evaluation (NSE.)
+
+--
+
++ Lots of questions please.
++ If something is unclear, please ask me to explain it again, differently.
+
+
+--
++ See [README](README.html)
+
+---
+#
+
+---
+# REPL - Read, Eval, Print Loop
+
++ implicit loop and actions
++ **R**eads input
++ attempts to parse the content into a language object.
+  + if fails, syntax error
+  + if incomplete, continuation prompt and user adds more input
++ if grammatically correct, **E**evaluates expression
+  + using R's evaluation rules and computational model.
++ **P**rints the value
+
+---
+# Why do we care about the REPL?
+
++ Separate nature errors
+   + syntax errors
+   + evaluation/run-time errors
+
+---
+# Parsing
+
++ Each newline/return/enter, REPL attempts to **parse** content
++ Parsing breaks content into tokens & elements of the grammar
+   + literal values
+   + variable names
+   + calls to functions - `foo(x, b = y + 1)`
+   + `if()-else`, ...
+   + loops - for() {}, while(){}, repeat
+   + comments
+
+---
+# Syntax Errors
+
+```r
+x = 2pi
+sum(c(x, y w))
+plot(x, y, main = 'Countries' wealth')
+x[[ i ][1]
+```
+---
+# Print step in REPL
+
++ By default, R will print the result of evaluating the top-level command
++ Unless
+   + command is an assignment, or
+```r
+ x = foo()
+ x$y = foo()
+```
+   + object not marked as invisible()
+     + return value from function wrapped in call to invisible
+```
+foo() {
+  x = ...
+  invisible(x)
+} 
+```
+
+---
+# Emulating the REPL Explicitly
+
+##  parse()
+
++ Can explicitly parse code
+  + from a file
+  + directly from a string
+
+```r
+e = parse("call.R")
+class(e)
+length(e)
+e[[1]]
+```
+
++ Can also use quote() to get the language object.
+```
+e = quote(foo(x, y + 1))
+```
+
+<!--
+---
+# eval(), find()
+-->
+
+
+---
+# Roadmap
+
+---
+# Basics of Evaluation
+
++ Consider simplest of commands
+```
+TRUE
+```
+
++ R parses this
+```r
+e = parse(text = "TRUE")
+class(e[[1]])
+```
+--
++ logical vector of length 1.
+
+--   
++ Evaluates it
+```
+ans = eval(e[[1]])
+class(ans)
+```
+
++ Evaluating a literal object returns that literal object.
+
+
+---
+# The command `T`
+
++ Next consider the seemingly similar command
+```
+T
+```
+
++ This involves a different concept in evaluation.
+
+```
+e = parse(text = "T")
+class(e[[1]])
+```
++ What's the class of e[[1]]
+
+---
+# Variable Names/Symbols
+
++ an object of class *name*, a.k.a., symbol
++ this is a reference to variable that we need to find/resolve.
+   + scoping rules
+
++ Evaluating this command involves
+   + finding the intended variable
+   + getting the value currently bound to/associated with it.
+
++ Let's see the answer, then why/how
+```r
+eval(e[[1]])
+[1] TRUE
+```
++ This returns TRUE, not T
+  + `TRUE` is the literal value bound to the variable name `T`
+
+---
+# Finding Variable Names/Symbols
+
++ Looking for "T"
++ Starting at top-level command
++ R looks along the search path
+```r
+search()
+[1] ".GlobalEnv"        "package:stats"     "package:graphics" 
+[4] "package:grDevices" "package:utils"     "package:datasets" 
+[7] "package:methods"   "Autoloads"         "package:base"     
+```
+
+---
+# Environments
+
++ Search path is a sequence/chain of **environments**
+
++ Each environment is a container of pairs of 
+  + variable name
+  + value/R object
+
++ All environments have a parent environment
+   + except emptyenv()
+   + form a chain/sequence
+
++ Each call to an R function creates an environment
+  + a call frame
+  + contains
+    + parameter and their values
+    + local variables in the body of the function.
+
+
+---
+# Back to the command `T`
+
++ eval() for a variable name is equivalent to
+```
+w = find("T")
+get("T", w[1])
+```
+
++ `find("T")` queries each element of the search path
+   + does it contain an entry for variable name "T"
+   + if not, moves to the next element of the search path
+
++ `get()` retrieves the value bound to a variable in a particular environment.
+
+---
+# Environment Chain
+
++ Important concept that will generalize how we find variables
+
++ For "T", we looked along the search path
+```
+ev = globalenv()
+exists("T", ev, inherits = FALSE)
+```
+
++ Look in parent environment
+```
+ev = parent.env(ev)
+exists("T", ev, inherits = FALSE)
+```
+
++ Let's see the entire chain via [showEnv()](showEnv.R)
+```
+source("showEnv.R")
+showEnv()
+```
+
+
+---
+# Evaluating `1 + 2`
+
++ This is different from `TRUE` and `T`
+
+```
+e = quote(1 + 2)
+class(e)
+```
+
+--
++ class `call`
+
++ almost everything is a function call in R
+   + including if(), for(), <-, =
+
+```
+is.call( quote(x <- 1) )
+is.call( quote(for(i in x) {}))
+```
+
++ calls are language object we can manipulate
+   + for now, to help our understanding
+```
+length(e)
+e[[1]]
+e[[2]]
+e[[3]]
+```
+
+---
+# Evaluating a Function Call
+
++ How does R evaluate this
+  + find the function object to invoke
+  + create a call frame for the function
+  + match the arguments in the call to the parameters
+    + see later slide
+    + does not evaluate the arguments yet - **lazy evaluation**
+  + evaluate the expressions in the body of the function
+    + within the **scope of the call frame**
+
+---
+
+
+scatter.smooth(mtcars[, c(1, 2)])
+
+
+---
+# For next sessions
+
++ Please send me (dtemplelang@ucdavis.edu)
+   + What do you find the hardest thing to understand about core R?
+   + Which idioms you want to know - why and when to use them?
+   + Please try to keep it about the language and how it works than a function in a particular package.
+      However, please do give examples.
+
+
+    </textarea>
+    <script src="https://remarkjs.com/downloads/remark-latest.min.js">
+    </script>
+    <script src="remark-toc/index.js">     </script>   
+    <script>
+     var slideshow = remark.create();
+//     var toc = require('remark-toc');
+//     slideshow.use(toc);
+    </script>
+  </body>
+</html>
