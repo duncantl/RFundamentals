@@ -2,6 +2,10 @@
 
 + [Goals](Goals.md)
 
++ [Day 1 slides](slidesDay1.html)
+
++ [Topic Outline](outlineNew.html)
+
 This brief mini-course focuses on explaining the computational model that underlies R.  I believe
 that if you understand this, you can **reason** about the R code and the language and can more
 rapidly solve (and avoid) problems with your code.  This approach is different from learning by
