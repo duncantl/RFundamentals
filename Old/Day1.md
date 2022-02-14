@@ -32,7 +32,7 @@ href="Day3.md">Day3</a></th><th><a href="Day4.md">Day4</a></th>
 + Environments
 + Search Path
    + finding symbols
-   + finding functions
+   + finding functions - mode = "function"
    + find(), get()
 + Calling functions
     + Matching arguments to parameters

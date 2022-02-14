@@ -326,7 +326,66 @@ e[[3]]
 ---
 
 
+---
+# Matching Arguments
+
++ Have the names of the formal parameters,
+   + possibly including ...
+
++ Take list of arguments from call.
+
++ Match
+   1. all named arguments
+      + match all that have an exact match to a parameter name
+         + remove names from possible further matches
+      + remaining named arguments, use **partial name matching**.
+         + remove names from possible further matches
+      + if no match for a named argument
+         + add to ... if present in parameters
+            + remove name from possible further matches
+         + raise an error - `unused argument`
+   1. unnamed arguments
+      + match by position to remaining available parameters
+
++ If ... in parameters, and named parameter following ... in function definition
+      + cannot use partial name matching
+
+```
+sum(1, 2, na.r = TRUE)
+```
+
+---
+# Matching arguments - example
+
++ Consider the call
+``` r
+scatter.smooth(mtcars[, c("mpg", "wt")], , , , "gaussian", 
+               "Weight of car", "Miles per Gallon", 
+			   lpars = list(lwd = 2, col = "red"),
+ 			   main = "Motor Trends Data")
+```
+
++ What arguments match which parameters in `scatter.smooth`?
+```
+names(formals(scatter.smooth))
+```
+
++ match.call
+```
+e = quote(e = quote(scatter.smooth(mtcars[, c("mpg", "wt")], , , , "gaussian", 
+               "Weight of car", "Miles per Gallon", 
+			   lpars = list(lwd = 2, col = "red"),
+ 			   main = "Motor Trends Data")))
+
+k = match.call(scatter.smooth, e)
+```
+
+---
+# Call Frames, Function Environments and Chains
+
+```
 scatter.smooth(mtcars[, c(1, 2)])
+```
 
 
 ---
