@@ -326,11 +326,11 @@ typeof(`+`)
 </r:code>
 So, let's look at a very similar call that does not involve a <literal>builtin</literal>  function, e.g.,
 <r:code>
-rnorm(1, 2)
+rnorm(5, -3)
 </r:code>
 Again, we'll get the language object just to show the similarity:
 <r:code>
-e = quote( rnorm(1, 2) )
+e = quote( rnorm(5, -3) )
 </r:code>
 The first element is a <r:class>name</r:class> and is <r:var>rnorm</r:var>.
 <r/> finds that in the <r:pkg>stats</r:pkg> package.
@@ -343,6 +343,55 @@ class(fun)
 ]]></r:output>
 </r:code>
 </para>
+
+
+<para>
+When invoking a function,  <r/>
+<ol>
+<li>creates a call frame (an enviroment for the parameters and local variables in the function)</li>
+<li>matches the arguments in the call to the parameters in the function and assigns <i>promises</i> to evaluate the
+arguments when they are needed</li>
+<li>evaluates each expression in the body of the function</li>
+<li>returns the value of the last evaluated expression in the body of the function</li>
+</ol>
+All of these are essential aspects of evaluating a function call in <r/>.
+The concept of a promise may be new.
+Evaluating each expression in the body is exactly what we have been discussing in this module.
+</para>
+<para>
+The first thing <r/> does is to create the call frame.
+Then it creates a variable within it for each parameter.
+If the parameter has a default value in the function definition,
+<r/> connects that expression for the default value to the corresponding
+variable it created in the call frame.  Importantly, it does not
+evaluate that value at this point in time.
+It merely keeps this expression in reserve in case a) there is no explicit
+argument for this parameter, and b) the value is not needed in the computations.
+</para>
+<para>
+The next step is to 
+</para>
+<para>
+
+
+takes the call and matches the arguments
+in the specific call to the parameters in the function definition.
+Specifically, we create a new <b>call frame</b>.
+This is an environment - a container for variable name-value pairs.
+When creating the call frame, <r/> creates a variable for each
+of the parameters in the function definition.
+So for <r:func>rnorm</r:func>, we have
+<r:code>
+names(formals(rnorm))
+<r:output><![CDATA[
+[1] "n"    "mean" "sd"  
+]]></r:output>
+</r:code>
+So we have three entries in the new call frame for this specific call.
+</para>
+
+
+
 
 </section>
 

@@ -29,7 +29,7 @@ about why some things worked and others didn't, and to actively learn.
 ### Non-standard Evaluation, tidyverse, etc.
 We won't focus much on the tidyverse, pipes, etc.
 They are fine packages. However, they use a lot of non-standard evaluation and
-so the computational model is similar but different from R. This 
+so the computational model is ostensibly similar but actually quote different from R. This 
 unfortunately complicates rather than simplifies matters and can make reasoning
 about them  challenging at best. Furthermore,
 the paradigm provided by the tidyverse packages strongly favor working 

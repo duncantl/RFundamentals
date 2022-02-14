@@ -1,0 +1,1079 @@
+
+R Under development (unstable) (2016-06-30 r70858) -- "Unsuffered Consequences"
+Copyright (C) 2016 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin15.2.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+PID = 17016 
+Time = 2017-07-18 08:56:27 
+Dir = /Users/duncan/DSI/Workshops/RFundamentals 
+1> options(STERM='iESS', str.dendrogram.last="'", editor='emacsclient', show.error.locations=TRUE)
+3> lapplt
+Error: object 'lapplt' not found
+No suitable frames for recover()
+3> lapply
+function (X, FUN, ...) 
+{
+    FUN <- match.fun(FUN)
+    if (!is.vector(X) || is.object(X)) 
+        X <- as.list(X)
+    .Internal(lapply(X, FUN))
+}
+<bytecode: 0x7ff7738da860>
+<environment: namespace:base>
+4> lapply(mtcars, class)
+$mpg
+[1] "numeric"
+
+$cyl
+[1] "numeric"
+
+$disp
+[1] "numeric"
+
+$hp
+[1] "numeric"
+
+$drat
+[1] "numeric"
+
+$wt
+[1] "numeric"
+
+$qsec
+[1] "numeric"
+
+$vs
+[1] "numeric"
+
+$am
+[1] "numeric"
+
+$gear
+[1] "numeric"
+
+$carb
+[1] "numeric"
+
+6> lapply(mtcars, max)
+*** output flushed ***
+7> table(sapply(mtcars, class))
+
+numeric 
+     11 
+9> lapply(mtcars, max, na.rm = TRUE)
+*** output flushed ***
+10> mtcars$danielle = "abc"
+12> class(mtcars$danielle)
+[1] "character"
+14> lapply(mtcars, max, na.rm = TRUE)
+$mpg
+[1] 33.9
+
+$cyl
+[1] 8
+
+$disp
+[1] 472
+
+$hp
+[1] 335
+
+$drat
+[1] 4.93
+
+$wt
+[1] 5.424
+
+$qsec
+[1] 22.9
+
+$vs
+[1] 1
+
+$am
+[1] 1
+
+$gear
+[1] 5
+
+$carb
+[1] 8
+
+$danielle
+[1] "abc"
+
+15> lapply(mtcars, function(x) try(max(x, na.rm = TRUE)))
+$mpg
+[1] 33.9
+
+$cyl
+[1] 8
+
+$disp
+[1] 472
+
+$hp
+[1] 335
+
+$drat
+[1] 4.93
+
+$wt
+[1] 5.424
+
+$qsec
+[1] 22.9
+
+$vs
+[1] 1
+
+$am
+[1] 1
+
+$gear
+[1] 5
+
+$carb
+[1] 8
+
+$danielle
+[1] "abc"
+
+18> lapply(mtcars[sapply(mtcars, is.numeric)], max)
+$mpg
+[1] 33.9
+
+$cyl
+[1] 8
+
+$disp
+[1] 472
+
+$hp
+[1] 335
+
+$drat
+[1] 4.93
+
+$wt
+[1] 5.424
+
+$qsec
+[1] 22.9
+
+$vs
+[1] 1
+
+$am
+[1] 1
+
+$gear
+[1] 5
+
+$carb
+[1] 8
+
+21> sapply(mtcars, is.numeric)
+     mpg      cyl     disp       hp     drat       wt     qsec 
+    TRUE     TRUE     TRUE     TRUE     TRUE     TRUE     TRUE 
+      vs       am     gear     carb danielle 
+    TRUE     TRUE     TRUE     TRUE    FALSE 
+22> w = sapply(mtcars, is.numeric)
+23> tmp = mtcars[w]
+24> dim(tmp)
+[1] 32 11
+26> lapply(tmp, max)
+*** output flushed ***
+27> sapply
+function (X, FUN, ..., simplify = TRUE, USE.NAMES = TRUE) 
+{
+    FUN <- match.fun(FUN)
+    answer <- lapply(X = X, FUN = FUN, ...)
+    if (USE.NAMES && is.character(X) && is.null(names(answer))) 
+        names(answer) <- X
+    if (!identical(simplify, FALSE) && length(answer)) 
+        simplify2array(answer, higher = (simplify == "array"))
+    else answer
+}
+<bytecode: 0x7ff7760e48b0>
+<environment: namespace:base>
+28> lapply(mtcars, is.numeric)
+$mpg
+[1] TRUE
+
+$cyl
+[1] TRUE
+
+$disp
+[1] TRUE
+
+$hp
+[1] TRUE
+
+$drat
+[1] TRUE
+
+$wt
+[1] TRUE
+
+$qsec
+[1] TRUE
+
+$vs
+[1] TRUE
+
+$am
+[1] TRUE
+
+$gear
+[1] TRUE
+
+$carb
+[1] TRUE
+
+$danielle
+[1] FALSE
+
+29> mtcars[ lapply(mtcars, is.numeric) ]
+Error in `[.default`(mtcars, lapply(mtcars, is.numeric)) : 
+  invalid subscript type 'list'
+
+Enter a frame number, or 0 to exit   
+
+1: mtcars[lapply(mtcars, is.numeric)]
+2: `[.data.frame`(mtcars, lapply(mtcars, is.numeric))
+3: NextMethod("[")
+
+Selection: 0
+29> 
+29> w = lapply(mtcars, is.numeric)
+30> w
+$mpg
+[1] TRUE
+
+$cyl
+[1] TRUE
+
+$disp
+[1] TRUE
+
+$hp
+[1] TRUE
+
+$drat
+[1] TRUE
+
+$wt
+[1] TRUE
+
+$qsec
+[1] TRUE
+
+$vs
+[1] TRUE
+
+$am
+[1] TRUE
+
+$gear
+[1] TRUE
+
+$carb
+[1] TRUE
+
+$danielle
+[1] FALSE
+
+31> unlist(w)
+     mpg      cyl     disp       hp     drat       wt     qsec 
+    TRUE     TRUE     TRUE     TRUE     TRUE     TRUE     TRUE 
+      vs       am     gear     carb danielle 
+    TRUE     TRUE     TRUE     TRUE    FALSE 
+33> mtcars[unlist(w) ]
+                     mpg cyl  disp  hp drat    wt  qsec vs am gear
+Mazda RX4           21.0   6 160.0 110 3.90 2.620 16.46  0  1    4
+Mazda RX4 Wag       21.0   6 160.0 110 3.90 2.875 17.02  0  1    4
+Datsun 710          22.8   4 108.0  93 3.85 2.320 18.61  1  1    4
+Hornet 4 Drive      21.4   6 258.0 110 3.08 3.215 19.44  1  0    3
+Hornet Sportabout   18.7   8 360.0 175 3.15 3.440 17.02  0  0    3
+Valiant             18.1   6 225.0 105 2.76 3.460 20.22  1  0    3
+Duster 360          14.3   8 360.0 245 3.21 3.570 15.84  0  0    3
+Merc 240D           24.4   4 146.7  62 3.69 3.190 20.00  1  0    4
+Merc 230            22.8   4 140.8  95 3.92 3.150 22.90  1  0    4
+Merc 280            19.2   6 167.6 123 3.92 3.440 18.30  1  0    4
+Merc 280C           17.8   6 167.6 123 3.92 3.440 18.90  1  0    4
+Merc 450SE          16.4   8 275.8 180 3.07 4.070 17.40  0  0    3
+Merc 450SL          17.3   8 275.8 180 3.07 3.730 17.60  0  0    3
+Merc 450SLC         15.2   8 275.8 180 3.07 3.780 18.00  0  0    3
+Cadillac Fleetwood  10.4   8 472.0 205 2.93 5.250 17.98  0  0    3
+Lincoln Continental 10.4   8 460.0 215 3.00 5.424 17.82  0  0    3
+Chrysler Imperial   14.7   8 440.0 230 3.23 5.345 17.42  0  0    3
+Fiat 128            32.4   4  78.7  66 4.08 2.200 19.47  1  1    4
+Honda Civic         30.4   4  75.7  52 4.93 1.615 18.52  1  1    4
+Toyota Corolla      33.9   4  71.1  65 4.22 1.835 19.90  1  1    4
+Toyota Corona       21.5   4 120.1  97 3.70 2.465 20.01  1  0    3
+Dodge Challenger    15.5   8 318.0 150 2.76 3.520 16.87  0  0    3
+AMC Javelin         15.2   8 304.0 150 3.15 3.435 17.30  0  0    3
+Camaro Z28          13.3   8 350.0 245 3.73 3.840 15.41  0  0    3
+Pontiac Firebird    19.2   8 400.0 175 3.08 3.845 17.05  0  0    3
+Fiat X1-9           27.3   4  79.0  66 4.08 1.935 18.90  1  1    4
+Porsche 914-2       26.0   4 120.3  91 4.43 2.140 16.70  0  1    5
+Lotus Europa        30.4   4  95.1 113 3.77 1.513 16.90  1  1    5
+Ford Pantera L      15.8   8 351.0 264 4.22 3.170 14.50  0  1    5
+Ferrari Dino        19.7   6 145.0 175 3.62 2.770 15.50  0  1    5
+Maserati Bora       15.0   8 301.0 335 3.54 3.570 14.60  0  1    5
+Volvo 142E          21.4   4 121.0 109 4.11 2.780 18.60  1  1    4
+                    carb
+Mazda RX4              4
+Mazda RX4 Wag          4
+Datsun 710             1
+Hornet 4 Drive         1
+Hornet Sportabout      2
+Valiant                1
+Duster 360             4
+Merc 240D              2
+Merc 230               2
+Merc 280               4
+Merc 280C              4
+Merc 450SE             3
+Merc 450SL             3
+Merc 450SLC            3
+Cadillac Fleetwood     4
+Lincoln Continental    4
+Chrysler Imperial      4
+Fiat 128               1
+Honda Civic            2
+Toyota Corolla         1
+Toyota Corona          1
+Dodge Challenger       2
+AMC Javelin            2
+Camaro Z28             4
+Pontiac Firebird       2
+Fiat X1-9              1
+Porsche 914-2          2
+Lotus Europa           2
+Ford Pantera L         4
+Ferrari Dino           6
+Maserati Bora          8
+Volvo 142E             2
+34> sapply(mtcars, is.numeric)
+     mpg      cyl     disp       hp     drat       wt     qsec 
+    TRUE     TRUE     TRUE     TRUE     TRUE     TRUE     TRUE 
+      vs       am     gear     carb danielle 
+    TRUE     TRUE     TRUE     TRUE    FALSE 
+35> sapply(mtcars, range)
+     mpg    cyl disp   hp    drat   wt      qsec   vs  am  gear carb
+[1,] "10.4" "4" "71.1" "52"  "2.76" "1.513" "14.5" "0" "0" "3"  "1" 
+[2,] "33.9" "8" "472"  "335" "4.93" "5.424" "22.9" "1" "1" "5"  "8" 
+     danielle
+[1,] "abc"   
+[2,] "abc"   
+36> sapply(mtcars[-12], range)
+      mpg cyl  disp  hp drat    wt qsec vs am gear carb
+[1,] 10.4   4  71.1  52 2.76 1.513 14.5  0  0    3    1
+[2,] 33.9   8 472.0 335 4.93 5.424 22.9  1  1    5    8
+37> lapply(mtcars[-12], range)
+$mpg
+[1] 10.4 33.9
+
+$cyl
+[1] 4 8
+
+$disp
+[1]  71.1 472.0
+
+$hp
+[1]  52 335
+
+$drat
+[1] 2.76 4.93
+
+$wt
+[1] 1.513 5.424
+
+$qsec
+[1] 14.5 22.9
+
+$vs
+[1] 0 1
+
+$am
+[1] 0 1
+
+$gear
+[1] 3 5
+
+$carb
+[1] 1 8
+
+38> 
+39> lapply(mtcars, range)
+$mpg
+[1] 10.4 33.9
+
+$cyl
+[1] 4 8
+
+$disp
+[1]  71.1 472.0
+
+$hp
+[1]  52 335
+
+$drat
+[1] 2.76 4.93
+
+$wt
+[1] 1.513 5.424
+
+$qsec
+[1] 14.5 22.9
+
+$vs
+[1] 0 1
+
+$am
+[1] 0 1
+
+$gear
+[1] 3 5
+
+$carb
+[1] 1 8
+
+$danielle
+[1] "abc" "abc"
+
+40> unlist(lapply(mtcars, range))
+     mpg1      mpg2      cyl1      cyl2     disp1     disp2       hp1 
+   "10.4"    "33.9"       "4"       "8"    "71.1"     "472"      "52" 
+      hp2     drat1     drat2       wt1       wt2     qsec1     qsec2 
+    "335"    "2.76"    "4.93"   "1.513"   "5.424"    "14.5"    "22.9" 
+      vs1       vs2       am1       am2     gear1     gear2     carb1 
+      "0"       "1"       "0"       "1"       "3"       "5"       "1" 
+    carb2 danielle1 danielle2 
+      "8"     "abc"     "abc" 
+41> try(nistara)
+Error in try(nistara) : object 'nistara' not found
+42> e = try(nistara)
+Error in try(nistara) : object 'nistara' not found
+43> class(e)
+[1] "try-error"
+45> is(e, "try-error")
+[1] TRUE
+47> 1:10
+ [1]  1  2  3  4  5  6  7  8  9 10
+48> bob = .Last.value
+49> bob
+ [1]  1  2  3  4  5  6  7  8  9 10
+50> quote(plot(x, y, main <- 'abc'))
+plot(x, y, main <- "abc")
+52> match.call(plot, quote(plot(x, y, main <- 'abc')))
+plot(x = x, y = y, main <- "abc")
+54> quote(plot(x, y main <- 'abc'))
+Error: unexpected symbol in "quote(plot(x, y main"
+No suitable frames for recover()
+55> match.call(plot, quote(plot(x, y, main <- 'abc')))
+plot(x = x, y = y, main <- "abc")
+56> match.call(plot, quote(plot(a, b, main <- 'abc')))
+plot(x = a, y = b, main <- "abc")
+58> plot
+function (x, y, ...) 
+UseMethod("plot")
+<bytecode: 0x7ff7748c8cd0>
+<environment: namespace:graphics>
+59> plot.default
+function (x, y = NULL, type = "p", xlim = NULL, ylim = NULL, 
+    log = "", main = NULL, sub = NULL, xlab = NULL, ylab = NULL, 
+    ann = par("ann"), axes = TRUE, frame.plot = axes, panel.first = NULL, 
+    panel.last = NULL, asp = NA, ...) 
+{
+    localAxis <- function(..., col, bg, pch, cex, lty, lwd) Axis(...)
+    localBox <- function(..., col, bg, pch, cex, lty, lwd) box(...)
+    localWindow <- function(..., col, bg, pch, cex, lty, lwd) plot.window(...)
+    localTitle <- function(..., col, bg, pch, cex, lty, lwd) title(...)
+    xlabel <- if (!missing(x)) 
+        deparse(substitute(x))
+    ylabel <- if (!missing(y)) 
+        deparse(substitute(y))
+    xy <- xy.coords(x, y, xlabel, ylabel, log)
+    xlab <- if (is.null(xlab)) 
+        xy$xlab
+    else xlab
+    ylab <- if (is.null(ylab)) 
+        xy$ylab
+    else ylab
+    xlim <- if (is.null(xlim)) 
+        range(xy$x[is.finite(xy$x)])
+    else xlim
+    ylim <- if (is.null(ylim)) 
+        range(xy$y[is.finite(xy$y)])
+    else ylim
+    dev.hold()
+    on.exit(dev.flush())
+    plot.new()
+    localWindow(xlim, ylim, log, asp, ...)
+    panel.first
+    plot.xy(xy, type, ...)
+    panel.last
+    if (axes) {
+        localAxis(if (is.null(y)) 
+            xy$x
+        else x, side = 1, ...)
+        localAxis(if (is.null(y)) 
+            x
+        else y, side = 2, ...)
+    }
+    if (frame.plot) 
+        localBox(...)
+    if (ann) 
+        localTitle(main = main, sub = sub, xlab = xlab, ylab = ylab, 
+            ...)
+    invisible()
+}
+<bytecode: 0x7ff774b3acd8>
+<environment: namespace:graphics>
+60> c = c(c = c)
+62> c
+$c
+function (..., recursive = FALSE)  .Primitive("c")
+
+63> c = c(c = 1, e = 2)
+65> c
+c e 
+1 2 
+66> options()
+$add.smooth
+[1] TRUE
+
+$bitmapType
+[1] "quartz"
+
+$browser
+[1] "/usr/bin/open"
+
+$browserNLdisabled
+[1] FALSE
+
+$CBoundsCheck
+[1] FALSE
+
+$check.bounds
+[1] FALSE
+
+$citation.bibtex.max
+[1] 1
+
+$continue
+[1] "+ "
+
+$contrasts
+        unordered           ordered 
+"contr.treatment"      "contr.poly" 
+
+$defaultPackages
+[1] "datasets"  "utils"     "grDevices" "graphics"  "stats"    
+[6] "methods"  
+
+$demo.ask
+[1] "default"
+
+$deparse.cutoff
+[1] 60
+
+$device
+[1] "quartz"
+
+$device.ask.default
+[1] FALSE
+
+$digits
+[1] 7
+
+$dvipscmd
+[1] "dvips"
+
+$echo
+[1] TRUE
+
+$editor
+[1] "emacsclient"
+
+$encoding
+[1] "native.enc"
+
+$EOLKey
+[1] "72d3e193f22482e07d514df8a95b0e369d0074ac"
+
+$error
+(function () 
+{
+    if (.isMethodsDispatchOn()) {
+        tState <- tracingState(FALSE)
+        on.exit(tracingState(tState))
+    }
+    calls <- sys.calls()
+    from <- 0L
+    n <- length(calls)
+    if (identical(sys.function(n), recover)) 
+        n <- n - 1L
+    for (i in rev(seq_len(n))) {
+        calli <- calls[[i]]
+        fname <- calli[[1L]]
+        if (!is.na(match(deparse(fname)[1L], c("methods::.doTrace", 
+            ".doTrace")))) {
+            from <- i - 1L
+            break
+        }
+    }
+    if (from == 0L) 
+        for (i in rev(seq_len(n))) {
+            calli <- calls[[i]]
+            fname <- calli[[1L]]
+            if (!is.name(fname) || is.na(match(as.character(fname), 
+                c("recover", "stop", "Stop")))) {
+                from <- i
+                break
+            }
+        }
+    if (from > 0L) {
+        if (!interactive()) {
+            try(dump.frames())
+            cat(gettext("recover called non-interactively; frames dumped, use debugger() to view\n"))
+            return(NULL)
+        }
+        else if (identical(getOption("show.error.messages"), 
+            FALSE)) 
+            return(NULL)
+        calls <- limitedLabels(calls[1L:from])
+        repeat {
+            which <- menu(calls, title = "\nEnter a frame number, or 0 to exit  ")
+            if (which) 
+                eval(substitute(browser(skipCalls = skip), list(skip = 7 - 
+                  which)), envir = sys.frame(which))
+            else break
+        }
+    }
+    else cat(gettext("No suitable frames for recover()\n"))
+})()
+
+$example.ask
+[1] "default"
+
+$expressions
+[1] 5000
+
+$GoodReadsPassword
+[1] "Carl8Josephine"
+
+$help.search.types
+[1] "vignette" "demo"     "help"    
+
+$help.try.all.packages
+[1] FALSE
+
+$HTTPUserAgent
+[1] "R (3.4.0 x86_64-apple-darwin15.2.0 x86_64 darwin15.2.0)"
+
+$internet.info
+[1] 2
+
+$keep.source
+[1] TRUE
+
+$keep.source.pkgs
+[1] FALSE
+
+$locatorBell
+[1] TRUE
+
+$mailer
+[1] "mailto"
+
+$max.print
+[1] 99999
+
+$MEAMCentralPassword
+[1] "298prosem"
+
+$menu.graphics
+[1] TRUE
+
+$mxmlc
+[1] "/Users/duncan/Projects/Animation/Flex/bin/mxmlc"
+
+$na.action
+[1] "na.omit"
+
+$nwarnings
+[1] 50
+
+$OutDec
+[1] "."
+
+$packageSourceDirs
+                                                                    RXMLHelp 
+                                    "/Users/duncan/Books/RPackages/RXMLHelp" 
+                                                                      Zillow 
+                           "/Users/duncan/Books/XMLTechnologies/Data/Zillow" 
+                                                                   FlashMXML 
+                   "/Users/duncan/Books/XMLTechnologies/Rpackages/FlashMXML" 
+                                                                  ParsingXML 
+                  "/Users/duncan/Books/XMLTechnologies/Rpackages/ParsingXML" 
+                                                                   RExcelXML 
+                   "/Users/duncan/Books/XMLTechnologies/Rpackages/RExcelXML" 
+                                                                 RGoogleDocs 
+                 "/Users/duncan/Books/XMLTechnologies/Rpackages/RGoogleDocs" 
+                                                                     RJSONIO 
+                     "/Users/duncan/Books/XMLTechnologies/Rpackages/RJSONIO" 
+                                                                        RKML 
+                        "/Users/duncan/Books/XMLTechnologies/Rpackages/RKML" 
+                                                                      ROOXML 
+                      "/Users/duncan/Books/XMLTechnologies/Rpackages/ROOXML" 
+                                                                 ROpenOffice 
+                 "/Users/duncan/Books/XMLTechnologies/Rpackages/ROpenOffice" 
+                                                                    RWordXML 
+                    "/Users/duncan/Books/XMLTechnologies/Rpackages/RWordXML" 
+                                                                     Rflickr 
+                     "/Users/duncan/Books/XMLTechnologies/Rpackages/Rflickr" 
+                                                               SVGAnnotation 
+               "/Users/duncan/Books/XMLTechnologies/Rpackages/SVGAnnotation" 
+                                                                     SWIGXML 
+                     "/Users/duncan/Books/XMLTechnologies/Rpackages/SWIGXML" 
+                                                                  WritingXML 
+                  "/Users/duncan/Books/XMLTechnologies/Rpackages/WritingXML" 
+                                                                   XDocTools 
+                   "/Users/duncan/Books/XMLTechnologies/Rpackages/XDocTools" 
+                                                                      XMLRPC 
+                      "/Users/duncan/Books/XMLTechnologies/Rpackages/XMLRPC" 
+                                                                      Aspell 
+                              "/Users/duncan/Projects/org/omegahat/R/Aspell" 
+                                                              CodeDependency 
+                      "/Users/duncan/Projects/org/omegahat/R/CodeDependency" 
+                                                                Combinations 
+                        "/Users/duncan/Projects/org/omegahat/R/Combinations" 
+                                                             GtkCanvasDevice 
+                 "/Users/duncan/Projects/org/omegahat/R/Gtk/GtkCanvasDevice" 
+                                                       PreparedFunctionCalls 
+               "/Users/duncan/Projects/org/omegahat/R/PreparedFunctionCalls" 
+                                                             RAutoGenRunTime 
+                     "/Users/duncan/Projects/org/omegahat/R/RAutoGenRunTime" 
+                                                                        RCSS 
+                                "/Users/duncan/Projects/org/omegahat/R/RCSS" 
+                                                                       RCurl 
+                               "/Users/duncan/Projects/org/omegahat/R/RCurl" 
+                                                                         RDA 
+                                 "/Users/duncan/Projects/org/omegahat/R/RDA" 
+                                                                REnumeration 
+                        "/Users/duncan/Projects/org/omegahat/R/REnumeration" 
+                                                             RGraphicsDevice 
+                     "/Users/duncan/Projects/org/omegahat/R/RGraphicsDevice" 
+                                                             RGtkIPrimitives 
+                     "/Users/duncan/Projects/org/omegahat/R/RGtkIPrimitives" 
+                                                                     RMatlab 
+                             "/Users/duncan/Projects/org/omegahat/R/RMatlab" 
+                                                                         RQt 
+                                 "/Users/duncan/Projects/org/omegahat/R/RQt" 
+                                                                     RTiming 
+                             "/Users/duncan/Projects/org/omegahat/R/RTiming" 
+                                                                RTimingTools 
+                        "/Users/duncan/Projects/org/omegahat/R/RTimingTools" 
+                                                                      RTools 
+                              "/Users/duncan/Projects/org/omegahat/R/RTools" 
+                                                                       RWord 
+                               "/Users/duncan/Projects/org/omegahat/R/RWord" 
+                                                                     RXMLDoc 
+                             "/Users/duncan/Projects/org/omegahat/R/RXMLDoc" 
+                                                                  Rcartogram 
+                          "/Users/duncan/Projects/org/omegahat/R/Rcartogram" 
+                                                                Rcompression 
+                        "/Users/duncan/Projects/org/omegahat/R/Rcompression" 
+                                                                      Rcrypt 
+                              "/Users/duncan/Projects/org/omegahat/R/Rcrypt" 
+                                                                       Rexif 
+                               "/Users/duncan/Projects/org/omegahat/R/Rexif" 
+                                                                   Rlibstree 
+                           "/Users/duncan/Projects/org/omegahat/R/Rlibstree" 
+                                                                      Rnifti 
+                              "/Users/duncan/Projects/org/omegahat/R/Rnifti" 
+                                                                       Rstem 
+                               "/Users/duncan/Projects/org/omegahat/R/Rstem" 
+                                                                   RwxDevice 
+                           "/Users/duncan/Projects/org/omegahat/R/RwxDevice" 
+                                                                      RwxGUI 
+                              "/Users/duncan/Projects/org/omegahat/R/RwxGUI" 
+                                                                  RwxWidgets 
+                          "/Users/duncan/Projects/org/omegahat/R/RwxWidgets" 
+                                                             S4DBMSInterface 
+                     "/Users/duncan/Projects/org/omegahat/R/S4DBMSInterface" 
+                                                           REmbeddedPostgres 
+                     "/Users/duncan/Projects/org/omegahat/REmbeddedPostgres" 
+                                                                 Experiments 
+                 "/Users/duncan/Projects/org/omegahat/SLanguage/Experiments" 
+                                                                        Perl 
+"/Users/duncan/Projects/org/omegahat/SLanguage/InterfaceGenerators/Gcc/Perl" 
+                                                                         OOP 
+                         "/Users/duncan/Projects/org/omegahat/SLanguage/OOP" 
+                                                                     SModels 
+                     "/Users/duncan/Projects/org/omegahat/SLanguage/SModels" 
+                                                                   Templates 
+          "/Users/duncan/Projects/org/omegahat/SLanguage/SPackage/Templates" 
+                                                                     Install 
+                        "/Users/duncan/Projects/org/omegahat/XML/RS/Install" 
+                                                                         XML 
+            "/Users/duncan/Projects/org/omegahat/XML/RS/Install/Web/pkg/XML" 
+                                                                     Install 
+                      "/Users/duncan/Projects/org/omegahat/XML/SOAP/Install" 
+                                                                  StatDataML 
+          "/Users/duncan/Projects/org/omegahat/XML/StatDataML/RS/StatDataML" 
+                                                                   XMLSchema 
+                         "/Users/duncan/Projects/org/omegahat/XML/XMLSchema" 
+                                                                     Install 
+             "/Users/duncan/Projects/org/omegahat/XML/XSL/S/libxslt/Install" 
+
+$pager
+[1] "/Users/duncan/Projects/R-3.3-devel/bin/pager"
+
+$papersize
+[1] "a4"
+
+$PDF2TXT
+[1] "/Users/duncan/DSIProjects/pdfminer/tools/pdf2txt.py"
+
+$PDFBoxJAR
+[1] "~/Downloads/pdfbox-app-2.0.2.jar"          
+[2] "~/Downloads/levigo-jbig2-imageio-1.6.4.jar"
+
+$PDFTOHTML
+[1] "/Users/duncan/DSIProjects/pdftohtml/src/pdftohtml"
+
+$pdfviewer
+[1] "/usr/bin/open"
+
+$pkgType
+[1] "source"
+
+$printcmd
+[1] "lpr"
+
+$prompt
+[1] "66> "
+
+$Rcimis_key
+[1] "e830cf97-5a17-4cb7-b829-8e34e071f6ec"
+
+$RCurlOptions
+$RCurlOptions$nosignal
+[1] FALSE
+
+$RCurlOptions$timeout
+[1] 120
+
+
+$repos
+[1] "http://cran.cnr.berkeley.edu" "http://www.omegahat.net/R"   
+
+$rl_word_breaks
+[1] " \t\n\"\\'`><=%;,|&{()}"
+
+$scipen
+[1] 0
+
+$ScopusKey
+[1] "b6d2fee7ca324788b391220210e4afcb"
+
+$show.coef.Pvalues
+[1] TRUE
+
+$show.error.locations
+[1] TRUE
+
+$show.error.messages
+[1] TRUE
+
+$show.signif.stars
+[1] TRUE
+
+$SOAPIKey
+[1] "AdeT*KNYsCdMsI)CJ5T08Q(("
+
+$STERM
+[1] "iESS"
+
+$str
+$str$strict.width
+[1] "no"
+
+$str$digits.d
+[1] 3
+
+$str$vec.len
+[1] 4
+
+
+$str.dendrogram.last
+[1] "'"
+
+$stringsAsFactors
+[1] TRUE
+
+$texi2dvi
+[1] "/usr/bin/texi2dvi"
+
+$timeout
+[1] 60
+
+$ts.eps
+[1] 1e-05
+
+$ts.S.compat
+[1] FALSE
+
+$unzip
+[1] "/usr/bin/unzip"
+
+$useFancyQuotes
+[1] TRUE
+
+$verbose
+[1] FALSE
+
+$warn
+[1] 0
+
+$warning.length
+[1] 1000
+
+$width
+[1] 70
+
+$xml.author.info
+[1] "~/authorInfo.xml"
+
+67> names(options()
++ )
+ [1] "add.smooth"            "bitmapType"           
+ [3] "browser"               "browserNLdisabled"    
+ [5] "CBoundsCheck"          "check.bounds"         
+ [7] "citation.bibtex.max"   "continue"             
+ [9] "contrasts"             "defaultPackages"      
+[11] "demo.ask"              "deparse.cutoff"       
+[13] "device"                "device.ask.default"   
+[15] "digits"                "dvipscmd"             
+[17] "echo"                  "editor"               
+[19] "encoding"              "EOLKey"               
+[21] "error"                 "example.ask"          
+[23] "expressions"           "GoodReadsPassword"    
+[25] "help.search.types"     "help.try.all.packages"
+[27] "HTTPUserAgent"         "internet.info"        
+[29] "keep.source"           "keep.source.pkgs"     
+[31] "locatorBell"           "mailer"               
+[33] "max.print"             "MEAMCentralPassword"  
+[35] "menu.graphics"         "mxmlc"                
+[37] "na.action"             "nwarnings"            
+[39] "OutDec"                "packageSourceDirs"    
+[41] "pager"                 "papersize"            
+[43] "PDF2TXT"               "PDFBoxJAR"            
+[45] "PDFTOHTML"             "pdfviewer"            
+[47] "pkgType"               "printcmd"             
+[49] "prompt"                "Rcimis_key"           
+[51] "RCurlOptions"          "repos"                
+[53] "rl_word_breaks"        "scipen"               
+[55] "ScopusKey"             "show.coef.Pvalues"    
+[57] "show.error.locations"  "show.error.messages"  
+[59] "show.signif.stars"     "SOAPIKey"             
+[61] "STERM"                 "str"                  
+[63] "str.dendrogram.last"   "stringsAsFactors"     
+[65] "texi2dvi"              "timeout"              
+[67] "ts.eps"                "ts.S.compat"          
+[69] "unzip"                 "useFancyQuotes"       
+[71] "verbose"               "warn"                 
+[73] "warning.length"        "width"                
+[75] "xml.author.info"      
+69> x = sample(letters, 20, replace = TRUE)
+71> x
+ [1] "t" "o" "n" "x" "x" "o" "v" "g" "m" "a" "w" "i" "p" "c" "i" "r"
+[17] "d" "d" "l" "u"
+72> table(x)
+x
+a c d g i l m n o p r t u v w x 
+1 1 2 1 2 1 1 1 2 1 1 1 1 1 1 2 
+73> f1 = factor(x)
+75> f
+Error: object 'f' not found
+No suitable frames for recover()
+75> f1
+ [1] t o n x x o v g m a w i p c i r d d l u
+Levels: a c d g i l m n o p r t u v w x
+76> f2 = factor(x, levels = letters)
+77> f2
+ [1] t o n x x o v g m a w i p c i r d d l u
+Levels: a b c d e f g h i j k l m n o p q r s t u v w x y z
+78> class(f1)
+[1] "factor"
+80> typeof(f2)
+[1] "integer"
+83> str(f2)
+ Factor w/ 26 levels "a","b","c","d",..: 20 15 14 24 24 15 22 7 13 1 ...
+85> levels(f1)
+ [1] "a" "c" "d" "g" "i" "l" "m" "n" "o" "p" "r" "t" "u" "v" "w" "x"
+87> levels(f2)
+ [1] "a" "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m" "n" "o" "p"
+[17] "q" "r" "s" "t" "u" "v" "w" "x" "y" "z"
+88> f2
+ [1] t o n x x o v g m a w i p c i r d d l u
+Levels: a b c d e f g h i j k l m n o p q r s t u v w x y z
+89> range(f2)
+Error in Summary.factor(c(20L, 15L, 14L, 24L, 24L, 15L, 22L, 7L, 13L,  : 
+  ‘range’ not meaningful for factors
+
+Enter a frame number, or 0 to exit   
+
+1: Summary.factor(c(20, 15, 14, 24, 24, 15, 22, 7, 13, 1, 23, 9, 16,
+
+Selection: 0
+90> range(as.integer(f2))
+[1]  1 24
+93> range(as.integer(f1))
+[1]  1 16
+96> levels(f2)[f2]
+ [1] "t" "o" "n" "x" "x" "o" "v" "g" "m" "a" "w" "i" "p" "c" "i" "r"
+[17] "d" "d" "l" "u"
+97> f2
+ [1] t o n x x o v g m a w i p c i r d d l u
+Levels: a b c d e f g h i j k l m n o p q r s t u v w x y z
+98> colors = c("red", "green", "blue")
+100> f3 = factor(c("A", "A", "B", "C", "C", "C", "B"))
+102> colors[f3]
+[1] "red"   "red"   "green" "blue"  "blue"  "blue"  "green"
+103> colors[-3][f3]
+[1] "red"   "red"   "green" NA      NA      NA      "green"
+104> f2
+ [1] t o n x x o v g m a w i p c i r d d l u
+Levels: a b c d e f g h i j k l m n o p q r s t u v w x y z
+105> length(f2)
+[1] 20
+107> f2[1] = NA
+108> f2
+ [1] <NA> o    n    x    x    o    v    g    m    a    w    i    p   
+[14] c    i    r    d    d    l    u   
+Levels: a b c d e f g h i j k l m n o p q r s t u v w x y z
+109> `[`
+.Primitive("[")
+110> ?`[`
+112> 
+112> 

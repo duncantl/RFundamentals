@@ -1,6 +1,6 @@
-## Update
-+ See Eval.html (clone the repository and view locally in your browser).
+## R Fundamentals
 
++ [Goals](Goals.md)
 
 This brief mini-course focuses on explaining the computational model that underlies R.  I believe
 that if you understand this, you can **reason** about the R code and the language and can more
@@ -20,9 +20,12 @@ you can learn anything related to it. If you know only a particular set of packa
 functions and idioms, you are limited to those.
 
 
-I expect lots of questions.  So speak up if anything is not clear or you want to know more about a
-particular topic..
+I expect lots of questions.  So please raise your hand, interrupt, or put something in the chat if
+anything is not clear. I guarantee that if you didn't fully grasp something, others didn't either
+and will benefit from you asking about it.
 
-Also, tell me what topics you want to cover in the remaining sessions?
+Also, please tell me what topics you want to cover in the remaining sessions?
 + What do you find the hardest thing to understand about R?
-+ Try to keep it about the language and how it works than a function in a particular package.
++ Why and when to use particular idioms?
++ Please try to keep it about the language and how it works than a function in a particular package.
+  However, please do give examples.

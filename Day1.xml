@@ -1,0 +1,11 @@
+<doc
+	 xmlns:xi="http://www.w3.org/2003/XInclude"
+	 xmlns:r="http://www.r-project.org">
+<title></title>
+
+<xi:include href="REPL.xml"/>
+
+<xi:include href="Exercise1.xml"/>
+
+<xi:include href="IntroEvaluation.xml"/>
+</doc>

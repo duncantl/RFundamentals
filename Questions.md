@@ -113,7 +113,7 @@ function(x)
      sum(log(dexp(x, theta)))
 }
 ```
-Where will f find theta?
+Where will f find theta? or is does this question make sense?
 
 + Continuing from the previous question
 ```
@@ -132,4 +132,4 @@ What is theta in each call to `lik()`.
 
 
 + Some people think it would be a good idea if R found non-local variables by walking up the **call
-stack**.  Why is this not a good idea?
+frame stack**.  Why is this not a good idea?

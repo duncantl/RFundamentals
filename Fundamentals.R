@@ -7,20 +7,20 @@
   You only see 15: NIL, SYM, CLOS, ENV, LANG, LGL, INT, REAL, CPL, STR, DOT, VEC, EXPR, EXTPTR, RAW
 
 
- NULL
+ NULL  (NIL)
 
- logical, integer, numeric, complex, character, list
+ logical, integer, numeric, complex, character, list   (LGL, INT, REAL, CPL, STR, VEC)
 
- expressions & calls
+ expressions & calls  (EXPR, LANG)
 
- external pointer
+ external pointer  (EXTPTR)
 
- raw
+ raw   (RAW)
 
- ...
+ ...   (DOT)
 
- function
+ function  (CLOS)
 
- name
+ name    (SYM)
 
- environment
+ environment  (ENV)
