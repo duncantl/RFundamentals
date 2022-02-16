@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>R Fundamentals 2022</title>
+    <meta charset="utf-8">
+    <style>
+      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+      body { font-family: 'Droid Serif'; }
+      h1, h2, h3 {
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: normal;
+      }
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center, middle
+
+# R Fundamentals 2022
+
+
+## [https://github.com/duncantl/RFundamentals](https://github.com/duncantl/RFundamentals)
+
+### Duncan Temple Lang
+### Professor, Statistics
+### Associate Dean, Graduate Studies
+
+<div style="clear: both"/>
+
+<!-- <hr width="50%"/> -->
+<img src="datalab-logo-full-color-rgb.png" height="30%" width="30%"></img>
+
+---
+layout: true
+<img style="float: right" src="datalab-logo-full-color-rgb.png" height="15%" width="15%"></img>
+
+---
+# R Fundamentals
+## Recap
+
++ REPL
++ Parsing
+  + language objects before evaluation
++ Evaluation
+  + literal values - evaluate to same object - e.g. TRUE
+  + symbols/variable names - lookup along search path - e.g. T
+  + Environments
+  + function calls - e.g., rnorm(1, 2),  rnorm(1, sd = 3)
+
+---
+# Environments
+
++ Environment - collection of (variable name, object/value) pairs
++ search() path
++ chain of environments
+  + parent.env
++ showEnv
++ pass-by-reference/mutable
+
+---
+# [Rewind] Evaluation of Assignment
++ T in base and T = 0
+   + regular assignment (T = 0, T <- 0) assigns in the caller's environment
++ illustrate with new environment on the search path
+```
+search()
+find("a")
+find("b")
+```
+
+--
+```
+e = new.env()
+e$a = list(x = 1)
+e$b = 1
+attach(e)
+```
+
+--
+```
+find("a")
+find("b")
+```
+
+---
+# Assigning to a and b
+
+```
+a$y = 2
+```
++ Where is `a`?
+
+--
+```
+b = 3
+```
++ Where is b?
+
+---
+# Assigning in place/to original variable
+## Non-local assignment
+
++ Undo our local variables
+```
+rm(a, b)
+```
+
++ Now consider
+```
+a$y <<- 2
+```
+
+--
++ Modify where variable is originally defined.
+
+
+---
+# attach()
+
++ Consider
+```
+mtcars
+attach(mtcars)
+mpg[3] = 100
+```
+
++ How many `mpg` vectors are there ?
++ What do the following commands see for the mpg vector?
+```
+lm(mpg ~ ., mtcars)
+sum(mtcars$mpg)
+```
++ Don't use attach() for short-hand convenience,
+   + i.e., not having to prefix `mtcars$mpg`
++ Use with()
+```
+with(mtcars, mpg + cyl)
+```
++ But this is **non-standard evaluation**.
+  + Doesn't follow the evaluation rules we have presented.
+
+---
+# Function Calls
+     + call language object
+     + find function by evaluating first element of call, e.g., rnorm,  x$fun
+     + call frame - environment
+        + create local variables in call frame for each parameter/formal argument
+     + match arguments in call to parameters
+     + evaluation of commands in the body of the function
+
+---
+# Matching Arguments to Parameters in a Call.
+
++ named arguments by exact match
+   + named arguments by partial match to remaining parameters
+   + remaining arguments to remaining parameters by position
+   + ... is special
+      + matches any named argument that doesn't match
+      + matches additional positional arguments
+      + named arguments that partially match, but not exactly, a named parameter after ... go to ... and do not match the partially matching parameter.
+
+```
+scatter.smooth(mtcars[, c("mpg", "wt")], , .75,
+                xlab = "Weight", yla = "Miles per gallon",
+                  main = "Motor Trend Cars Data")
+```
+
++ match.call(scatter.smooth, call)
+
+---
+# ... and parameters
+
++ parameters after ... in the parameter list.
+  `na.rm` in `sum`
+```
+sum
+function (..., na.rm = FALSE)
+   .Primitive("sum")
+```
++ named arguments in a call that partially match, but not exactly, a named parameter after ... go to ... and do not match the partially matching parameter.
+
+```
+f = function(..., other = TRUE)
+{
+  browser()
+}
+```
+```
+f(1, 2, oth = 101)
+Called from: f(1, 2, oth = 101)
+Browse[1]> other
+[1] TRUE
+Browse[1]> list(...)
+[[1]]
+[1] 1
+
+[[2]]
+[1] 2
+
+$oth
+[1] 101
+```
+
+---
+#
+
+
++ Consequence
+```
+sum(1, 2, na.rm = TRUE)
+```
+```
+sum(1, 2, na.r = TRUE)
+```
+
+
+
+---
+# Lazy Evaluation
+
++ R doesn't evaluate the arguments and then pass them to the function
+  + it passes the expression/command for each argument
++ evaluates each argument when its value is first needed
++ in addition to expression, passes environment in which to evaluate that.
++ uses regular evaluation rules using that environment
+
+---
+# Querying an Argument, Call, Call Stack
+
++ a function can query the expression for a given argument
+  + `substitute()`
+```
+substitute(x)
+```
+
++ 
+
+---
+# Call Frame
+
++ sys.nframe()
++ sys.calls()
++ sys.frames(sys.nframe())
+
+
+---
+# Finding/Evaluating Variables in Body of a Function
+
++ rnorm
++ scatter.smooth
+  + debug(`[`)
+  + illustrates lazy evaluation
+  + S3 method [.data.frame
+
+
+---
+# Environment of a Function
+
++ The *environment of a function* is the environment
+  in which it is created.
+
++ Top-level function creation
++ source()
++ Explicitly setting the environment of a function.
++ Functions created in the body of a function.
+  + **call frame** of the function in which it is created.
+  + not the environment of the function in which it is created, but the call to that function.
+
+---
+# Closures/Generator Functions
+
++ Function returning a function.
++ Inner function captures the environment and its variables in which
+  it was created
+  + Call frame.
+
+```
+normalLikh = 
+function(x)
+{
+   function(parm)
+     prod(dnorm(x, parm[1], parm[2]))
+}
+```
+
+```
+x1 = rnorm(10)
+x2 = rnorm(1000, 25, 4)
+```
+
+lik1 = normalLikh(x1)
+lik2 = normalLikh(x2)
+
+lik1(c(0, 1))
+lik2(c(0, 1))
+
+
+---
+# Non-local Assignments
+
++ Maintain state across calls.
++ Count the number of calls to the eval() function during call to lm()
+
++ Create a function that returns a function.
+  + Inner function updates non-local variable
+```
+collect = 
+function()
+{
+   count = 0L
+   function() {
+     count <<- count + 1L
+   }
+}
+```
+
+```
+c1 = collect()
+trace("eval", c1, print = FALSE)
+lm(mpg ~ wt, mtcars, weights = rep(1, nrow(mtcars)))
+```
+
+```
+ls(environment(c1))
+environment(c1)$count
+```
+
+---
+# on.exit() & Errors
+
+
++ When evaluating the body of a function
+
++ when R is about to return from that function, it evaluates any expression(s)
+   registered via on.exit() in the body of that function.
+  + these are evaluated in each function whether it returns or raises an error.
+
++ Used to reset and clean up
+  + reset options(), graphics par() settings, environment variables
+  + close connections opened within the function
+  + remove temporary files
+
++ if there are errors
+  + R raises an error **condition**
+  + unwinds each call on the stack
+    + evaluating each call frame's on.exit() code.
+
+---
+# Continuing Evaluation after Errors
+
++ try() and tryCatch()
+
+---
+# OOP: generic functions and methods
+
++ How did we get [.data.frame in the call stack?
+  + model.frame.default
+
+---
+# Non-standard Evaluation
+
+```
+source("boost.R")
+```
+
++ `z = boost(mpg ~ wt, mtcars)`
+   +   all results the same
+
+--
++ remove weights from global environment.
+   + error
+```
+Error in model.frame.default(formula = formula, data = data, weights = weights,  : 
+  invalid type (closure) for variable '(weights)'
+```
++ detach stats package
+   + different error
+```
+Error in eval(extras, data, env) : object 'weights' not found
+```
+
+
+
+
+    </textarea>
+    <script src="https://remarkjs.com/downloads/remark-latest.min.js">
+    </script>
+    <script src="remark-toc/index.js">     </script>   
+    <script>
+     var slideshow = remark.create();
+//     var toc = require('remark-toc');
+//     slideshow.use(toc);
+    </script>
+  </body>
+</html>
+

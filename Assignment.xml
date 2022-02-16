@@ -15,8 +15,9 @@ The assignment will made locally within this call and disappear after the call e
 </para>
 
 <para>
-Assignment is slightly more complicated when 1) a variable already exists in the search path
-and 2) also when we assign to a sub-element within a variable on the search path, e.g, <r:expr>a$x</r:expr>.
+Assignment is seemingly slightly more complicated when 1) a variable already exists in the search path
+and 2) also when we assign to a sub-element within a variable on the search path, e.g, <r:expr>a$x</r:expr>. However, it
+is still local to the caller's environment.
 We'll setup an artificial situation to illustrate how assignment works in these cases.
 The take-away is the assignment is local, not overwriting the original object along the search path.
 </para>
