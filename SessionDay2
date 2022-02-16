@@ -1,0 +1,983 @@
+]0;RFundamentals~/RFundamentals> R
+
+R Under development (unstable) (2021-10-20 r81081) -- "Unsuffered Consequences"
+Copyright (C) 2021 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin19.0.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+PID = 32629 
+Time = 2022-02-16 09:32:25 
+Dir = /Users/duncan/RFundamentals 
+The following object is masked from package:RShellTools:
+
+    bigfiles
+
+1> find("bigfiles")
+[1] "utility functions"   "package:RShellTools"
+[49:04] 2> search()
+ [1] ".GlobalEnv"          "package:stats"       "package:graphics"   
+ [4] "package:grDevices"   "package:datasets"    "utility functions"  
+ [7] "package:RShellTools" "package:utils"       "package:methods"    
+[10] "Autoloads"           "package:base"       
+[49:30] 3> bigfiles
+function(dir = "~/Downloads")
+{
+  i = file.info(list.files(dir, full.names = TRUE))    
+  i[order(i$size, decreasing = TRUE), c("size", "ctime"), drop = FALSE] 
+}
+<environment: 0x7fd746331ee0>
+[50:45] 4> library(dplyr)
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+[50:56] 5> lag
+function (x, n = 1L, default = NA, order_by = NULL, ...) 
+{
+    if (!is.null(order_by)) {
+        return(with_order(order_by, lag, x, n = n, default = default))
+    }
+    if (inherits(x, "ts")) {
+        bad_args("x", "must be a vector, not a ts object, do you want `stats::lag()`?")
+    }
+    if (length(n) != 1 || !is.numeric(n) || n < 0) {
+        bad_args("n", "must be a nonnegative integer scalar, ", 
+            "not {friendly_type_of(n)} of length {length(n)}.")
+    }
+    if (n == 0) 
+        return(x)
+    if (vec_size(default) != 1L) {
+        abort(glue("`default` must be size 1, not size {vec_size(default)}"))
+    }
+    xlen <- vec_size(x)
+    n <- pmin(n, xlen)
+    inputs <- vec_cast_common(default = default, x = x)
+    vec_c(vec_rep(inputs$default, n), vec_slice(inputs$x, seq_len(xlen - 
+        n)))
+}
+<bytecode: 0x7fd746a337f8>
+<environment: namespace:dplyr>
+[51:32] 6> find("lag")
+[1] "package:dplyr" "package:stats"
+[51:57] 7> search()
+ [1] ".GlobalEnv"          "package:dplyr"       "package:stats"      
+ [4] "package:graphics"    "package:grDevices"   "package:datasets"   
+ [7] "utility functions"   "package:RShellTools" "package:utils"      
+[10] "package:methods"     "Autoloads"           "package:base"       
+[52:44] 8> stats::lag
+function (x, ...) 
+UseMethod("lag")
+<bytecode: 0x7fd746a8fca8>
+<environment: namespace:stats>
+[54:03] 9> detach(2)
+[55:55] 10> search()
+ [1] ".GlobalEnv"          "package:stats"       "package:graphics"   
+ [4] "package:grDevices"   "package:datasets"    "utility functions"  
+ [7] "package:RShellTools" "package:utils"       "package:methods"    
+[10] "Autoloads"           "package:base"       
+[55:57] 11> find("lag")
+[1] "package:stats"
+[56:04] 12> lag
+function (x, ...) 
+UseMethod("lag")
+<bytecode: 0x7fd746a8fca8>
+<environment: namespace:stats>
+[56:07] 13> dplyr::lag
+*** output flushed ***
+[56:38] 14> search()
+ [1] ".GlobalEnv"          "package:stats"       "package:graphics"   
+ [4] "package:grDevices"   "package:datasets"    "utility functions"  
+ [7] "package:RShellTools" "package:utils"       "package:methods"    
+[10] "Autoloads"           "package:base"       
+[56:44] 15> library(dplyr, pos = 9)
+
+Attaching package: ‘dplyr’
+
+The following objects are masked _by_ ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+[58:04] 16> search()
+ [1] ".GlobalEnv"          "package:stats"       "package:graphics"   
+ [4] "package:grDevices"   "package:datasets"    "utility functions"  
+ [7] "package:RShellTools" "package:utils"       "package:dplyr"      
+[10] "package:methods"     "Autoloads"           "package:base"       
+[58:08] 17> find("lag")
+[1] "package:stats" "package:dplyr"
+[58:46] 18> lag
+function (x, ...) 
+UseMethod("lag")
+<bytecode: 0x7fd746a8fca8>
+<environment: namespace:stats>
+[58:52] 19> install.packages("bob")
+Installing package into ‘/Users/duncan/Rpackages4’
+(as ‘lib’ is unspecified)
+Warning message:
+package ‘bob’ is not available for this version of R
+
+A version of this package for your version of R might be available elsewhere,
+see the ideas at
+https://cran.r-project.org/doc/manuals/r-devel/R-admin.html#Installing-packages 
+[59:43] 20> install.packages("emmeans", type = "source")
+Installing package into ‘/Users/duncan/Rpackages4’
+(as ‘lib’ is unspecified)
+trying URL 'https://ftp.osuosl.org/pub/cran/src/contrib/emmeans_1.7.2.tar.gz'
+Content type 'application/x-gzip' length 1363620 bytes (1.3 MB)
+==================================================
+downloaded 1.3 MB
+
+* installing *source* package ‘emmeans’ ...
+** package ‘emmeans’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** data
+*** moving datasets to lazyload DB
+** inst
+** byte-compile and prepare package for lazy loading
+** help
+*** installing help indices
+** building package indices
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+** testing if installed package can be loaded from final location
+** testing if installed package keeps a record of temporary installation path
+* DONE (emmeans)
+
+The downloaded source packages are in
+	‘/private/var/folders/_z/3wtk4yb903gb37jkp54f53sc0000gn/T/RtmpcMbDEE/downloaded_packages’
+[02:05] 21> `for`
+.Primitive("for")
+[06:11] 22> class(`for`)
+[1] "function"
+[06:17] 23> typeof(`for`)
+[1] "special"
+[06:39] 24> typeof(`function`)
+[1] "special"
+[06:57] 25> e = quote( function(x) x+1 )
+[07:20] 26> class(e)
+[1] "call"
+[07:24] 27> class(eval(e)(
++   C-c C-c^C
+No suitable frames for recover()
+[07:24] 27> class(eval(e))
+[1] "function"
+[08:14] 28> search()
+ [1] ".GlobalEnv"          "package:stats"       "package:graphics"   
+ [4] "package:grDevices"   "package:datasets"    "utility functions"  
+ [7] "package:RShellTools" "package:utils"       "package:dplyr"      
+[10] "package:methods"     "Autoloads"           "package:base"       
+[08:57] 29> globalenv()
+<environment: R_GlobalEnv>
+[09:19] 30> ls(globalenv())
+[1] "e"
+[11:40] 31> "lag" %in% ls(globalenv())
+[1] FALSE
+[11:46] 32> env2 = parent.evn( globalenv() )
+Error in parent.evn(globalenv()) : could not find function "parent.evn"
+No suitable frames for recover()
+[11:46] 32> env2 = parent.env( globalenv() )
+[12:11] 33> class(env2)
+[1] "environment"
+[12:16] 34> ls(env2)
+*** output flushed ***
+[12:46] 35> parent.env(env2)
+<environment: package:graphics>
+attr(,"name")
+[1] "package:graphics"
+attr(,"path")
+[1] "/Users/duncan/R/R-new/build3/library/graphics"
+[13:03] 36> source("showEnv.R")
+[13:26] 37> envs = showEnv(globalenv(), TRUE)
+*** output flushed ***
+[13:41] 38> f = function(x) x + a
+[14:49] 39> environment(f)
+<environment: R_GlobalEnv>
+[15:07] 40> lag
+function (x, ...) 
+UseMethod("lag")
+<bytecode: 0x7fd746a8fca8>
+<environment: namespace:stats>
+[15:26] 41> environment(lag)
+<environment: namespace:stats>
+[15:43] 42> parent.env(environment(lag))
+<environment: 0x7fd747a952b0>
+attr(,"name")
+[1] "imports:stats"
+[15:52] 43> find("T")
+[1] "package:base"
+[17:12] 44> T = 0
+[17:19] 45> find("T")
+[1] ".GlobalEnv"   "package:base"
+[17:22] 46> rm(T)
+[17:48] 47> find("T")
+[1] "package:base"
+[19:42] 48>  T + 2
+[1] 3
+[19:50] 49> T = T + 2
+[20:56] 50> find("T")
+[1] ".GlobalEnv"   "package:base"
+[20:59] 51> e = quote(T <- T+2)
+[21:12] 52> class(e)
+[1] "<-"
+[21:14] 53> `<-`
+.Primitive("<-")
+[21:20] 54> search()
+ [1] ".GlobalEnv"          "package:stats"       "package:graphics"   
+ [4] "package:grDevices"   "package:datasets"    "utility functions"  
+ [7] "package:RShellTools" "package:utils"       "package:dplyr"      
+[10] "package:methods"     "Autoloads"           "package:base"       
+[23:40] 55> env = new.env()
+[24:41] 56> class(env)
+[1] "environment"
+[24:44] 57> ls(env)
+character(0)
+[24:56] 58> e$a = list(x = 1)
+[25:23] 59> e$b = 5
+[25:28] 60> env$a = list(x = 1)
+[25:38] 61> env$b = 5
+[25:44] 62> ls(env)
+[1] "a" "b"
+[25:48] 63> env$c = 10
+[25:56] 64> ls(env)
+[1] "a" "b" "c"
+[26:11] 65> attach(env, 2)
+[26:31] 66> searc()
+*** output flushed ***
+[26:31] 66> search()
+ [1] ".GlobalEnv"          "env"                 "package:stats"      
+ [4] "package:graphics"    "package:grDevices"   "package:datasets"   
+ [7] "utility functions"   "package:RShellTools" "package:utils"      
+[10] "package:dplyr"       "package:methods"     "Autoloads"          
+[13] "package:base"       
+[26:37] 67> a
+$x
+[1] 1
+
+[27:26] 68> a$y = "a string"
+[27:59] 69> a
+$x
+[1] 1
+
+$y
+[1] "a string"
+
+[28:01] 70> find("a")
+[1] ".GlobalEnv" "env"       
+[28:34] 71> get("a", env)
+$x
+[1] 1
+
+[28:50] 72> env$a
+$x
+[1] 1
+
+[29:53] 73> f = function() {  T = T + 2; browser()  }  
+[31:42] 74> find("T")
+[1] ".GlobalEnv"   "package:base"
+[31:57] 75> rm(T)
+[32:01] 76> find("T")
+[1] "package:base"
+[32:05] 77> f()
+Called from: f()
+Browse[1]> ls()
+[1] "T"
+Browse[1]> T
+[1] 3
+Browse[1]> Q
+[33:36] 79> f = function(T) {  browser(); T = T + 2; 1  }  
+[34:39] 80> f(11)
+Called from: f(11)
+Browse[1]> ls()
+[1] "T"
+Browse[1]> T
+[1] 11
+Browse[1]> n
+debug at #1: T = T + 2
+Browse[2]> n
+debug at #1: [1] 1
+Browse[2]> ls()
+[1] "T"
+Browse[2]> T
+[1] 13
+Browse[2]> sys.calls()
+[[1]]
+f(11)
+
+Browse[2]> Q
+[37:18] 85> debug(`[`)
+[37:43] 86> scatter.smooth(mtcars[, c("mpg", "wt")])
+*** output flushed ***
+Browse[2]> where
+where 1: `[.data.frame`(mtcars, , c("mpg", "wt"))
+where 2: mtcars[, c("mpg", "wt")]
+where 3: xy.coords(x, y, xlabel, ylabel)
+where 4: scatter.smooth(mtcars[, c("mpg", "wt")])
+
+Browse[2]> names(formals(scatter.smooth))
+ [1] "x"          "y"          "span"       "degree"     "family"    
+ [6] "xlab"       "ylab"       "ylim"       "evaluation" "..."       
+[11] "lpars"     
+Browse[2]> sys.calls()
+[[1]]
+scatter.smooth(mtcars[, c("mpg", "wt")])
+
+[[2]]
+xy.coords(x, y, xlabel, ylabel)
+
+[[3]]
+mtcars[, c("mpg", "wt")]
+
+[[4]]
+`[.data.frame`(mtcars, , c("mpg", "wt"))
+
+Browse[2]> sys.nframe()
+[1] 4
+Browse[2]> sys.frame(4)
+<environment: 0x7fd706d1bad8>
+Browse[2]> ls(sys.frame(4))
+[1] "drop" "i"    "j"    "x"   
+Browse[2]> parent.env(sys.frame(4))
+<environment: namespace:base>
+Browse[2]> find("[.data.frame")
+[1] "package:base"
+Browse[2]> body()
+*** output flushed ***
+Browse[2]> scatter.smooth
+function (x, y = NULL, span = 2/3, degree = 1, family = c("symmetric", 
+    "gaussian"), xlab = NULL, ylab = NULL, ylim = range(y, pred$y, 
+    na.rm = TRUE), evaluation = 50, ..., lpars = list()) 
+{
+    xlabel <- if (!missing(x)) 
+        deparse1(substitute(x))
+    ylabel <- if (!missing(y)) 
+        deparse1(substitute(y))
+    xy <- xy.coords(x, y, xlabel, ylabel)
+    x <- xy$x
+    y <- xy$y
+    xlab <- if (is.null(xlab)) 
+        xy$xlab
+    else xlab
+    ylab <- if (is.null(ylab)) 
+        xy$ylab
+    else ylab
+    pred <- loess.smooth(x, y, span, degree, family, evaluation)
+    plot(x, y, ylim = ylim, xlab = xlab, ylab = ylab, ...)
+    do.call(lines, c(list(pred), lpars))
+    invisible()
+}
+<bytecode: 0x7fd6e7a08190>
+<environment: namespace:stats>
+Browse[2]> Q
+[43:43] 95> debug(scatter.smooth)
+[45:23] 96> scatter.smooth(mtcars[, c("mpg", "wt")])
+debugging in: scatter.smooth(mtcars[, c("mpg", "wt")])
+debug: {
+    xlabel <- if (!missing(x)) 
+        deparse1(substitute(x))
+    ylabel <- if (!missing(y)) 
+        deparse1(substitute(y))
+    xy <- xy.coords(x, y, xlabel, ylabel)
+    x <- xy$x
+    y <- xy$y
+    xlab <- if (is.null(xlab)) 
+        xy$xlab
+    else xlab
+    ylab <- if (is.null(ylab)) 
+        xy$ylab
+    else ylab
+    pred <- loess.smooth(x, y, span, degree, family, evaluation)
+    plot(x, y, ylim = ylim, xlab = xlab, ylab = ylab, ...)
+    do.call(lines, c(list(pred), lpars))
+    invisible()
+}
+Browse[2]> n
+debug: xlabel <- if (!missing(x)) deparse1(substitute(x))
+Browse[2]> 
+debug: deparse1(substitute(x))
+Browse[2]> 
+debug: ylabel <- if (!missing(y)) deparse1(substitute(y))
+Browse[2]> 
+debug: xy <- xy.coords(x, y, xlabel, ylabel)
+Browse[2]> ls()
+ [1] "degree"     "evaluation" "family"     "lpars"      "span"      
+ [6] "x"          "xlab"       "xlabel"     "y"          "ylab"      
+[11] "ylabel"     "ylim"      
+Browse[2]> sys.nframe()
+[1] 1
+Browse[2]> env = sys.frames(sys.nframe())
+
+Selection: 0
+Browse[2]> env = sys.frame(sys.nframe())
+Browse[2]> env
+<environment: 0x7fd706ce7950>
+Browse[2]> parent.env(env)
+<environment: namespace:stats>
+Browse[2]> ls(parent.env(env))
+*** output flushed ***
+Browse[2]> "xy.coords" %in% ls(parent.env(env))
+[1] FALSE
+Browse[2]> parent.env(parent.env(env)))
+Error: unexpected ')' in "parent.env(parent.env(env)))"
+
+Enter a frame number, or 0 to exit   
+
+1: scatter.smooth(mtcars[, c("mpg", "wt")])
+
+Selection: 0
+Browse[2]> parent.env(parent.env(env))
+<environment: 0x7fd747a952b0>
+attr(,"name")
+[1] "imports:stats"
+Browse[2]> "xy.coords" %in% ls(parent.env(parent.env(env)))
+[1] TRUE
+Browse[2]> xy.coords
+function (x, y = NULL, xlab = NULL, ylab = NULL, log = NULL, 
+    recycle = FALSE, setLab = TRUE) 
+{
+    if (is.null(y)) {
+        if (is.null(ylab)) 
+            ylab <- xlab
+        if (is.language(x)) {
+            if (inherits(x, "formula") && length(x) == 3) {
+                if (setLab) {
+                  ylab <- deparse(x[[2L]])
+                  xlab <- deparse(x[[3L]])
+                }
+                y <- eval(x[[2L]], environment(x))
+                x <- eval(x[[3L]], environment(x))
+            }
+            else stop("invalid first argument")
+        }
+        else if (inherits(x, "ts")) {
+            y <- if (is.matrix(x)) 
+                x[, 1]
+            else x
+            x <- stats::time(x)
+            if (setLab) 
+                xlab <- "Time"
+        }
+        else if (is.complex(x)) {
+            y <- Im(x)
+            x <- Re(x)
+            if (setLab) {
+                xlab <- paste0("Re(", ylab, ")")
+                ylab <- paste0("Im(", ylab, ")")
+            }
+        }
+        else if (is.matrix(x) || is.data.frame(x)) {
+            x <- data.matrix(x)
+            if (ncol(x) == 1) {
+                if (setLab) 
+                  xlab <- "Index"
+                y <- x[, 1]
+                x <- seq_along(y)
+            }
+            else {
+                colnames <- dimnames(x)[[2L]]
+                if (setLab) {
+                  if (is.null(colnames)) {
+                    xlab <- paste0(ylab, "[,1]")
+                    ylab <- paste0(ylab, "[,2]")
+                  }
+                  else {
+                    xlab <- colnames[1L]
+                    ylab <- colnames[2L]
+                  }
+                }
+                y <- x[, 2]
+                x <- x[, 1]
+            }
+        }
+        else if (is.list(x)) {
+            if (all(c("x", "y") %in% names(x))) {
+                if (setLab) {
+                  xlab <- paste0(ylab, "$x")
+                  ylab <- paste0(ylab, "$y")
+                }
+                y <- x[["y"]]
+                x <- x[["x"]]
+            }
+            else stop("'x' is a list, but does not have components 'x' and 'y'")
+        }
+        else {
+            if (is.factor(x)) 
+                x <- as.numeric(x)
+            if (setLab) 
+                xlab <- "Index"
+            y <- x
+            x <- seq_along(x)
+        }
+    }
+    if (inherits(x, "POSIXt")) 
+        x <- as.POSIXct(x)
+    if (length(x) != length(y)) {
+        if (recycle) {
+            if ((nx <- length(x)) < (ny <- length(y))) 
+                x <- rep_len(x, ny)
+            else y <- rep_len(y, nx)
+        }
+        else stop("'x' and 'y' lengths differ")
+    }
+    if (length(log) && log != "") {
+        log <- strsplit(log, NULL)[[1L]]
+        if ("x" %in% log && any(ii <- x <= 0 & !is.na(x))) {
+            n <- as.integer(sum(ii))
+            warning(sprintf(ngettext(n, "%d x value <= 0 omitted from logarithmic plot", 
+                "%d x values <= 0 omitted from logarithmic plot"), 
+                n), domain = NA)
+            x[ii] <- NA
+        }
+        if ("y" %in% log && any(ii <- y <= 0 & !is.na(y))) {
+            n <- as.integer(sum(ii))
+            warning(sprintf(ngettext(n, "%d y value <= 0 omitted from logarithmic plot", 
+                "%d y values <= 0 omitted from logarithmic plot"), 
+                n), domain = NA)
+            y[ii] <- NA
+        }
+    }
+    list(x = as.double(x), y = as.double(y), xlab = xlab, ylab = ylab)
+}
+<bytecode: 0x7fd6e7a02350>
+<environment: namespace:grDevices>
+Browse[2]> ?sys.call
+WARNING: terminal is not fully functional
+-  (press RETURN)
+sys.parent                package:base                 R Documentation
+
+Functions to Access the Function Call Stack
+
+Description:
+
+     These functions provide access to ‘environment’s (‘frames’ in S
+     terminology) associated with functions further up the calling
+     stack.
+
+Usage:
+
+     sys.call(which = 0)
+     sys.frame(which = 0)
+     sys.nframe()
+     sys.function(which = 0)
+     sys.parent(n = 1)
+     
+     sys.calls()
+     sys.frames()
+     sys.parents()
+     sys.on.exit()
+     sys.status()
+     parent.frame(n = 1)
+     
+Arguments:
+
+   which: the frame number if non-negative, the number of frames to go
+          back if negative.
+
+       n: the number of generations to go back.  (See the ‘Details’
+          section.)
+
+Details:
+
+     ‘.GlobalEnv’ is given number 0 in the list of frames.  Each
+     subsequent function evaluation increases the frame stack by 1.
+     The call, function definition and the environment for evaluation
+     of that function are returned by ‘sys.call’, ‘sys.function’ and
+     ‘sys.frame’ with the appropriate index.
+
+     ‘sys.call’, ‘sys.function’ and ‘sys.frame’ accept integer values
+     for the argument ‘which’.  Non-negative values of ‘which’ are
+     frame numbers starting from ‘.GlobalEnv’ whereas negative values
+     are counted back from the frame number of the current evaluation.
+
+     The parent frame of a function evaluation is the environment in
+     which the function was called.  It is not necessarily numbered one
+     less than the frame number of the current evaluation, nor is it
+:
+     the environment within which the function was defined.
+:q
+Browse[2]> 
+debugging in: `[.data.frame`(mtcars, , c("mpg", "wt"))
+debug: {
+    mdrop <- missing(drop)
+    Narg <- nargs() - !mdrop
+    has.j <- !missing(j)
+    if (!all(names(sys.call()) %in% c("", "drop")) && !isS4(x)) 
+        warning("named arguments other than 'drop' are discouraged")
+    if (Narg < 3L) {
+        if (!mdrop) 
+            warning("'drop' argument will be ignored")
+        if (missing(i)) 
+            return(x)
+        if (is.matrix(i)) 
+            return(as.matrix(x)[i])
+        nm <- names(x)
+        if (is.null(nm)) 
+            nm <- character()
+        if (!is.character(i) && anyNA(nm)) {
+            names(nm) <- names(x) <- seq_along(x)
+            y <- NextMethod("[")
+            cols <- names(y)
+            if (anyNA(cols)) 
+                stop("undefined columns selected")
+            cols <- names(y) <- nm[cols]
+        }
+        else {
+            y <- NextMethod("[")
+            cols <- names(y)
+            if (!is.null(cols) && anyNA(cols)) 
+                stop("undefined columns selected")
+        }
+        if (anyDuplicated(cols)) 
+            names(y) <- make.unique(cols)
+        attr(y, "row.names") <- .row_names_info(x, 0L)
+        attr(y, "class") <- oldClass(x)
+        return(y)
+    }
+    if (missing(i)) {
+        if (drop && !has.j && length(x) == 1L) 
+            return(.subset2(x, 1L))
+        nm <- names(x)
+        if (is.null(nm)) 
+            nm <- character()
+        if (has.j && !is.character(j) && anyNA(nm)) {
+            names(nm) <- names(x) <- seq_along(x)
+            y <- .subset(x, j)
+            cols <- names(y)
+            if (anyNA(cols)) 
+                stop("undefined columns selected")
+            cols <- names(y) <- nm[cols]
+        }
+        else {
+            y <- if (has.j) 
+                .subset(x, j)
+            else x
+            cols <- names(y)
+            if (anyNA(cols)) 
+                stop("undefined columns selected")
+        }
+        if (drop && length(y) == 1L) 
+            return(.subset2(y, 1L))
+        if (anyDuplicated(cols)) 
+            names(y) <- make.unique(cols)
+        nrow <- .row_names_info(x, 2L)
+        if (drop && !mdrop && nrow == 1L) 
+            return(structure(y, class = NULL, row.names = NULL))
+        else {
+            attr(y, "class") <- oldClass(x)
+            attr(y, "row.names") <- .row_names_info(x, 0L)
+            return(y)
+        }
+    }
+    xx <- x
+    cols <- names(xx)
+    x <- vector("list", length(x))
+    x <- .Internal(copyDFattr(xx, x))
+    oldClass(x) <- attr(x, "row.names") <- NULL
+    if (has.j) {
+        nm <- names(x)
+        if (is.null(nm)) 
+            nm <- character()
+        if (!is.character(j) && anyNA(nm)) 
+            names(nm) <- names(x) <- seq_along(x)
+        x <- x[j]
+        cols <- names(x)
+        if (drop && length(x) == 1L) {
+            if (is.character(i)) {
+                rows <- attr(xx, "row.names")
+                i <- pmatch(i, rows, duplicates.ok = TRUE)
+            }
+            xj <- .subset2(.subset(xx, j), 1L)
+            return(if (length(dim(xj)) != 2L) xj[i] else xj[i, 
+                , drop = FALSE])
+        }
+        if (anyNA(cols)) 
+            stop("undefined columns selected")
+        if (!is.null(names(nm))) 
+            cols <- names(x) <- nm[cols]
+        nxx <- structure(seq_along(xx), names = names(xx))
+        sxx <- match(nxx[j], seq_along(xx))
+    }
+    else sxx <- seq_along(x)
+    rows <- NULL
+    if (is.character(i)) {
+        rows <- attr(xx, "row.names")
+        i <- pmatch(i, rows, duplicates.ok = TRUE)
+    }
+    for (j in seq_along(x)) {
+        xj <- xx[[sxx[j]]]
+        x[[j]] <- if (length(dim(xj)) != 2L) 
+            xj[i]
+        else xj[i, , drop = FALSE]
+    }
+    if (drop) {
+        n <- length(x)
+        if (n == 1L) 
+            return(x[[1L]])
+        if (n > 1L) {
+            xj <- x[[1L]]
+            nrow <- if (length(dim(xj)) == 2L) 
+                dim(xj)[1L]
+            else length(xj)
+            drop <- !mdrop && nrow == 1L
+        }
+        else drop <- FALSE
+    }
+    if (!drop) {
+        if (is.null(rows)) 
+            rows <- attr(xx, "row.names")
+        rows <- rows[i]
+        if ((ina <- anyNA(rows)) | (dup <- anyDuplicated(rows))) {
+            if (!dup && is.character(rows)) 
+                dup <- "NA" %in% rows
+            if (ina) 
+                rows[is.na(rows)] <- "NA"
+            if (dup) 
+                rows <- make.unique(as.character(rows))
+        }
+        if (has.j && anyDuplicated(nm <- names(x))) 
+            names(x) <- make.unique(nm)
+        if (is.null(rows)) 
+            rows <- attr(xx, "row.names")[i]
+        attr(x, "row.names") <- rows
+        oldClass(x) <- oldClass(xx)
+    }
+    x
+}
+Browse[3]> Q
+[55:33] 107> search()
+ [1] ".GlobalEnv"          "env"                 "package:stats"      
+ [4] "package:graphics"    "package:grDevices"   "package:datasets"   
+ [7] "utility functions"   "package:RShellTools" "package:utils"      
+[10] "package:dplyr"       "package:methods"     "Autoloads"          
+[13] "package:base"       
+[56:26] 108> detach(env)
+[56:41] 109> attach(mtcars)
+[56:46] 110> search()
+ [1] ".GlobalEnv"          "mtcars"              "package:stats"      
+ [4] "package:graphics"    "package:grDevices"   "package:datasets"   
+ [7] "utility functions"   "package:RShellTools" "package:utils"      
+[10] "package:dplyr"       "package:methods"     "Autoloads"          
+[13] "package:base"       
+[56:49] 111> find("mpg")
+[1] "mtcars"
+[56:54] 112> ls(2)
+ [1] "am"   "carb" "cyl"  "disp" "drat" "gear" "hp"   "mpg"  "qsec"
+[10] "vs"   "wt"  
+[57:10] 113> names(mtcars)
+ [1] "mpg"  "cyl"  "disp" "hp"   "drat" "wt"   "qsec" "vs"   "am"  
+[10] "gear" "carb"
+[57:13] 114> mpg[3] = 100
+[57:46] 115> find("mpg")
+[1] ".GlobalEnv" "mtcars"    
+[58:06] 116> mpg[3]]
+Error: unexpected ']' in "mpg[3]]"
+No suitable frames for recover()
+[58:06] 116> mpg[3]
+[1] 100
+[58:47] 117> get('mpg', 2)[3]
+[1] 22.8
+[58:56] 118> mtcars$mpg
+ [1] 21.0 21.0 22.8 21.4 18.7 18.1 14.3 24.4 22.8 19.2 17.8 16.4 17.3
+[14] 15.2 10.4 10.4 14.7 32.4 30.4 33.9 21.5 15.5 15.2 13.3 19.2 27.3
+[27] 26.0 30.4 15.8 19.7 15.0 21.4
+[59:05] 119> mtcars$mpg[3] = 200
+[59:11] 120> mtcars$mpg
+*** output flushed ***
+[59:15] 121> mtcars$mpg[3]
+[1] 200
+[59:19] 122> mpg[3]
+[1] 100
+[59:23] 123> get('mpg', 2)[3]
+[1] 22.8
+[59:32] 124> names(formals(scatter.smooth))
+ [1] "x"          "y"          "span"       "degree"     "family"    
+ [6] "xlab"       "ylab"       "ylim"       "evaluation" "..."       
+[11] "lpars"     
+[01:19] 125> e = quote(scatter.smooth(mtcars[, c("mpg", "wt")], , .75,
+                xlab = "Weight", yla = "Miles per gallon",
+                  main = "Motor Trend Cars Data"))
++ + [01:43] 126> 
+[08:20] 127> e
+scatter.smooth(mtcars[, c("mpg", "wt")], span = 0.75, xlab = "Weight", 
+    yla = "Miles per gallon", main = "Motor Trend Cars Data")
+[08:42] 128> e = quote(scatter.smooth(mtcars[, c("mpg", "wt")], , .75,
+                xlab = "Weight", yla = "Miles per gallon",
+                  main = "Motor Trend Cars Data"))
++ + [08:47] 129> e
+scatter.smooth(mtcars[, c("mpg", "wt")], , 0.75, xlab = "Weight", 
+    yla = "Miles per gallon", main = "Motor Trend Cars Data")
+[08:50] 130> match.call(scatter.smooth,  e)
+scatter.smooth(x = mtcars[, c("mpg", "wt")], span = 0.75, xlab = "Weight", 
+    ylab = "Miles per gallon", main = "Motor Trend Cars Data")
+[09:03] 131> 
+[09:03] 131> sum
+function (..., na.rm = FALSE)  .Primitive("sum")
+[10:09] 132> sum(1, 2, na.rm = TRUE)
+[1] 3
+[10:41] 133> sum(1, 2, na.r = TRUE)
+[1] 4
+[10:51] 134> normalLikh = 
+function(x)
+{
+   function(parm)
+     prod(dnorm(x, parm[1], parm[2]))
+}
+
+x1 = rnorm(10)
+x2 = rnorm(1000, 25, 4)
++ + + + + [14:55] 135> [14:55] 135> [14:55] 136> [14:55] 137> 
+[14:55] 137> lik1 = normalLikh(x1)
+[15:02] 138> lik1
+function(parm)
+     prod(dnorm(x, parm[1], parm[2]))
+<environment: 0x7fd6e78acf90>
+[15:03] 139> class(lik1)
+[1] "function"
+[15:24] 140> environment(lik1)
+<environment: 0x7fd6e78acf90>
+[18:37] 141> x1
+ [1] -0.1762552  0.3624821  1.2981423  0.7844311  0.9516226 -0.9507102
+ [7] -1.6198604  0.3766618  0.9889240 -0.7828634
+[19:26] 142> environment(lik1)$x
+ [1] -0.1762552  0.3624821  1.2981423  0.7844311  0.9516226 -0.9507102
+ [7] -1.6198604  0.3766618  0.9889240 -0.7828634
+[19:36] 143> debug(lik1)
+[20:35] 144> lik1(c(0, .5))
+debugging in: lik1(c(0, 0.5))
+debug at #4: prod(dnorm(x, parm[1], parm[2]))
+Browse[2]> Q
+[20:35] 144> lik1
+function(parm)
+     prod(dnorm(x, parm[1], parm[2]))
+<environment: 0x7fd6e78acf90>
+[21:07] 145> lik1(c(0, .5))
+debugging in: lik1(c(0, 0.5))
+debug at #4: prod(dnorm(x, parm[1], parm[2]))
+Browse[2]> body()
+prod(dnorm(x, parm[1], parm[2]))
+Browse[2]> ls()
+[1] "parm"
+Browse[2]> sys.frame(sys.nframe())
+<environment: 0x7fd6e787f118>
+Browse[2]> cf = sys.frame(sys.nframe())
+Browse[2]> parent.env(cf)
+<environment: 0x7fd6e78acf90>
+Browse[2]> ls(parent.env(cf))
+[1] "x"
+Browse[2]> Q
+[22:38] 151> source("boost.R")
+debugging in: `[.POSIXct`(file.mtime(filename), 1)
+debug: .POSIXct(NextMethod("["), attr(x, "tzone"), oldClass(x))
+Browse[2]> Q
+[22:38] 151> undebug(`[`)
+[29:08] 152> source("boost.R")
+[29:10] 153> z = boost(mpg ~ wt, mtcars)
+Error in model.frame.default(formula = formula, data = data, weights = weights,  : 
+  invalid type (closure) for variable '(weights)'
+
+Enter a frame number, or 0 to exit   
+
+1: boost(mpg ~ wt, mtcars)
+2: boost.R#8: stats::lm(formula, data, weights = weights)
+3: eval(mf, parent.frame())
+4: eval(mf, parent.frame())
+5: stats::model.frame(formula = formula, data = data, weights = weig
+6: model.frame.default(formula = formula, data = data, weights = wei
+
+Selection: 0
+[29:10] 153> lm(mpg ~ wt, mtcars, weight = rep(1, 32))
+
+Call:
+lm(formula = mpg ~ wt, data = mtcars, weights = rep(1, 32))
+
+Coefficients:
+(Intercept)           wt  
+      60.06       -10.70  
+
+[30:20] 154> weights = rep(1, 32)/32
+[30:37] 155> z = boost(mpg ~ wt, mtcars)
+[30:49] 156> search()
+ [1] ".GlobalEnv"          "mtcars"              "package:stats"      
+ [4] "package:graphics"    "package:grDevices"   "package:datasets"   
+ [7] "utility functions"   "package:RShellTools" "package:utils"      
+[10] "package:dplyr"       "package:methods"     "Autoloads"          
+[13] "package:base"       
+[31:34] 157> detach(2)
+[31:41] 158> detach(3)
+[31:45] 159> search()
+ [1] ".GlobalEnv"          "package:stats"       "package:grDevices"  
+ [4] "package:datasets"    "utility functions"   "package:RShellTools"
+ [7] "package:utils"       "package:dplyr"       "package:methods"    
+[10] "Autoloads"           "package:base"       
+[31:47] 160> z = boost(mpg ~ wt, mtcars)
+[31:52] 161> find("weights")
+[1] ".GlobalEnv"    "package:stats"
+[32:03] 162> rm(weights)
+[32:05] 163> z = boost(mpg ~ wt, mtcars)
+Error in model.frame.default(formula = formula, data = data, weights = weights,  : 
+  invalid type (closure) for variable '(weights)'
+
+Enter a frame number, or 0 to exit   
+
+1: boost(mpg ~ wt, mtcars)
+2: boost.R#8: stats::lm(formula, data, weights = weights)
+3: eval(mf, parent.frame())
+4: eval(mf, parent.frame())
+5: stats::model.frame(formula = formula, data = data, weights = weig
+6: model.frame.default(formula = formula, data = data, weights = wei
+
+Selection: 0
+[32:05] 163> detach(2)
+[32:19] 164> z = boost(mpg ~ wt, mtcars)
+Error in eval(extras, data, env) : object 'weights' not found
+
+Enter a frame number, or 0 to exit   
+
+1: boost(mpg ~ wt, mtcars)
+2: boost.R#8: stats::lm(formula, data, weights = weights)
+3: eval(mf, parent.frame())
+4: eval(mf, parent.frame())
+5: stats::model.frame(formula = formula, data = data, weights = weig
+6: model.frame.default(formula = formula, data = data, weights = wei
+7: eval(extras, data, env)
+8: eval(extras, data, env)
+
+Selection: 0
+[32:19] 164> z   C-c C-c^C
+No suitable frames for recover()
+[32:19] 164> length(z)
+[1] 50
+[32:40] 165> sapply(z[-1], identical, z[[1]])
+ [1] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+[14] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+[27] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+[40] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+[32:56] 166> mpg ~ wt
+mpg ~ wt
+[33:42] 167> f = mpg ~ wt
+[33:46] 168> environment(f)
+<environment: R_GlobalEnv>
+[33:51] 169> 
