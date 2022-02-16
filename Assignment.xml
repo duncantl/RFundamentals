@@ -1,0 +1,172 @@
+<section
+	 xmlns:r="http://www.r-project.org">
+<title>Evaluating Assignments</title>
+
+<para>
+Simple assignment to variables is straightforward.
+When we assign to a variable 
+<r:code>
+x = 1
+</r:code>
+this is evaluated in the current environment.
+If this is a top-level, interactive command, this is the global environment.
+If it is within the body of a function, it is in the call frame for this call to that function.
+The assignment will made locally within this call and disappear after the call ends.
+</para>
+
+<para>
+Assignment is slightly more complicated when 1) a variable already exists in the search path
+and 2) also when we assign to a sub-element within a variable on the search path, e.g, <r:expr>a$x</r:expr>.
+We'll setup an artificial situation to illustrate how assignment works in these cases.
+The take-away is the assignment is local, not overwriting the original object along the search path.
+</para>
+<para>
+We'll create an environment, assign some variable-value pairs to it, and then
+put it on the search path using <r:func>attach</r:func>. (Don't use attach !)
+We create a the environment and create two variables - <r:var>a</r:var> and <r:var>b</r:var>.
+<r:var>a</r:var> is a list with an element named x; <r:var>b</r:var> is a simple vector:
+<r:code>
+e = new.env()
+e$a = list(x = 1)
+e$b = 1
+</r:code>
+We query the search path and then attach this environment in the second position:
+<r:code>
+search()
+attach(e, 2)
+</r:code>
+We can verify that is present with
+<r:code>
+search()
+ls(2)
+</r:code>
+</para>
+<para>
+Where is <r:var>a</r:var>:
+<r:code>
+find("a")
+</r:code>
+and what is its value
+<r:code>
+<r:output><![CDATA[
+$x
+[1] 1
+]]></r:output>
+</r:code>
+Now, we add a new element <r:el>y</r:el> to <r:var>a</r:var>:
+<r:code>
+a$y = 101
+</r:code>
+Where is <r:var>a</r:var> now?
+<r:code>
+find("a")
+<r:output><![CDATA[
+[1] ".GlobalEnv" "e"
+]]></r:output>
+</r:code>
+What is its value. We give the command <r:expr>a</r:expr> and see
+<r:output><![CDATA[
+a
+$x
+[1] 1
+
+$y
+[1] 101
+]]></r:output>
+What about the one in <r:var>e</r:var>?
+<r:code>
+get("a", 2)
+$x
+[1] 1
+</r:code>
+Alternatively, we can see the two with 
+<r:code>
+lapply(find("a"), function(e) get("a", e))
+<r:output><![CDATA[
+[[1]]
+[[1]]$x
+[1] 1
+
+[[1]]$y
+[1] 101
+
+
+[[2]]
+[[2]]$x
+[1] 1
+]]></r:output>
+</r:code>
+</para>
+
+
+<para>
+What if we remove our new local version of <r:var>a</r:var> and try to change the one in the second
+<r:code><![CDATA[
+rm(a)
+a$x <<- 100
+]]></r:code>
+<r:code>
+find("a")
+<r:output><![CDATA[
+[1] "e"
+]]></r:output>
+</r:code>
+The value bound to <r:var>a</r:var> is
+<r:code>
+a
+<r:output><![CDATA[
+$x
+[1] 100
+]]></r:output>
+</r:code>
+So the explicit non-local assignment with <r:keyword><![CDATA[<<-]]></r:keyword> changed the original, existing variable's value.
+It did not create a new local variable in the environment of the call, i.e., the global environment.
+</para>
+
+
+
+<para>
+The lesson here is that assignments are local, unless explicitly using <r:keyword><![CDATA[<<-]]></r:keyword>
+</para>
+
+<para><fix/>
+This exploration shows why <r:func>attach</r:func> can be confusing, at best, and worse lead to significant errors.
+Consider the following sequence of commands.
+How many separate versions of the <r:el>mpg</r:el> vector are there in the following three commands:
+<r:code>
+attach(mtcars)
+mpg[3] = -1
+lm(mpg ~ . , mtcars)
+</r:code>
+</para>
+<para>
+The answer is 3:
+<ol>
+<li>in the global environment</li>
+<li>in the second element of the search path</li>
+<li>in the data.frame <r:var>mtcars</r:var> variable </li>
+</ol>
+</para>
+<para>
+To see this, let's start from scratch.
+<r:code>
+rm(mpg)
+</r:code>
+Now consider
+<r:code>
+find("mpg")
+attach(mtcars)
+find("mpg")
+mpg[3] = NA
+find("mpg")
+mpg
+get("mpg", 2)
+mpg[3]  = 100
+mtcars$mpg
+tmp = cbind(mpg, get("mpg", 2), mtcars$mpg)
+tmp[3,]
+</r:code>
+</para>
+
+
+</section>

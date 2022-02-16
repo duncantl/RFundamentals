@@ -1,11 +1,27 @@
 <section
-	 xmlns:r="http://www.r-project.org">
+	 xmlns:r="http://www.r-project.org"
+	 xmlns:xi="http://www.w3.org/2003/XInclude">
 <title>Introduction to the Evaluation Model</title>
 <!-- see Computing3.md and bring in material from there. -->
 
 <para>
 We've seen parsing and the very high-level idea of evaluation - finding variables and the associated value,
 calling functions. We'll now get into the details, incrementally introducing the different situations.
+We'll look at how <r/> evaluates
+<ol>
+<li>literal values</li>
+<li>variable names (also known as symbols)</li>
+<li>function calls, i.e., calls to functions such as <r:expr>1 + 2</r:expr>, <r:expr>rnorm(length(x), sd = 5)</r:expr></li>
+</ol>
+These cover the vast majority of evaluation in <r/>. This is because
+even <r:keyword>if</r:keyword> and <r:keyword>for</r:keyword>/<r:keyword>while</r:keyword> statements
+are actually function calls in <r/>.
+We'll see that function calls and variable lookup are rich, but also have quite simple generalities
+that apply in all cases. This greatly helps reasoning.
+</para>
+
+<para>
+We'll also so see some minor aspects of evaluation that warrant note, e.g., when functions are actually defined.
 </para>
 
 <section>
@@ -253,6 +269,7 @@ and then its parent environment, and that environment's parent, and so on.
 </section>
 
 
+<xi:include href="Assignment.xml"/>
 
 <section>
 <title>Evaluating a Simple Function Call</title>
@@ -391,8 +408,360 @@ So we have three entries in the new call frame for this specific call.
 </para>
 
 
+</section>
 
 
+<section>
+<title>When are Functions Created and Defined</title>
+
+<para>
+Consider the command
+<r:code>
+f = function(x) x + 1
+</r:code>
+When is the function object created?
+Firstly, we can separate this from the assignment to <r:var>f</r:var> as the right-hand-side
+of the assignment is evaluated before the assignment (even with lazy evaluation.)
+So let's deal with
+<r:code>
+function(x) x + 1
+</r:code>
+We can parse this or use <r:func>quote</r:func> to get the language object the parser will yield
+<r:code>
+e = quote(function(x) x + 1)
+</r:code>
+What's the class of <r:var>e</r:var>
+<r:code>
+class(e)
+<r:output><![CDATA[
+[1] "call"
+]]></r:output>
+</r:code>
+So this is not a function - yet.
+It is a call.  What is it a call to?
+<r:code>
+e[[1]]
+<r:output><![CDATA[
+`function`
+]]></r:output>
+</r:code>
+So this is a call to the function named <r:keyword>function</r:keyword>.
+Like `+`, we can get the <r:keyword>function</r:keyword> object, i.e.,
+<r:code>
+`function`
+<r:output><![CDATA[
+.Primitive("function")
+]]></r:output>
+</r:code>
+We look at its class and <r:func>typeof</r:func>
+<r:code>
+typeof(`function`)
+<r:output><![CDATA[
+[1] "special"
+]]></r:output>
+</r:code>
+and we see it is <r:class>special</r:class> and different from a regular function such as
+<r:func>rnorm</r:func> or <r:func>paste</r:func> which have <literal>closure</literal> as the
+value of <r:func>typeof</r:func>.
+</para>
+<para>
+So how does the <r/> evaluate this call?
+It is like <r:keyword>for</r:keyword> and <r:keyword>while</r:keyword> in that the syntax
+doesn't look like a regular call as it does have the (), but is followed by the body of the function being created.
+But let's look at <r:var>e</r:var>.  It is a call to <r:keyword>function</r:keyword>,
+and it has 4 elements
+<ol>
+<li>the function being called, i.e., <r:expr>`function`</r:expr></li>
+<li>the named list of parameter default values</li>
+<li>the body of the function</li>
+<li>the <r:class>srcref</r:class> which is the original text of the code from the parser</li>
+</ol>
+We don't need to concern ourselves with the fourth element.
+The key is that the call to <r:keyword>`function`</r:keyword> sees the parameter list
+and the body and creates a function object of class <r:class>closure</r:class>.
+</para>
+<para>
+In addition to constructing the <r:class>closure</r:class> object, <r:func>`function`</r:func>
+also sets the environment of the function to the caller's  environment,
+in which the call to <r:func>`function`</r:func> is made.
+<ul>
+<li>When we create a function at the interactive prompt, this environment is the global environment.</li>
+<li>When we source code from a file or connection, by default, that uses the global environment
+as the environment in which to evaluate that code, so the environment for the functions is the global environment.
+If we specify a different environment for <r:func>source</r:func> to use (via the <r:arg>local</r:arg> parameter),
+any functions sourced from the connection will have that environment.</li>
+<li>If a function is created in the body of another function (say <r:var>fun1</r:var>), the environment
+is the call frame of that function whose body is being evaluated, <r:var>fun1</r:var>.  Note that this is not
+  the environment of that function, but the call frame of the specific call to that function.</li>
+</ul>
+</para>
+<para>
+At the interactive prompt, 
+<r:code>
+f = function(x) x + 1
+environment(f)
+</r:code>
+The same applies for an anonymous function:
+<r:code>
+environment(function(x) x + 1)
+</r:code>
+This means that anonymous functions in top-level (at the interactive prompt) calls
+such as 
+<r:code>
+sapply(x, function(x) sum(x == a))
+</r:code>
+have the global environment as their environment.
+In this example, each call to the anonymous function will search for <r:var>a</r:var> in the
+call frame and then in the global environment and along its chain of environments.
+</para>
+
+<section>
+<title>Top-level Functions</title>
+<para>
+Consider <r:func>source</r:func>. We'll source the file <file>showEnv.R</file> from the repository:
+<r:code>
+ls()
+source("showEnv.R")
+ls()
+</r:code>
+So we have two new functions: <r:func>showEnv</r:func> and <r:func>findVarFromFun</r:func>.
+Their environments are the global environment
+<r:code>
+environment(showEnv)
+<r:output><![CDATA[
+<environment: R_GlobalEnv>
+]]></r:output>
+</r:code>
+</para>
+</section>
+
+<section>
+<title><r:func>source</r:func> and Environments</title>
+
+<para>
+Now, let's create a separate environment and source the file using that as the environment in which to evaluate the <r/>
+code in the file.  We create it with <r:func>new.env</r:func> and then check to see its parent environment:
+<r:code>
+env = new.env()
+parent.env(env)
+<r:output><![CDATA[
+<environment: R_GlobalEnv>
+]]></r:output>
+</r:code>
+Now we can <r:func>source</r:func> the file:
+<r:code>
+source("showEnv.R", env)
+</r:code>
+The functions are now (also) in <r:var>env</r:var>
+<r:code>
+ls(env)
+<r:output><![CDATA[
+[1] "findVarFromFun" "showEnv"       
+]]></r:output>
+</r:code>
+</para>
+<para>
+Are the two versions of  <r:func>showEnv</r:func> the same?  No:
+<r:code>
+identical(showEnv, env$showEnv)
+<r:output><![CDATA[
+[1] FALSE
+]]></r:output>
+</r:code>
+This is because the have different environments and so could behave quite differently by finding different values for
+the same names/symbols.
+</para>
+
+
+<para>
+We could go further and refine the environment chain for <r:func>showEnv</r:func>.
+All of the non-local
+names are actually in the <r:pkg>base</r:pkg> package.
+We can't put <r:func>showEnv</r:func> in base since that is locked.
+However, we can create a new environment whose parent is the <r:pkg>base</r:pkg> namespace/environment:
+<r:code>
+env = new.env(parent = getNamespace("base"))
+parent.env(env)
+<r:output><![CDATA[
+<environment: namespace:base>
+]]></r:output>
+</r:code>
+We can use this in the call to <r:func>source</r:func>
+<r:code>
+source("showEnv.R", env)
+</r:code>
+<r:func>showEnv</r:func>'s environment is now <r:var>env</r:var>
+and its parent is base
+</para>
+
+
+<question>
+<para>
+Given the computations above, i.e.,
+<r:code>
+source("showEnv.R")
+env = new.env(parent = getNamespace("base"))
+source("showEnv.R", env)
+</r:code>
+What's the difference between the results of 
+<r:code>
+env$showEnv(environment( env$showEnv))[1:4]
+env$showEnv(environment( showEnv))[1:4]
+</r:code>
+</para>
+<answer>
+<para>
+<r:code>
+env$showEnv(environment( env$showEnv))[1:4]
+<r:output><![CDATA[
+[[1]]
+<environment: 0x7fd8aa6fc538>
+
+[[2]]
+<environment: namespace:base>
+
+[[3]]
+<environment: R_GlobalEnv>
+
+[[4]]
+<environment: package:stats>
+attr(,"name")
+[1] "package:stats"
+attr(,"path")
+[1] "/Users/duncan/R/R-new/build3/library/stats"
+
+]]></r:output>
+env$showEnv(environment( showEnv))[1:4]
+<r:output><![CDATA[
+[[1]]
+<environment: R_GlobalEnv>
+
+[[2]]
+<environment: package:stats>
+attr(,"name")
+[1] "package:stats"
+attr(,"path")
+[1] "/Users/duncan/R/R-new/build3/library/stats"
+
+[[3]]
+<environment: package:graphics>
+attr(,"name")
+[1] "package:graphics"
+attr(,"path")
+[1] "/Users/duncan/R/R-new/build3/library/graphics"
+
+[[4]]
+<environment: package:grDevices>
+attr(,"name")
+[1] "package:grDevices"
+attr(,"path")
+[1] "/Users/duncan/R/R-new/build3/library/grDevices"
+]]></r:output>
+</r:code>
+</para>
+</answer>
+</question>
+
+
+
+<para>
+Next let's perform a little experiment.
+<r:code>
+f = function(x) x + a
+</r:code>
+<r:code>
+env1 = new.env()
+env1$a = 10
+environment(f) = env1
+f(1)
+</r:code>
+
+Now let's change the value of <r:var>a</r:var> in <r:var>env1</r:var>:
+<r:code>
+env1$a = 55
+f(1)
+</r:code>
+</para>
+
+<para>
+Now let's create two identical functions:
+<r:code>
+f1 = f2 = function(x) x + a
+</r:code>
+We'll create two different environments and set the environment for <r:func>f1</r:func> and <r:func>f2</r:func> to these
+<r:code>
+env1 = new.env()
+env2 = new.env()
+env1$a = env2$a = 100
+environment(f1) = env1
+environment(f2) = env2
+</r:code>
+<r:code>
+f1(1) == f2(1)
+</r:code>
+<r:code>
+env2$a = 11
+</r:code>
+Now, do the two functions give the same result? No
+<r:code>
+f1(1) == f2(1)
+[1] FALSE
+</r:code>
+The values are 
+<r:code>
+c(f1(1), f2(1))
+<r:output><![CDATA[
+[1] 101  12
+]]></r:output>
+</r:code>
+</para>
+
+<para>
+This is an explicit illustration of manually specifying the environment of a function.
+Typically it happens implicitly, e.g., at the top-level prompt,
+when <r:func>source</r:func> a file, when the code in a package is evaluated during installation.
+However, it commonly happens when we define a function within the body of another function.
+</para>
+</section>
+
+
+<section>
+<title>Functions within Functions</title>
+
+<para>
+We often see a function defined within the body of another function.
+These might anonymous functions such as
+<r:code><![CDATA[
+f = function(d) {
+    w = sapply(d, function(x) is.list(x) && length(x) > 0)
+    x[w]
+}
+]]></r:code>
+Here, the function within the call to <r:func>sapply</r:func> is an
+anonymous function and defined within the body of <r:func>f</r:func>.
+We also see this in the form
+<r:code><![CDATA[
+f = function(d) {
+    check = function(x)
+                 is.list(x) && length(x) > 0
+    w = sapply(d, check)
+    x[w]
+}
+]]></r:code>
+This behave identically.
+Again, the environment of a function is the environment
+</para>
+</section>
+
+</section>
+
+
+<section>
+<title>Formulas, Environments and Scope</title>
+
+<para>
+
+</para>
 </section>
 
 </section>
