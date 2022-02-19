@@ -1,0 +1,279 @@
+]0;RFundamentals~/RFundamentals> R
+
+R Under development (unstable) (2021-10-20 r81081) -- "Unsuffered Consequences"
+Copyright (C) 2021 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin19.0.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+PID = 4735 
+Time = 2022-02-14 09:51:22 
+Dir = /Users/duncan/RFundamentals 
+The following object is masked from package:RShellTools:
+
+    bigfiles
+
+1> TRUE
+[1] TRUE
+[54:07] 2> 
+[54:07] 2> 1+2
+[1] 3
+[54:35] 3> 1+
++ 2 +
++ 5
+[1] 8
+[55:27] 4> x = 2pi
+Error: unexpected symbol in "x = 2pi"
+No suitable frames for recover()
+[55:27] 4> x = pi2
+Error: object 'pi2' not found
+No suitable frames for recover()
+[55:27] 4> e = parse(text = "x = 2pi")
+Error in parse(text = "x = 2pi") : <text>:1:6: unexpected symbol
+1: x = 2pi
+         ^
+
+Enter a frame number, or 0 to exit   
+
+1: parse(text = "x = 2pi")
+
+Selection: 0
+[55:27] 4> e = parse(text = "x = 2*pix")
+[01:25] 5> x = 2*pix
+Error: object 'pix' not found
+No suitable frames for recover()
+[01:25] 5> plot(1:10, main = 'County's wealth')
+Error: unexpected symbol in "plot(1:10, main = 'County's"
+No suitable frames for recover()
+[01:25] 5> plot(1:10, main = "Couny's wealth")
+[03:35] 6> plot(1:10, main = 'Couny\'s wealth')
+[04:26] 7> if(FALSE)  
++    print("not okay")
+[05:40] 8> if(FALSE)  {
++ print('not okay')
++ } else
++   print("okay")
+[1] "okay"
+[07:07] 9> e = parse( text = "TRUE")
+[09:04] 10> class(e)
+[1] "expression"
+[09:27] 11> length(e)
+[1] 1
+[09:47] 12> e
+expression(TRUE)
+[10:21] 13> e[[1]]
+[1] TRUE
+[10:24] 14> class(e[[1]])
+[1] "logical"
+[10:35] 15> e2 =quote(2)
+[11:41] 16> e2
+[1] 2
+[11:43] 17> class(e2)
+[1] "numeric"
+[11:46] 18> ans = eval(e)
+[12:26] 19> ans
+[1] TRUE
+[12:27] 20> identical(ans, e)
+[1] FALSE
+[12:32] 21> identical(ans, e[[1]])
+[1] TRUE
+[12:38] 22> e = parse(text = "T")
+[13:42] 23> T
+[1] TRUE
+[14:02] 24> e[[1]]
+T
+[14:32] 25> class(e[[1]])
+[1] "name"
+[14:53] 26> search()
+ [1] ".GlobalEnv"          "package:stats"       "package:graphics"   
+ [4] "package:grDevices"   "package:datasets"    "utility functions"  
+ [7] "package:RShellTools" "package:utils"       "package:methods"    
+[10] "Autoloads"           "package:base"       
+[16:32] 27> ls(1)
+[1] "ans" "e"   "e2" 
+[18:37] 28> ans
+[1] TRUE
+[19:33] 29> find("ans")
+[1] ".GlobalEnv"
+[20:30] 30> get("ans", globalenv())
+[1] TRUE
+[20:44] 31> find("T")
+[1] "package:base"
+[21:19] 32> get("T", find("T")[1])
+[1] TRUE
+[21:55] 33> find("pi2")
+character(0)
+[22:18] 34> T = 0
+[23:29] 35> find("T")
+[1] ".GlobalEnv"   "package:base"
+[24:15] 36> 
+[24:15] 36> e[[1]]
+T
+[25:45] 37> eval(e[[1]])
+[1] 0
+[25:49] 38> e3 = quote(T <- 0 )
+[27:44] 39> e3
+T <- 0
+[27:49] 40> class(e3)
+[1] "<-"
+[28:21] 41> is.call(e3)
+[1] TRUE
+[28:33] 42> e4 = parse(text = "T = 0")
+[29:03] 43> class(e4[[1]])
+[1] "="
+[29:09] 44> rnorm
+function (n, mean = 0, sd = 1) 
+.Call(C_rnorm, n, mean, sd)
+<bytecode: 0x7fd7636765f0>
+<environment: namespace:stats>
+[29:35] 45> =
+Error: unexpected '=' in "="
+No suitable frames for recover()
+[29:35] 45> `=`
+.Primitive("=")
+[32:53] 46> `+`
+function (e1, e2)  .Primitive("+")
+[33:21] 47> find("+")
+[1] "package:base"
+[33:40] 48> get("+")
+function (e1, e2)  .Primitive("+")
+[33:47] 49> e4 = quote(1+2)
+[36:41] 50> e4
+1 + 2
+[36:42] 51> class(e4)
+[1] "call"
+[36:51] 52> e4[[1]]
+`+`
+[37:40] 53> length(e4)
+[1] 3
+[37:45] 54> as.list(e4)
+[[1]]
+`+`
+
+[[2]]
+[1] 1
+
+[[3]]
+[1] 2
+
+[37:51] 55> z = quote(plot(x, xlab = "text", main = "title", cex = 2))
+[39:44] 56> z
+plot(x, xlab = "text", main = "title", cex = 2)
+[39:46] 57> names(z)
+[1] ""     ""     "xlab" "main" "cex" 
+[39:49] 58> z[[1]]
+plot
+[40:02] 59> 
+[1] 3
+[40:35] 60> e4
+1 + 2
+[41:04] 61> find("+")
+[1] "package:base"
+[41:47] 62> get("+", find("+"))
+function (e1, e2)  .Primitive("+")
+[42:12] 63> f = get("+", find("+"))
+[43:57] 64> class(f)
+[1] "function"
+[44:00] 65> class(`=`)
+*** output flushed ***
+[44:13] 66> body(f)
+NULL
+[48:45] 67> rnorm
+function (n, mean = 0, sd = 1) 
+.Call(C_rnorm, n, mean, sd)
+<bytecode: 0x7fd7636765f0>
+<environment: namespace:stats>
+[50:01] 68> e5 = quote(rnorm(1, 5))
+[50:22] 69> e5
+rnorm(1, 5)
+[50:23] 70> e5[[1]]
+rnorm
+[50:26] 71> class(e5[[1]])
+[1] "name"
+[50:46] 72> get("rnorm")
+function (n, mean = 0, sd = 1) 
+.Call(C_rnorm, n, mean, sd)
+<bytecode: 0x7fd7636765f0>
+<environment: namespace:stats>
+[50:58] 73> f = get("rnorm")
+[51:00] 74> formals(f)
+$n
+
+
+$mean
+[1] 0
+
+$sd
+[1] 1
+
+[51:08] 75> names(formals(f))
+[1] "n"    "mean" "sd"  
+[51:21] 76> body(f)
+.Call(C_rnorm, n, mean, sd)
+[00:47] 77> b = body(f)
+[00:53] 78> b[[3]]
+n
+[00:57] 79> class(b[[3]])
+[1] "name"
+[01:02] 80> e6 =quote(rnorm(10, sd = 150))
+[26:03] 81> names(e6)
+[1] ""   ""   "sd"
+[26:07] 82> names(formals(rnorm))
+[1] "n"    "mean" "sd"  
+[26:32] 83> e6[-1]
+10(sd = 150)
+[26:58] 84> as.list(e6)[-1]
+[[1]]
+[1] 10
+
+$sd
+[1] 150
+
+[27:07] 85> names(as.list(e6)[-1])
+[1] ""   "sd"
+[27:12] 86> names(formals(rnorm))
+[1] "n"    "mean" "sd"  
+[27:15] 87> e6 =quote(rnorm(10, s = 150, me = -50))
+[28:23] 88> as.list(e6)[-1]
+[[1]]
+[1] 10
+
+$s
+[1] 150
+
+$me
+-50
+
+[28:33] 89> names(as.list(e6)[-1])
+[1] ""   "s"  "me"
+[28:37] 90> match.call(rnorm, e6)
+rnorm(n = 10, mean = -50, sd = 150)
+[29:40] 91> sum(1, 2, na.rm = TRUE)
+[1] 3
+[30:24] 92> sum(1, 2, na.r = TRUE)
+[1] 4
+[30:32] 93> sum
+function (..., na.rm = FALSE)  .Primitive("sum")
+[30:39] 94> match.call(sum, quote(sum(1, 2, na.rm = TRUE)))
+Error in match.call(sum, quote(sum(1, 2, na.rm = TRUE))) : 
+  invalid 'definition' argument
+
+Enter a frame number, or 0 to exit   
+
+1: match.call(sum, quote(sum(1, 2, na.rm = TRUE)))
+
+Selection: 0
+[30:39] 94> # sum is very special.
+[30:39] 94> 

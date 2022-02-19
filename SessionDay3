@@ -1,0 +1,837 @@
+]0;duncan~>
+]0;duncan~> R
+
+R Under development (unstable) (2021-10-20 r81081) -- "Unsuffered Consequences"
+Copyright (C) 2021 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin19.0.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+PID = 76774 
+Time = 2022-02-18 09:34:30 
+Dir = /Users/duncan 
+The following object is masked from package:RShellTools:
+
+    bigfiles
+
+[Previously saved workspace restored]
+
+1> foo = function(dir, f = list.files(dir, ...), ...) {
++    i = file.info(f)
++    f[order(i$size, decreasing = TRUE) ]
++ }
+[40:52] 2> z = foo(".")
+[41:27] 3> class(z)
+[1] "character"
+[41:41] 4> head(z)
+[1] "IMG_1576.mov"                   "IMG_1618.jpeg"                 
+[3] "IMG_1610.heic"                  "Rainbow_Mountain_Peru.jpg"     
+[5] "MB17b_remaining_Data_files.rda" "mb17b_remaining_data_files.rds"
+[41:44] 5> ?list.files
+WARNING: terminal is not fully functional
+-  (press RETURN) 
+list.files                package:base                 R Documentation
+
+List the Files in a Directory/Folder
+
+Description:
+
+     These functions produce a character vector of the names of files
+     or directories in the named directory.
+
+Usage:
+
+     list.files(path = ".", pattern = NULL, all.files = FALSE,
+                full.names = FALSE, recursive = FALSE,
+                ignore.case = FALSE, include.dirs = FALSE, no.. = FALSE)
+     
+            dir(path = ".", pattern = NULL, all.files = FALSE,
+                full.names = FALSE, recursive = FALSE,
+                ignore.case = FALSE, include.dirs = FALSE, no.. = FALSE)
+     
+     list.dirs(path = ".", full.names = TRUE, recursive = TRUE)
+     
+Arguments:
+
+    path: a character vector of full path names; the default
+          corresponds to the working directory, ‘getwd()’.  Tilde
+          expansion (see ‘path.expand’) is performed.  Missing values
+          will be ignored.  Elements with a marked encoding will be
+          converted to the native encoding (and if that fails,
+          considered non-existent).
+
+ pattern: an optional regular expression.  Only file names which match
+          the regular expression will be returned.
+
+all.files: a logical value.  If ‘FALSE’, only the names of visible
+          files are returned (following Unix-style visibility, that is
+          files whose name does not start with a dot).  If ‘TRUE’, all
+          file names will be returned.
+
+full.names: a logical value.  If ‘TRUE’, the directory path is
+:q
+[43:00] 6> 
+[43:00] 6> foo
+function(dir, f = list.files(dir, ...), ...) {
+   i = file.info(f)
+   f[order(i$size, decreasing = TRUE) ]
+}
+[43:02] 7> foo("Downloads")
+  [1] "foo.svg"                                                                                                                                                                     
+  [2] "node_modules"                                                                                                                                                                
+  [3] "JenniferQuynn"                                                                                                                                                               
+  [4] "PDF"                                                                                                                                                                         
+  [5] "images"                                                                                                                                                                      
+  [6] "noweb"                                                                                                                                                                       
+  [7] "Docx"                                                                                                                                                                        
+  [8] "go"                                                                                                                                                                          
+  [9] "___All_Errors.txt"                                                                                                                                                           
+ [10] "__MACOSX"                                                                                                                                                                    
+ [11] "__Program Review Closure Responses_Error.txt"                                                                                                                                
+ [12] "-1.pdf"                                                                                                                                                                      
+ [13] "-10.pdf"                                                                                                                                                                     
+ [14] "-11.pdf"                                                                                                                                                                     
+ [15] "-12.pdf"                                                                                                                                                                     
+ [16] "-2.pdf"                                                                                                                                                                      
+ [17] "-3.pdf"                                                                                                                                                                      
+ [18] "-4.pdf"                                                                                                                                                                      
+ [19] "-5.pdf"                                                                                                                                                                      
+ [20] "-6.pdf"                                                                                                                                                                      
+ [21] "-7.pdf"                                                                                                                                                                      
+ [22] "-8.pdf"                                                                                                                                                                      
+ [23] "-9.pdf"                                                                                                                                                                      
+ [24] "#discussion.org#"                                                                                                                                                            
+ [25] "~$19.22. MA_GREL Degree Requirements.docx"                                                                                                                                   
+ [26] "~$2011-02_rev5_template.docx"                                                                                                                                                
+ [27] "~$21 Grad Group Chair Nomination Request - Food Science.doc"                                                                                                                 
+ [28] "~$22 Chair Appointment Request Letters.docx"                                                                                                                                 
+ [29] "~$Associate Deans workbook.xlsx"                                                                                                                                             
+ [30] "~$Copy of ForEligibility(1).xlsx"                                                                                                                                            
+ [31] "~$ecutive Director of Graduate Student & Postdoc Support 2nd Round Questions.docx"                                                                                           
+ [32] "~$GGI GSR -01-17-2022.xlsx"                                                                                                                                                  
+ [33] "~$gpfa_metric_model.xlsx"                                                                                                                                                    
+ [34] "~$Indonesian group 2-1-22_.xlsx"                                                                                                                                             
+ [35] "~$MEIP 22-23 estimated allocation summary.xlsx"                                                                                                                              
+ [36] "~$nie King--Request for merit and promotion comments.docx"                                                                                                                   
+ [37] "~$Program Detail 20220125.xlsx"                                                                                                                                              
+ [38] "~$Return to Work Schedule--1-5-2022.xlsx"                                                                                                                                    
+ [39] "~$Summary for AS Chair Meeting_02_07_22_V2.pptx"                                                                                                                             
+ [40] "~$Winter 2022 Town Hall 20220207.pptx"                                                                                                                                       
+ [41] "03.mp4"                                                                                                                                                                      
+ [42] "1.19.22. MA_GREL Degree Requirements.docx"                                                                                                                                   
+ [43] "1127_the_belmont_report.pdf"                                                                                                                                                 
+ [44] "1250 Jones St.m4a"                                                                                                                                                           
+ [45] "1476-511X-12-66"                                                                                                                                                             
+ [46] "16.htm"                                                                                                                                                                      
+ [47] "1630612718617.png"                                                                                                                                                           
+ [48] "1989344-1.pdf"                                                                                                                                                               
+ [49] "1989344.pdf"                                                                                                                                                                 
+ [50] "1ztm4MWL.csv"                                                                                                                                                                
+ [51] "200-20a.vsd"                                                                                                                                                                 
+ [52] "2019 Campus Leadership Retreat GS v2.pptx"                                                                                                                                   
+ [53] "2019 CODVC UCD Online Landscape and Opportunities_v1.pptx"                                                                                                                   
+ [54] "2019-06-12 RE- Indonesia.pdf"                                                                                                                                                
+ [55] "2020-07-026 RE- Indonesian Graduate Student Full Funding Opportunity.pdf"                                                                                                    
+ [56] "2020-12-24T0915_Grades-STA_141B_A01_FQ_2020.csv"                                                                                                                             
+ [57] "2020-21-Graduate-Student-Profile-Final.pdf"                                                                                                                                  
+ [58] "2020-graduate-student-support-survey.xml"                                                                                                                                    
+ [59] "2020-January.txt.gz"                                                                                                                                                         
+ [60] "2020nov20.ets"                                                                                                                                                               
+ [61] "2021 Grad Group Chair Nomination Request - Cultural Studies.doc"                                                                                                             
+ [62] "2021 Grad Group Chair Nomination Request - Food Science.doc"                                                                                                                 
+ [63] "2022 Award for Excellence nominee tracking.xlsx"                                                                                                                             
+ [64] "2022 Chair Appointment Request Letters.docx"                                                                                                                                 
+ [65] "2022-01-24 Reimagining DDGF[6].pdf"                                                                                                                                          
+ [66] "2022-01-31 DDGF to Cota Robles.pptx"                                                                                                                                         
+ [67] "20220204 postdoc award nomination Eric.pdf"                                                                                                                                  
+ [68] "252054__config.json"                                                                                                                                                         
+ [69] "252054_0f42rf0p_config.json"                                                                                                                                                 
+ [70] "252054_kz1nv1vr_config.json"                                                                                                                                                 
+ [71] "2752CB2E-09AB-47B1-86E0-621465A40333.MP4"                                                                                                                                    
+ [72] "651237_824698e1ce664e689c2c1fa4c8f941c4.pdf"                                                                                                                                 
+ [73] "abbr-name.csv"                                                                                                                                                               
+ [74] "Academic Federation Ballot Josephine Moreno 2020-2021.doc"                                                                                                                   
+ [75] "ACFrOgD_ZyEKajxlS-5TLip958OAyCGwxGt4P8_xL2A0gZMkdDqUtxDrR8P70RNHCjz_4GEH7QVjnBjX3oKhkmGn0MAsrFQHrNPPzr26vd31h9Oh0ralZ79CRgXK4JF1uS-rpwKubT1TG7m0puEh"                        
+ [76] "adp-mou_apr19_FINAL.doc"                                                                                                                                                     
+ [77] "ALC agenda.01-19-22.pdf"                                                                                                                                                     
+ [78] "Amanda Letter _ Award 2022_updated_NS.doc"                                                                                                                                   
+ [79] "Annie King--Request for merit and promotion comments.docx"                                                                                                                   
+ [80] "anomaly_labels.txt"                                                                                                                                                          
+ [81] "Apache.log"                                                                                                                                                                  
+ [82] "apifu46pW_IaWataWwWx1B0BWHECBWtOQX_nf9SrfivDsd-OMDkxLO3hs4ESVcS-.SsL7WFeubWbQsSxD"                                                                                           
+ [83] "apm-150.pdf"                                                                                                                                                                 
+ [84] "apm-245-1.pdf"                                                                                                                                                               
+ [85] "apm-245.pdf"                                                                                                                                                                 
+ [86] "apm-310.pdf"                                                                                                                                                                 
+ [87] "apple_health_export"                                                                                                                                                         
+ [88] "applications-20211124-1725.csv"                                                                                                                                              
+ [89] "appointmenttitlechangeforteresadillinger.zip"                                                                                                                                
+ [90] "approvals to registrar 12-1.xlt"                                                                                                                                             
+ [91] "apr-util-1.6.1.tar.bz2"                                                                                                                                                      
+ [92] "ASIS"                                                                                                                                                                        
+ [93] "aspell-0.60.6.1"                                                                                                                                                             
+ [94] "aspell6-en-2018.04.16-0"                                                                                                                                                     
+ [95] "Associate Deans workbook.xlsx"                                                                                                                                               
+ [96] "ATT00001.htm"                                                                                                                                                                
+ [97] "autoconf-2.69"                                                                                                                                                               
+ [98] "autoconf-2.71"                                                                                                                                                               
+ [99] "automake-1.16"                                                                                                                                                               
+[100] "BalanceSummary_20190622105629.xls"                                                                                                                                           
+[101] "BalanceSummary_20190622105716.xls"                                                                                                                                           
+[102] "Ballot_JB 2.4.2022.pdf"                                                                                                                                                      
+[103] "Ballot_JB--EHOC.doc"                                                                                                                                                         
+[104] "Ballot_JB.pdf"                                                                                                                                                               
+[105] "bayesjaw.ppt"                                                                                                                                                                
+[106] "Beggs - proposal.pdf"                                                                                                                                                        
+[107] "Beyond Compare.app"                                                                                                                                                          
+[108] "Bingzheng Xu's petiton of grade option change for STA 208.pdf ; size=309986; creation-date= Fri, 29 May 2020 17 14 54 GMT ; modification-date= Fri, 29 May 2020 17 17 30 GMT"
+[109] "Bolan, Patty.pptx"                                                                                                                                                           
+[110] "Book Proposal Form_Wind_Hua.doc"                                                                                                                                             
+[111] "boosting.pdf"                                                                                                                                                                
+[112] "Box-Downloads"                                                                                                                                                               
+[113] "Brown,Veneese.pptx"                                                                                                                                                          
+[114] "Bylaws_Feb12006 (2) revised KG to review 2-27-06.doc"                                                                                                                        
+[115] "CAES"                                                                                                                                                                        
+[116] "cairo-1.16.0"                                                                                                                                                                
+[117] "calendar.ics"                                                                                                                                                                
+[118] "Cameron, Lindsay.pptx"                                                                                                                                                       
+[119] "Campus Ready - Sentiment Report 21_09_02.pptx"                                                                                                                               
+[120] "Candidacy for the Degree of Master of Advanced Study - Plan II.pdf"                                                                                                          
+[121] "ch02.pdf"                                                                                                                                                                    
+[122] "ch1_statsflowchart.png"                                                                                                                                                      
+[123] "Chair Appointment Letter from Provost to Cort Anastasio.pdf"                                                                                                                 
+[124] "ChairOrientation_2019.pptx"                                                                                                                                                  
+[125] "ChairsOrientation.pptx"                                                                                                                                                      
+[126] "check_results_cxl508_at_psu.edu.html"                                                                                                                                        
+[127] "check_results_hugh.parsonage_at_gmail.com.html"                                                                                                                              
+[128] "Ciochina, Ludmila (Milly).pptx"                                                                                                                                              
+[129] "CITI_List_1.04.2021.pdf"                                                                                                                                                     
+[130] "citiCompletionReport_5821724_20865237.pdf"                                                                                                                                   
+[131] "Clark"                                                                                                                                                                       
+[132] "ClarkPDF"                                                                                                                                                                    
+[133] "CLS"                                                                                                                                                                         
+[134] "CLS_Letterhead_Statistics_Seal.dotx"                                                                                                                                         
+[135] "CLS_Letterhead_Statistics_Seal(1).dotx"                                                                                                                                      
+[136] "CODV*** output flushed ***
+[43:02] 7> debug(foo)
+[43:45] 8> foo("Downloads")
+debugging in: foo("Downloads")
+debug at #1: {
+    i = file.info(f)
+    f[order(i$size, decreasing = TRUE)]
+}
+Browse[2]> n
+debug at #2: i = file.info(f)
+Browse[2]> class(f)
+[1] "character"
+Browse[2]> length(f)
+[1] 687
+Browse[2]> head(f)
+[1] "___All_Errors.txt"                           
+[2] "__MACOSX"                                    
+[3] "__Program Review Closure Responses_Error.txt"
+[4] "-1.pdf"                                      
+[5] "-10.pdf"                                     
+[6] "-11.pdf"                                     
+Browse[2]> n
+debug at #3: f[order(i$size, decreasing = TRUE)]
+Browse[2]> class(i)
+[1] "data.frame"
+Browse[2]> head(i)
+                                             size isdir mode mtime
+___All_Errors.txt                              NA    NA <NA>  <NA>
+__MACOSX                                       NA    NA <NA>  <NA>
+__Program Review Closure Responses_Error.txt   NA    NA <NA>  <NA>
+-1.pdf                                         NA    NA <NA>  <NA>
+-10.pdf                                        NA    NA <NA>  <NA>
+-11.pdf                                        NA    NA <NA>  <NA>
+                                             ctime atime uid gid
+___All_Errors.txt                             <NA>  <NA>  NA  NA
+__MACOSX                                      <NA>  <NA>  NA  NA
+__Program Review Closure Responses_Error.txt  <NA>  <NA>  NA  NA
+-1.pdf                                        <NA>  <NA>  NA  NA
+-10.pdf                                       <NA>  <NA>  NA  NA
+-11.pdf                                       <NA>  <NA>  NA  NA
+                                             uname grname
+___All_Errors.txt                             <NA>   <NA>
+__MACOSX                                      <NA>   <NA>
+__Program Review Closure Responses_Error.txt  <NA>   <NA>
+-1.pdf                                        <NA>   <NA>
+-10.pdf                                       <NA>   <NA>
+-11.pdf                                       <NA>   <NA>
+Browse[2]> Q
+[44:35] 13> foo("Downloads", pattern = "pdf$", full.names = TRUE)
+debugging in: foo("Downloads", pattern = "pdf$", full.names = TRUE)
+debug at #1: {
+    i = file.info(f)
+    f[order(i$size, decreasing = TRUE)]
+}
+Browse[2]> n
+debug at #2: i = file.info(f)
+Browse[2]> 
+debug at #3: f[order(i$size, decreasing = TRUE)]
+Browse[2]> head(i)
+*** output flushed ***
+Browse[2]> Q
+[45:16] 14> undebug(foo)
+[45:30] 15> debug(list.files)
+[45:33] 16> foo("Downloads", pattern = "pdf$", full.names = TRUE)
+debugging in: list.files(dir, ...)
+debug: .Internal(list.files(path, pattern, all.files, full.names, recursive, 
+    ignore.case, include.dirs, no..))
+Browse[2]> ls(all = TRUE)
+[1] "all.files"    "full.names"   "ignore.case"  "include.dirs"
+[5] "no.."         "path"         "pattern"      "recursive"   
+Browse[2]> names(formals(list.files))
+[1] "path"         "pattern"      "all.files"    "full.names"  
+[5] "recursive"    "ignore.case"  "include.dirs" "no.."        
+Browse[2]> formals(list.files)$full.names
+[1] FALSE
+Browse[2]> full.names
+[1] TRUE
+Browse[2]> foo
+function(dir, f = list.files(dir, ...), ...) {
+   i = file.info(f)
+   f[order(i$size, decreasing = TRUE) ]
+}
+<bytecode: 0x7fe5ea902578>
+Browse[2]> math.call(foo, foo("Downloads", pattern = "pdf$", full.names = TRUE), expand.dots = FALSE)
+*** output flushed ***
+Selection: 0
+Browse[2]> match.call(foo, foo("Downloads", pattern = "pdf$", full.names = TRUE), expand.dots = FALSE)
+debugging in: list.files(dir, ...)
+debug: .Internal(list.files(path, pattern, all.files, full.names, recursive, 
+    ignore.case, include.dirs, no..))
+Browse[4]> c
+exiting from: list.files(dir, ...)
+Error in match.call(foo, foo("Downloads", pattern = "pdf$", full.names = TRUE),  : 
+  invalid 'call' argument
+
+Enter a frame number, or 0 to exit   
+
+1: foo("Downloads", pattern = "pdf$", full.names = TRUE)
+2: #2: file.info(f)
+3: #2: list.files(dir, ...)
+4: match.call(foo, foo("Downloads", pattern = "pdf$", full.names = T
+
+Selection: 0
+Browse[2]> Q
+[47:38] 21> match.call(foo, quote(foo("Downloads", pattern = "pdf$", full.names = TRUE), expand.dots = FALSE))
+Error in quote(foo("Downloads", pattern = "pdf$", full.names = TRUE),  : 
+  2 arguments passed to 'quote' which requires 1
+
+Enter a frame number, or 0 to exit   
+
+1: match.call(foo, quote(foo("Downloads", pattern = "pdf$", full.nam
+
+Selection: 0
+[47:38] 21> match.call(foo, quote(foo("Downloads", pattern = "pdf$", full.names = TRUE)), expand.dots = FALSE)
+foo(dir = "Downloads", ... = pairlist(pattern = "pdf$", full.names = TRUE))
+[51:03] 22> debug(foo)
+[51:43] 23> foo("Downloads", pattern = "pdf$", full.names = TRUE)
+debugging in: foo("Downloads", pattern = "pdf$", full.names = TRUE)
+debug at #1: {
+    i = file.info(f)
+    f[order(i$size, decreasing = TRUE)]
+}
+Browse[2]> ls(all = TRUE)
+[1] "..." "dir" "f"  
+Browse[2]> list(...)
+$pattern
+[1] "pdf$"
+
+$full.names
+[1] TRUE
+
+Browse[2]> c
+debugging in: list.files(dir, ...)
+debug: .Internal(list.files(path, pattern, all.files, full.names, recursive, 
+    ignore.case, include.dirs, no..))
+Browse[2]> ls()
+[1] "all.files"    "full.names"   "ignore.case"  "include.dirs"
+[5] "no.."         "path"         "pattern"      "recursive"   
+Browse[2]> foo
+function(dir, f = list.files(dir, ...), ...) {
+   i = file.info(f)
+   f[order(i$size, decreasing = TRUE) ]
+}
+<bytecode: 0x7fe5ea902578>
+Browse[2]> Q
+[53:06] 27> foo("Downloads", pattern = "pdf$", full.names = TRUE, nonsense = 1)
+debugging in: foo("Downloads", pattern = "pdf$", full.names = TRUE, nonsense = 1)
+debug at #1: {
+    i = file.info(f)
+    f[order(i$size, decreasing = TRUE)]
+}
+Browse[2]> c
+Error in list.files(dir, ...) : unused argument (nonsense = 1)
+
+Enter a frame number, or 0 to exit   
+
+1: foo("Downloads", pattern = "pdf$", full.names = TRUE, nonsense = 
+2: #2: file.info(f)
+
+Selection: 0
+[53:06] 27> g = function(x, ...) {  plot(1:length(x), x, main = "Title", ...)}
+[56:23] 28> g(rnorm(10), cex = 2, nonsense = 1)
+Warning messages:
+1: In plot.window(...) : "nonsense" is not a graphical parameter
+2: In plot.xy(xy, type, ...) : "nonsense" is not a graphical parameter
+3: In axis(side = side, at = at, labels = labels, ...) :
+  "nonsense" is not a graphical parameter
+4: In axis(side = side, at = at, labels = labels, ...) :
+  "nonsense" is not a graphical parameter
+5: In box(...) : "nonsense" is not a graphical parameter
+6: In title(...) : "nonsense" is not a graphical parameter
+[56:56] 29> names(formals(plot.window))
+[1] "xlim" "ylim" "log"  "asp"  "..." 
+Warning messages:
+1: "nonsense" is not a graphical parameter 
+2: "nonsense" is not a graphical parameter 
+3: "nonsense" is not a graphical parameter 
+4: "nonsense" is not a graphical parameter 
+5: "nonsense" is not a graphical parameter 
+6: "nonsense" is not a graphical parameter 
+[57:32] 30> showEnv
+Error: object 'showEnv' not found
+No suitable frames for recover()
+[57:32] 30> setwd("RFundamentals")
+[02:41] 31> list.files()
+debugging in: list.files()
+debug: .Internal(list.files(path, pattern, all.files, full.names, recursive, 
+    ignore.case, include.dirs, no..))
+Browse[2]> c
+*** output flushed ***
+[02:48] 32> undebug(list.files)
+[02:53] 33> undebug(foo)
+[02:56] 34> source("showEnv.R")
+[03:16] 35> showEnv
+function(e = globalenv(), print = FALSE)
+{
+    ans = list(e)
+    ctr = 2L
+    while(!is.null(e) && !identical(e, emptyenv())) {
+        if(print)
+            print(e)
+        e = parent.env(e)
+        ans[[ctr]] = e
+        ctr = ctr + 1L
+        
+    }
+    invisible(ans[-length(ans)])
+}
+[03:23] 36> list.files
+*** output flushed ***
+[03:41] 37> environment(showEnv)
+<environment: R_GlobalEnv>
+[03:57] 38> source
+*** output flushed ***
+[04:11] 39> rm(showEnv)
+[05:07] 40> env  = new.env()
+[05:10] 41> source("showEnv.R", env)
+[05:33] 42> showEnv
+Error: object 'showEnv' not found
+No suitable frames for recover()
+[05:33] 42> ls(env)
+[1] "findVarFromFun" "showEnv"       
+[05:49] 43> env$showEnv
+function(e = globalenv(), print = FALSE)
+{
+    ans = list(e)
+    ctr = 2L
+    while(!is.null(e) && !identical(e, emptyenv())) {
+        if(print)
+            print(e)
+        e = parent.env(e)
+        ans[[ctr]] = e
+        ctr = ctr + 1L
+        
+    }
+    invisible(ans[-length(ans)])
+}
+<environment: 0x7fe5ba04e518>
+[05:58] 44> env
+<environment: 0x7fe5ba04e518>
+[06:15] 45> f = function(x) function(param) prod(dnorm(x, param[1], param[2]))
+[08:29] 46> f2 = f(1:10)
+[08:36] 47> f2
+function(param) prod(dnorm(x, param[1], param[2]))
+<environment: 0x7fe59a830820>
+[08:37] 48> debug(f2)
+[09:42] 49> f2(c(1, 2))
+debugging in: f2(c(1, 2))
+debug at #1: prod(dnorm(x, param[1], param[2]))
+Browse[2]> body()
+prod(dnorm(x, param[1], param[2]))
+Browse[2]> ls()
+[1] "param"
+Browse[2]> param
+[1] 1 2
+Browse[2]> sys.frame(sys.nframe())
+<environment: 0x7fe59a8170a8>
+Browse[2]> ls(parent.env(sys.frame(sys.nframe())))
+[1] "x"
+Browse[2]> ls(environment(f2))
+[1] "x"
+Browse[2]> ls(parent.env(parent.env(sys.frame(sys.nframe()))))
+ [1] "%!in%"            "bigfiles"         "cookie"          
+ [4] "dsort"            "env"              "f"               
+ [7] "f2"               "findVarFromFun"   "foo"             
+[10] "g"                "getFunctions"     "GoogleGeocodeKey"
+[13] "mostRecent"       "NRELKey"          "opdf"            
+[16] "Open"             "quartz"           "readxl"          
+[19] "showCounts"       "z"                "zid"             
+Browse[2]> Q
+[11:32] 56> f = function(dir , list.files(dir, full.names = TRUE, ...), ...) {
+Error: unexpected '(' in "f = function(dir , list.files("
+No suitable frames for recover()
+[11:32] 56> f = function(dir , files = list.files(dir, full.names = TRUE, ...), ...) {
++   sapply(files, function(x) length(readLines(x)))
++ }
+[14:28] 57> 
+[16:34] 58> stats::dnorm
+*** output flushed ***
+[17:27] 59> f = function(dir , files = list.files(dir, full.names = TRUE, ...), numLines = -1, ...) {
+  sapply(files, function(x) length(readLines(x, numLines)))
+}
+
++ + [22:15] 60> [22:15] 60> f = function(dir , files = list.files(dir, full.names = TRUE, ...), numLines = -1, ...) {
+    util = function(x) {
+               browser()
+            length(readLines(x, numLines))
+    }
+    browser()
+    sapply(files,  util  )
+}
+
++ + + + + + + [23:12] 61> [23:12] 61> f(".", numLines = 10)
+Called from: f(".", numLines = 10)
+Browse[1]> util
+function(x) {
+               browser()
+            length(readLines(x, numLines))
+    }
+<environment: 0x7fe5fafc5250>
+Browse[1]> sys.frame(sys.nframe())
+<environment: 0x7fe5fafc5250>
+Browse[1]> ls(environment(util))
+[1] "dir"      "files"    "numLines" "util"    
+Browse[1]> n
+debug at #7: sapply(files, util)
+Browse[2]> 
+Called from: FUN(X[[i]], ...)
+Browse[2]> body()
+{
+    browser()
+    length(readLines(x, numLines))
+}
+Browse[2]> ls()
+[1] "x"
+Browse[2]> x
+[1] "./Assignment.xml"
+Browse[2]> sys.frame(sys.nframe())
+<environment: 0x7fe5fafa7950>
+Browse[2]> body()
+{
+    browser()
+    length(readLines(x, numLines))
+}
+Browse[2]> callFrame.util = sys.frame(sys.nframe())
+Browse[2]> parent.env(callFrame.util)
+<environment: 0x7fe5fafc5250>
+Browse[2]> ls(parent.env(callFrame.util))
+[1] "dir"      "files"    "numLines" "util"    
+Browse[2]> Q
+[27:35] 72> source("boost.R")
+[40:30] 73> z = boost(mpg ~ wt, mtcars)
+Error in model.frame.default(formula = formula, data = data, weights = weights,  : 
+  invalid type (closure) for variable '(weights)'
+
+Enter a frame number, or 0 to exit   
+
+1: boost(mpg ~ wt, mtcars)
+2: boost.R#8: stats::lm(formula, data, weights = weights)
+3: eval(mf, parent.frame())
+4: eval(mf, parent.frame())
+5: stats::model.frame(formula = formula, data = data, weights = weig
+6: model.frame.default(formula = formula, data = data, weights = wei
+
+Selection: 0
+[40:30] 73>    weights = rep(1/32, 32)
+[43:19] 74> lm(mpg ~wt, mtcars, weights = weights)
+
+Call:
+lm(formula = mpg ~ wt, data = mtcars, weights = weights)
+
+Coefficients:
+(Intercept)           wt  
+     37.285       -5.344  
+
+[43:42] 75> z = boost(mpg ~ wt, mtcars)
+[43:50] 76> sapply(z[-1], identical, z[[1]])
+ [1] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+[14] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+[27] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+[40] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+[44:10] 77> search()
+ [1] ".GlobalEnv"          "package:stats"       "package:graphics"   
+ [4] "package:grDevices"   "package:datasets"    "utility functions"  
+ [7] "package:RShellTools" "package:utils"       "package:methods"    
+[10] "Autoloads"           "package:base"       
+[45:12] 78> detach(2)
+[45:17] 79> rm(weights)
+[45:32] 80> z = boost(mpg ~ wt, mtcars)
+Error in eval(extras, data, env) : object 'weights' not found
+
+Enter a frame number, or 0 to exit   
+
+1: boost(mpg ~ wt, mtcars)
+2: boost.R#8: stats::lm(formula, data, weights = weights)
+3: eval(mf, parent.frame())
+4: eval(mf, parent.frame())
+5: stats::model.frame(formula = formula, data = data, weights = weig
+6: model.frame.default(formula = formula, data = data, weights = wei
+7: eval(extras, data, env)
+8: eval(extras, data, env)
+
+Selection: 0
+[45:32] 80> stats::weights
+function (object, ...) 
+UseMethod("weights")
+<bytecode: 0x7fe5fac92938>
+<environment: namespace:stats>
+[46:04] 81> as.list(body(model.frame.default))
+Error in body(model.frame.default) : 
+  object 'model.frame.default' not found
+
+Enter a frame number, or 0 to exit   
+
+1: as.list(body(model.frame.default))
+2: body(model.frame.default)
+
+Selection: 0
+[46:04] 81> as.list(body(stats:::model.frame.default))
+*** output flushed ***
+[48:50] 82> trace(model.frame.default, browser, where = model.frame, at = 20)
+Error in trace(model.frame.default, browser, where = model.frame, at = 20) : 
+  object 'model.frame' not found
+
+Enter a frame number, or 0 to exit   
+
+1: trace(model.frame.default, browser, where = model.frame, at = 20)
+
+Selection: 0
+[48:50] 82> library(stats)
+[49:45] 83> trace(model.frame.default, browser, where = model.frame, at = 20)
+Tracing function "model.frame.default" as seen from
+package "stats"
+[1] "model.frame.default"
+[49:46] 84> z = boost(mpg ~ wt, mtcars)
+Tracing model.frame.default(formula = formula, data = data, weights = weights,  .... step 20 
+Called from: eval(expr, p)
+Browse[1]> n
+debug: extras <- substitute(list(...))
+Browse[2]> list(...)
+$weights
+ [1] 0.03125 0.03125 0.03125 0.03125 0.03125 0.03125 0.03125 0.03125
+ [9] 0.03125 0.03125 0.03125 0.03125 0.03125 0.03125 0.03125 0.03125
+[17] 0.03125 0.03125 0.03125 0.03125 0.03125 0.03125 0.03125 0.03125
+[25] 0.03125 0.03125 0.03125 0.03125 0.03125 0.03125 0.03125 0.03125
+
+Browse[2]> n
+debug: extranames <- names(extras[-1L])
+Browse[2]> 
+debug: extras <- eval(extras, data, env)
+Browse[2]> extras
+list(weights = weights)
+Browse[2]> class(extras)
+[1] "call"
+Browse[2]> class(data)
+[1] "data.frame"
+Browse[2]> dim(data)
+[1] 32 11
+Browse[2]> env
+<environment: R_GlobalEnv>
+Browse[2]> ls()
+ [1] "data"               "drop.unused.levels" "env"               
+ [4] "extranames"         "extras"             "formula"           
+ [7] "i"                  "na.action"          "naa"               
+[10] "possible_newdata"   "predvars"           "resp"              
+[13] "rownames"           "subset"             "variables"         
+[16] "varnames"           "vars"               "xlev"              
+Browse[2]> formula
+mpg ~ wt
+attr(,"variables")
+list(mpg, wt)
+attr(,"factors")
+    wt
+mpg  0
+wt   1
+attr(,"term.labels")
+[1] "wt"
+attr(,"order")
+[1] 1
+attr(,"intercept")
+[1] 1
+attr(,"response")
+[1] 1
+attr(,".Environment")
+<environment: R_GlobalEnv>
+attr(,"predvars")
+list(mpg, wt)
+Browse[2]> environment(formula)
+<environment: R_GlobalEnv>
+Browse[2]> Q
+[54:26] 93> form = mpg ~wt
+[55:01] 94> environment(form)
+<environment: R_GlobalEnv>
+[55:07] 95> z = boost(mpg ~ wt, mtcars)
+Tracing model.frame.default(formula = formula, data = data, weights = weights,  .... step 20 
+Called from: eval(expr, p)
+Browse[1]> n
+debug: extras <- substitute(list(...))
+Browse[2]> 
+debug: extranames <- names(extras[-1L])
+Browse[2]> 
+debug: extras <- eval(extras, data, env)
+Browse[2]> Q
+[55:07] 95> z = boost(mpg ~ wt, mtcars)
+Tracing model.frame.default(formula = formula, data = data, weights = weights,  .... step 20 
+Called from: eval(expr, p)
+Browse[1]> where
+where 1: eval(expr, p)
+where 2: eval(expr, p)
+where 3: eval.parent(exprObj)
+where 4: .doTrace(browser(), "step 20")
+where 5: model.frame.default(formula = formula, data = data, weights = weights, 
+    drop.unused.levels = TRUE)
+where 6: stats::model.frame(formula = formula, data = data, weights = weights, 
+    drop.unused.levels = TRUE)
+where 7: eval(mf, parent.frame())
+where 8: eval(mf, parent.frame())
+where 9 at boost.R#8: stats::lm(formula, data, weights = weights)
+where 10: boost(mpg ~ wt, mtcars)
+
+Browse[1]> recover()
+
+Enter a frame number, or 0 to exit   
+
+1: boost(mpg ~ wt, mtcars)
+2: boost.R#8: stats::lm(formula, data, weights = weights)
+3: eval(mf, parent.frame())
+4: eval(mf, parent.frame())
+5: stats::model.frame(formula = formula, data = data, weights = weig
+6: model.frame.default(formula = formula, data = data, weights = wei
+
+Selection: 5
+Called from: recover()
+Browse[4]> ls()
+[1] "formula"
+Browse[4]> body()
+UseMethod("model.frame")
+Browse[4]> ls()
+[1] "formula"
+Browse[4]> ls(all = TRUE)
+[1] "..."     "formula"
+Browse[4]> getS3Method("model.frame", class(formula))
+Error in getS3Method("model.frame", class(formula)) : 
+  could not find function "getS3Method"
+
+Enter a frame number, or 0 to exit   
+
+1: boost(mpg ~ wt, mtcars)
+2: boost.R#8: stats::lm(formula, data, weights = weights)
+3: eval(mf, parent.frame())
+4: eval(mf, parent.frame())
+5: stats::model.frame(formula = formula, data = data, weights = weig
+6: model.frame.default(formula = formula, data = data, weights = wei
+
+Selection: 0
+Browse[4]> getS3method("model.frame", class(formula))
+Error in getS3method("model.frame", class(formula)) : 
+  S3 method 'model.frame.formula' not found
+
+Enter a frame number, or 0 to exit   
+
+1: boost(mpg ~ wt, mtcars)
+2: boost.R#8: stats::lm(formula, data, weights = weights)
+3: eval(mf, parent.frame())
+4: eval(mf, parent.frame())
+5: stats::model.frame(formula = formula, data = data, weights = weig
+6: model.frame.default(formula = formula, data = data, weights = wei
+
+Selection: 0
+Browse[4]> stats::model.frame
+function (formula, ...) 
+UseMethod("model.frame")
+<bytecode: 0x7fe5ea1963d8>
+<environment: namespace:stats>
+Browse[4]> ls9)
+Error: unexpected ')' in "ls9)"
+
+Enter a frame number, or 0 to exit   
+
+1: boost(mpg ~ wt, mtcars)
+2: boost.R#8: stats::lm(formula, data, weights = weights)
+3: eval(mf, parent.frame())
+4: eval(mf, parent.frame())
+5: stats::model.frame(formula = formula, data = data, weights = weig
+6: model.frame.default(formula = formula, data = data, weights = wei
+
+Selection: 0
+Browse[4]> ls()
+[1] "formula"
+Browse[4]> class(formula)
+[1] "formula"
+Browse[4]> c(class(formula), "default")
+[1] "formula" "default"
+Browse[4]> paste("model.frame", c(class(formula), "default")), sep = ".")
+Error: unexpected ',' in "paste("model.frame", c(class(formula), "default")),"
+
+Enter a frame number, or 0 to exit   
+
+1: boost(mpg ~ wt, mtcars)
+2: boost.R#8: stats::lm(formula, data, weights = weights)
+3: eval(mf, parent.frame())
+4: eval(mf, parent.frame())
+5: stats::model.frame(formula = formula, data = data, weights = weig
+6: model.frame.default(formula = formula, data = data, weights = wei
+
+Selection: 0
+Browse[4]> paste("model.frame", c(class(formula), "default"), sep = ".")
+[1] "model.frame.formula" "model.frame.default"
+Browse[4]> plot
+function (x, y, ...) 
+UseMethod("plot")
+<bytecode: 0x7fe59a8c06d0>
+<environment: namespace:base>
+Browse[4]> Q
+[18:37] 105> plot.MyClass = function(x, y, ...)  stop("my error")
+[19:05] 106> x = structure(1, class = c("A", "MyClass"))
+[19:22] 107> x
+[1] 1
+attr(,"class")
+[1] "A"       "MyClass"
+[19:22] 108> plot(x)
+Error in plot.MyClass(x) : my error
+
+Enter a frame number, or 0 to exit   
+
+1: plot(x)
+2: plot.MyClass(x)
+
+Selection: 0
+[19:22] 108> plot(1:10)
+[19:41] 109> 
