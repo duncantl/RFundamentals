@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>R Fundamentals 2022</title>
+    <meta charset="utf-8">
+    <style>
+      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+      body { font-family: 'Droid Serif'; }
+      h1, h2, h3 {
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: normal;
+      }
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center, middle
+
+# R Fundamentals 2022
+
+
+## [https://github.com/duncantl/RFundamentals](https://github.com/duncantl/RFundamentals)
+
+### Duncan Temple Lang
+### Professor, Statistics
+### Associate Dean, Graduate Studies
+
+<div style="clear: both"/>
+
+<!-- <hr width="50%"/> -->
+<img src="datalab-logo-full-color-rgb.png" height="30%" width="30%"></img>
+
+---
+layout: true
+<img style="float: right" src="datalab-logo-full-color-rgb.png" height="15%" width="15%"></img>
+
+
+---
+#
+
++ Every function has an environment
++ The environment of  function is the environment in which it is created.
+
++ This can be
+   + top-level prompt -  global environment
+   + source("showEnv.R", env)
+   + inside a function call
+      + specific call frame for the call to the enclosing function
+      + what is the parent of a call frame?
+
+---
++ functions created in functions
+ + function(x) {
+     function(parm)
+        prod(dnorm(x, parm[1], parm[2]))
+   }
+   
+ + function() {
+       count = 0L
+       function()
+         count <<- count + 1L
+   }
+ + environment of functions is the call frame of the enclosing function
+ + trap variables in the host/outer/parent function.
+ + non-local assignments find the first location of the variable being assigned
+   and assign there.
+
+---
+# Can explicity set the enviroment of a function
+```r
+  a = 2
+  f = function(x) x + a
+  f(10)
+```
++ Set the environment
+```r
+  env = new.env()
+  env$a = 101
+  environment(f) = env
+  f(10)
+```
+---
+# Evaluating Arguments
+
++ arguments are passed lazily
++ arguments evaluated in the caller's environment/call frame
+
++ Consider `scatter.smooth(mtcars[, c("mpg", "wt")])`
+
++ scatter.smooth calls xy.coords needs the value of its x argument.
+
++ scatter.smooth parameter x lazily matched to `mtcars[, c("mpg", "wt")]`
++ scatter.smooth calls `xy.coords(x, y, ...)`
+    + xy.coords's parameter x matched to expression `x` in scatter.smooth
++ xy.coord gets value of its `x` argument
+    + evaluates expression `x` in caller (scatter.smooth's call frame)
+    + that has not been evaluated yet
+    + lazy expression is `mtcars[, c("mpg", "wt")]` evaluated in global environment
+        from which scatter.smooth was called.
+
+---
+# Evaluating Default values of Parameters
+
++ f = function(dir, files = list.files(dir, ...), ...)
+
+---
+# Pass-by-value/Copy
+
++ argument values are "copied"/passed by value, not by reference
+   + changes to an argument are local to the function
+```   
+      foo = function(x) {
+          x[2] = 1  # local to this call to foo()
+      }
+```      
+
++ except environments, connections, external pointers
+   
+
+---
+# (Semi) Non-standard Evaluation
+
+```
+source("boost.R")
+```
+
++ `z = boost(mpg ~ wt, mtcars)`
+   +   all results the same
+
+--
++ remove weights from global environment.
+   + error
+```
+Error in model.frame.default(formula = formula, data = data, weights = weights,  : 
+  invalid type (closure) for variable '(weights)'
+```
++ detach stats package
+   + different error
+```
+Error in eval(extras, data, env) : object 'weights' not found
+```
+
+
+---
+
++ Based on the error(s), debug command 20  in model.frame.default
+
+```r
+trace(model.frame.default, browser, where = model.frame, at = 20)
+```
+
++ Run command again - `boost(mpg ~ wt, mtcars)`
+
+```
+extras <- substitute(list(...))
+
+extras <- eval(extras, data, env)
+```
+
+data - mtcars data.frame
+env - R_GlobalEnv
+
+---
+Read documentation for eval() to understand the two arguments envir and enclos
+enclose - where R looks for objects not found in envir. Here envir is a data.frame
+
+---
+Solution is we have to either
+1) put weights into the data.frame in each iteration
+2) change the environment of the formula to use this call frame where weights is assigned.
+3) change the environment to still use the formula's current environment, but
+   put a new environment in front of it in a chain.
+  3a) insert a new environment in the chain immediately after the formula's environment.
+
+
+2) **If** all terms in the formula are in the data.frame, then we can change the environment on the formula.
+If not, we need to be able to find those external variables.
+But this can be more complicated as we may have terms derived from variables in the data.frame, e.g., log(wt)
+We can use code analysis to determine the names of the variables in the formula:
+CodeAnalysis::getGlobals( formula )
+f = mpg ~ wt + log(wt + 2) + sin(cos(disp))  - 1
+getGlobals(f)$variables
+[1] "mpg"  "wt"   "wt"   "disp"
+If all variable names are in the data.frame, then we can change the environment of the formula
+to one that contains the weights variable. This can be the current call frame
+or a new environment in which we put the weights at each iteration.
+
+
+
+1) We need to ensure name of column we use to add the weights doesn't conflict with existing name.
+This example has a wt column for weight so shows opportunity to have a conflict.
+See if .weights is in the data.frame. If not, use that. If it is, add random suffix and see if that is present.
+Then add this to the call to lm as weights = weightsVarName
+But varName has to be a symbol, not a string.
+So we can create the necessary expression with
+
+    expr = substitute(stats::lm(formula, data, weights = wvarName), list(wvarName = as.name(weightsVarName)))
+Then we can eval() this in each iteration of the loop.
+
+
+---
+
+Consider the formula
+ mpg ~ wt + a
+
+a is not in the mtcars data.frame
+v = CodeAnalysis::getGlobals( f)$variables
+v %in% names(mtcars)
+
+So 2) won't work.
+We could put a into the data.frame
+
+
+---
+What if the formula is created in a function, e.g.,
+ boost(  mkFormula(mtcars), mtcars)
+
+If mkFormula was a simple as
+function(data, simple = TRUE)
+{
+   if(simple)
+     return(mpg ~ wt)
+
+   # make complex formula
+}
+then the default will return a formula whose environment is the call
+frame to mkFormula.
+
+It is worth thinking about the environment on a formula.
+While the default is typically appropriate, you can change it.
+
+
+
+---
+# on.exit() & Errors
+
++ When evaluating the body of a function
+
++ when R is about to return from that function, it evaluates any expression(s)
+   registered via on.exit() in the body of that function.
+  + these are evaluated in each function whether it returns or raises an error.
+
++ Used to reset and clean up
+  + reset options(), graphics par() settings, environment variables
+  + close connections opened within the function
+  + reset the working directory (setwd)
+  + remove temporary files
+
++ if there are errors
+  + R raises an error **condition**
+  + unwinds each call on the stack
+    + evaluating each call frame's on.exit() code.
+  + unwinds to top-most caller OR
+     + finds a call to try() or tryCatch()
+
+---
+# Continuing Evaluation after Errors
+
++ try() and tryCatch()
+
++ Want to continue even if there is an error
+
+```
+ans = lapply(urls, function(u) try(download.file(u)))
+```
+
+```
+err = sapply(ans, is, 'try-error')
+```
+
+
+---
+# OOP: generic functions and methods
+
++ How did we get [.data.frame in the call stack?
+  + in call to scatter.smooth()
++ model.frame.default in lm()/boost()
+
++ S3 methods and how they are found.
+
+  + getS3method("generic", "className")
+  + typically, found by looking for "function name.class"
+  + take the class() of the object
+     + character vector with possibly multiple values
+        + e.g.  c("glm", "lm")
+  + plot(x) would look for
+      + plot.glm
+      + plot.lm
+      + plot.default
+  + packages can "redirect" to another function not using this naming convention
+      + from package relevance's NAMESPACE
+```
+S3method(print, termtable)
+S3method(plot, termtable, plot.inference)
+```
+
++ Writing Functions
+   + often no need for explicit return. Object returned from last evaluated expression
+```   
+     if() 
+         expr1
+     else
+         expr2
+```	 
+   + Same logic applies to {}
+       + value of {cmd1; cmd2; cmd3 } is the value of the last
+          command evaluated in the {} (i.e., cmd3 in this example)
+
+   + if() statements
+```   
+  x = if() {
+      tmp = 1
+      sin(tmp + tmp^2)
+  } else
+       202
+```
+
+---
+# Use default values to make your code more flexible.
+  + allow callers to provide different values.
+
+```
+wc = 
+function(dir)
+{
+    f = list.files(dir, full.names = TRUE)
+    sapply(f, function(f) length(readLines(f)))
+}
+```
+
++ "Hoist the expression
+  + Expensive to compute list.files()
+      + want to be able to precompute and reuse.
+  + Expensive to process all of them when testing function
+      + want to be able to be able to provide subset
+--
+```
+wc = 
+function(dir, f = list.files(dir, full.names = TRUE))
+{
+   sapply(f, function(f) length(readLines(f)))
+}
+```
+
+---
+# Additional/Alternative approach
+
++  add ... to allow caller to customize list.files() call
+   + argument matching rules tell us 
+   + pass the entire collection of arguments in ... to 
+```
+wc = 
+function(dir, ...)
+{
+    f = list.files(dir, full.names = TRUE, ...)
+    sapply(f, function(f) length(readLines(f)))
+}
+```
+So can be called with
+```r
+wc(".", pattern = ".R$")
+wc(".", pattern = ".R$", recursive = TRUE)
+```
+
+---
+# Combine Both Approaches
+
+```
+wc = 
+function(dir, f = list.files(dir, full.names = TRUE, ...), ...)
+{
+    f = list.files(dir, full.names = TRUE, ...)
+    sapply(f, function(f) length(readLines(f)))
+}
+```
+
++ `wc( pattern = ".R", recursive = TRUE)`
+
++ Note the ... in the parameter list, and also used in the default value of f
+      + no problem in evaluation 
+         + 
+```r
+match.call(wc, quote(wc(".", pattern = ".R$", recursive = TRUE)), expand.dots = FALSE)
+```
+      + it is slightly awkward as we need to by pass dir and f to specify arguments?
+      + could do 
+         `wc = function(..., dir, f = list.files(dir, ...)) `
+         but then have to spell out dir and f to specify those arguments.
+          `wc(dir = "~")` rather than `wc("~")`
+
+
+
++ Hoisting/lifting:
+   + Write function first and the gradually move commands in body up to parameters.
+
+---------
+
+
+
+
+---
+# Vectorization
+
++ Question:
+    + I have a 2-column data.frame with 18+ million rows. The cells are populated with alphanumeric strings.         
+    + I need to append a new column with each row composed of the pasting of the sorted composition of that row, e.g.
+```r
+columnA      columnB     newColumn
+asj123       cgyy562     asj123_cgyy562
+hdsahvu      baoiw25     baoiw25_hdsahvu
+ttsq         adkeoje     adkeoje_ttsq
+isdii        zoosd21     isdii_zoosd21                                                                                                                             
+```
+    + I tried to do it rowwise, but it is taking too long.
+
+---
+# What would the row-wise version look like?
+```
+doit = 
+function(z)
+{
+   ans = character(nrow(z))
+   for(i in 1:nrow(z))  {
+       ans[i] = if(z[i, 1] < z[i, 2])
+                     paste0(z[i,1], "_", z[i,2])
+                else
+                     paste0(z[i,2], "_", z[i,1])
+    }
+    ans
+}
+```
+
++ How to vectorize this?
+
++ But first ....
+---
+# How do we create a sample data.set?
+```
+mkWord0 =
+function()
+{
+    wordLen = sample(3:8, 1)
+    chars = sample(c(letters, 0:9), wordLen, replace = TRUE)
+    paste(chars, collapse = "")
+}
+```
+
+```
+col1 = replicate(N, mkWord0)
+col2 = replicate(N, mkWord0)
+```
++ N *2 *2  calls to sample
++ 2 * N calls to paste
+
+
+---
+# Vectorized Word Generation
+
+```
+mkString3 =
+function(n)    
+{
+    wordLen = sample(3:8, n, replace = TRUE)
+    chars = sample(c(letters, 0:9), sum(wordLen), replace = TRUE)
+    tapply(chars, rep(1:n, wordLen), paste, collapse = "")
+}  
+```
+
++ Note can generate values for both columns in single call 
+```r
+tmp = mkString3( 2 * N)
+matrix(tmp, , 2)
+```
+
++ 2 calls to sample
++ n calls to paste
+   + can we do better? 
+   + does it matter?
+
+
+---
+# Back to Real Problem
+
++ Approaches?
++ Work on entire vector in one operation
+  + or a few sub-vectors
+  + divide and conquer
+
+--
+
++ for all the rows for which the first column value sorts before the second,
+ ```r
+   paste(col1, col2, sep = "_")
+```
++ for the other rows, reverse the order of pasting
+```r
+   paste(col2, col1, sep = "_")
+```
+
+---
+
+```r
+mkCol =
+function(z)
+{
+    w = z$a < z$b
+    z$c = "" 
+    z$c[w] = paste(z$a[w], z$b[w], sep = "_")
+    z$c[!w] = paste(z$b[!w], z$a[!w], sep = "_")   
+    z
+}
+```
+
+
+
+
+    </textarea>
+    <script src="https://remarkjs.com/downloads/remark-latest.min.js">
+    </script>
+    <script src="remark-toc/index.js">     </script>   
+    <script>
+     var slideshow = remark.create();
+//     var toc = require('remark-toc');
+//     slideshow.use(toc);
+    </script>
+  </body>
+</html>
+
