@@ -106,6 +106,14 @@ layout: true
   	  + how values are found
 	+ local assignments
            + Don't use attach()
+    + on.exit
+
+---
+# Scope II
++ √ perils of attach()
++ √ Closures/nested function definitions.
++ formulae and scope
+
 
 ---
 # Errors and `try()`, `tryCatch()`
@@ -148,6 +156,7 @@ lapply(x, function(v) try(foo(x)))
    across vectors within data.frame.
  + matrix
    + versus data.frame
+
 ---
 # Attributes
    + "hang" additional information on an object.
@@ -163,6 +172,10 @@ lapply(x, function(v) try(foo(x)))
    + negative index
    + logical
    + name
+   + empty
+      x[] = 1
+        + recycling
+      x = 1
    + two-dimensional subsetting
    + matrix subsetting
       + x[i, j]
@@ -214,12 +227,6 @@ lapply(x, function(v) try(foo(x)))
    + conditions
    + stop(), warning()
 
----
-# Scope II
-+ perils of attach()
-+ Closures/nested function definitions.
-+ formulae and scope
-   
 
 ---
 # NSE generally

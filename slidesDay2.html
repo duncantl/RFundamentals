@@ -307,17 +307,22 @@ lik2(c(0, 1))
 
 + Maintain state across calls.
 + Count the number of calls to the eval() function during call to lm()
+   + Each time eval() is called, call function to update non-local variable.
 
 + Create a function that returns a function.
   + Inner function updates non-local variable
-```
+
+---
+# Non-local Assignments ctd.
+
+```r
 collect = 
 function()
 {
-   count = 0L
-   function() {
-     count <<- count + 1L
-   }
+	count = 0L
+	function() {
+          count <<- count + 1L
+      }
 }
 ```
 
@@ -331,61 +336,6 @@ lm(mpg ~ wt, mtcars, weights = rep(1, nrow(mtcars)))
 ls(environment(c1))
 environment(c1)$count
 ```
-
----
-# on.exit() & Errors
-
-
-+ When evaluating the body of a function
-
-+ when R is about to return from that function, it evaluates any expression(s)
-   registered via on.exit() in the body of that function.
-  + these are evaluated in each function whether it returns or raises an error.
-
-+ Used to reset and clean up
-  + reset options(), graphics par() settings, environment variables
-  + close connections opened within the function
-  + remove temporary files
-
-+ if there are errors
-  + R raises an error **condition**
-  + unwinds each call on the stack
-    + evaluating each call frame's on.exit() code.
-
----
-# Continuing Evaluation after Errors
-
-+ try() and tryCatch()
-
----
-# OOP: generic functions and methods
-
-+ How did we get [.data.frame in the call stack?
-  + model.frame.default
-
----
-# Non-standard Evaluation
-
-```
-source("boost.R")
-```
-
-+ `z = boost(mpg ~ wt, mtcars)`
-   +   all results the same
-
---
-+ remove weights from global environment.
-   + error
-```
-Error in model.frame.default(formula = formula, data = data, weights = weights,  : 
-  invalid type (closure) for variable '(weights)'
-```
-+ detach stats package
-   + different error
-```
-Error in eval(extras, data, env) : object 'weights' not found
-```
-
 
 
 

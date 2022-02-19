@@ -13,3 +13,17 @@ function(e = globalenv(), print = FALSE)
     }
     invisible(ans[-length(ans)])
 }
+
+
+
+findVarFromFun =
+    #
+    # analogous to find() but works on call frames, not just the search path.
+    # Given a call frame, walk its 
+    #
+function(var, frame)
+{
+    echain = showEnv(frame)
+    w = sapply(echain, function(e) exists(var, e, inherits = FALSE))
+    echain [[ which(w)[1] ]]
+}
