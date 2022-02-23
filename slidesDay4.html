@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>R Fundamentals 2022 - Session 1</title>
+    <meta charset="utf-8">
+    <style>
+      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+      body { font-family: 'Droid Serif'; }
+      h1, h2, h3 {
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: normal;
+      }
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center, middle
+
+# R Fundamentals 2022   Session 4
+
+
+## [https://github.com/duncantl/RFundamentals](https://github.com/duncantl/RFundamentals)
+
+### Duncan Temple Lang
+### Professor, Statistics
+### Associate Dean, Graduate Studies
+
+<div style="clear: both"/>
+
+<!-- <hr width="50%"/> -->
+<img src="datalab-logo-full-color-rgb.png" height="30%" width="30%"></img>
+
+---
+layout: true
+<img style="float: right" src="datalab-logo-full-color-rgb.png" height="15%" width="15%"></img>
+
+---
+# Note about Formula, Environments, Call Frames, Data, Memory!
+
++ Consider a function
+```r
+sim = function(N, numIter = 1000) {
+   replicate(numIter, {
+          x1 = runif(N)
+          d = data.frame(x = x1, y = 10*x1 + 1 + rnorm(N))
+          lm( y ~ x^2., d)
+       }, simplify = FALSE)
+}
+```
+
++ Each element of z is an lm object and has a formula and that formula was created inside the call to sim()
+  + the environment of the formula in each lm object
+
+---
+# Environments of `lm` objects
+
+```r
+sapply(z, function(l) environment(formula(l)))
+[[1]]
+&lt;environment: 0x7fb3544f52a0&gt;
+
+[[2]]
+&lt;environment: 0x7fb351e5ab30&gt;
+
+[[3]]
+&lt;environment: 0x7fb3464cc350&gt;
+```
+
++ All are the call frames in which the environment was created
+
++  Examine the d and x1 variables within these environments
+```r
+sapply(z, function(l) dim(environment(formula(l))$d))
+sapply(z, function(l) length(environment(formula(l))$x1))
+```
+    
+---
+# Data Types in R
+
++ vector types
+   + no scalars, just vectors of length 1.
+
++ logical, integer, numeric, character, complex
+   + in this order as values of one type can be coerced to the next type (to the right)
+     without losing information.
+```r
+c(TRUE, 2L)
+c(TRUE, 2L, 3.1415)
+c(TRUE, 2L, 3.1415)
+c(TRUE, 2L, 3.1415, "2.6")
+```
+
++ What class is `NA`?
+
+---
+# NA
+
++ Computing on NA
+```
+x = c(1, NA, 3)
+x == NA
+[1] NA NA NA
+```
++ Compare each value of x to NA
+   + is 1 the same as NA ?
+--
+   + Value can only be unknown - we don't know if 1 is the same as a value we don't know
+
+
+---
+# class() versus typeof()
+
++ typeof() tells us how the object is built
++ class() gives a human label for how to think about the object
+   + methods for printing, plotting, etc.
+   + higher-level concept than raw value.
+
+```
+class(Sys.Date()) - Date
+typeof(Sys.Date()) - numeric
+```
+
+```
+f = mpg ~ .
+class(f)    # formula
+typeof(f)   # language - a call to ~
+```
+
+```
+fit = lm(mpg ~ ., mtcars)
+class(fit)    # lm
+typeof(fit)   # list
+names(fit)
+ [1] "coefficients"  "residuals"     "effects"       "rank"         
+ [5] "fitted.values" "assign"        "qr"            "df.residual"  
+ [9] "xlevels"       "call"          "terms"         "model"        
+```
+
+---
+# Attributes
+
++ R objects can have attributes "hanging" off them
+  + arbitrary list of name-value pairs
+
++ special recognized attribute names
+  + class
+  + names
+  + dim
+  + dimnames
+
++ `attributes(x)`
++ `attr(x, "id")`
++ `attr(x, "id") = value`
+
+---
+# Factors/Categorical types
+
++ factor() and ordered()
+   + state abbreviations or names - AK, AL, CA, CO, AZ
+     + alows grouping-by
+     + arranged alphabetically but no implicit order
+   + ordered categories, e.g.,
+      + grades A+, A, A-, B+, B, B-
+      + UG standing - Freshman, Sophmore, Junior, Senior
+
++ efficient representation
+    + don't duplicate each value
+    + instead, built as integer vector indexing a character vector
+      + levels
+```
+f = factor( c("B", "A", "A+", "A-", "A") )
+typeof(f) # integer
+levels(f)
+levels(f)[ f ]
+```
+
++ Very useful feature of factors is subsetting using factors
+  +  R treats it as an index of integer vectors
+  + subset vector of same length as levels(f)
+```
+c("green", "lightgreen", "red", "orange", "gr"blue", "vals[ f ]
+```
+  + e.g. get colors, plotting characters for points.
+
+---
+# Dates and Times
+
++ Date and POSIXlt, POSIXct classes
+
++ Date
+   + a numeric vector counting the number of days from 1970-01-01
+   + birth of UNIX
+
++ POSIXct
+   + an numeric vector counting the number of seconds since Jan 1, 1970 00:00
+   + easily added as column in a data.frame
+
++ POSIXlt
+   + contains details of the time, day, day within year, year, weekday, time zone, ..
+   + returned by strptime(). Need to coerce to POSIXct.
+   + Strange object
+      + a list
+      + names() returns NULL
+      + but names(unclass(val)) returns
+```
+[1] "sec"    "min"    "hour"   "mday"   "mon"    "year"   "wday"  
+[8] "yday"   "isdst"  "zone"   "gmtoff"
+
+
+---
+# matrix
+
++ vector of values with
+   + a `dim` attribute - vector of number of rows and columns
+   + a `class` vector indicating matrix.
+
++ array is extension of this
+   + `class` attribute "array"
+   + `dim`  vector with as many elements as dimensions, and values giving maximum of each dimension.
+```r
+array(1:24, c(2, 4, 3))   # 3 dimensional array of 2-D 2x4 matrices
+```
+
+---
+# list
+
++ basic types have same type of elements
+```
+x = c(TRUE, 2L,  pi)  # numeric vector
+```
++ Need for ordered container with different types for each element - **list**
+
+
+---
+# data.frame
+
++ Need for collection of columns with capability of different types for each column
++ data.frame is a list with constraint that all elements/columns have same number of elements/rows/records
++ Rarely use matrices except for
+  + linear algebra - very powerful
+  + result of sapply()
+
+
+---
+# Subsetting
+
++ General rule for base R data types
+  + subsetting an object with [ returns an objet
+
++ 6 different ways for vector types
+  + position/index  `x[ 1 ]`, `x[ 2:3 ]`
+  + negative index  `x[ -1]`, `x [ - (2:3) ]` - omit elements
+  + logical vector -
+      + same length as vector being subsetted
+      + elements corresponding to TRUE, kept
+      + elements corresponding to FALSE, dropped/omitted
+  + name
+      + `x[c("a", "b", "f")]`
+  + empty
+      + all elements.  Equivalent to using `1:length(x)` (but that's bad idiom), `rep(TRUE, length(x))`
+      + `x[]`
+      + given `x = 1:10`, compare `x = 1` and `x[] = 1`
+  + NA
+
++ can repeat an index or name
+   + `x[ c("a", "a") ]`
+   + `x[ c(1, 1, 2, 2) ]
+
+
+---
+# Edge/Corner cases
+
++ `x[ length(x) + 1 ] ?
+
+--
+  + NA
+
++ `x[integer()]` ?
+
+--
+  + same length as what we are indexing with, so 0 length.
+
+---
+# Lists
++ `[[` for extracting a single element from a list
+    + returns the (single) element, not a list
+    + x[2] returns a list with one element which is the second element of x.
+
++ l$elName
+    + treats elName literally.  Doesn't find the value in the variable elName.
+    + uses partial matching of element names
+       + 
+
++ `l[[ elName ]]` - evaluates elName as a variable.
+
++ `l[[ c(2, 1, 3) ]]` - hierarchical indexing
+   + `ll[[2]][[1]][[3]]`
+   + `l[[i]]` can often be a mistake if i is not length-1 vector
+
++ When element name doesn't exist
+  + returns NULL for l$noEl, l[["noEl"]]
+
++ Index by position beyond length
+   + error
+   + `list(a = 1)[[3]]`
+
+---
+# Two Dimensional Subsetting
++ 2-dimensional subsetting (and higher dimensions)
+     + `x[i, j]` for data.frames and matrices and arrays generally.
+     + i and j can be any of the 5 different ways above.
+
++ `x[characterV, ]`  - match row names
++ `x[, characterV]`  - match column names
+   + `x[ characterV ]`  - since x is a list, index by column
+
+---
+# Subsetting Matrices **with Matrices**
+
++ M an r x c matrix
++  M [ logicalMatrix  ]
+   + returns vector of elements corresponding to TRUE elements in logicalMatrix
+   + M[ col(M) >= row(M) ] - upper-diagonal
+
++ Position indexing
+    + Consider
+```r
+m = matrix(1:15,3, 5)
+```
+
+```r
+idx = cbind(c(2, 3, 1), c(5, 1, 4))
+
+     [,1] [,2]
+[1,]    2    5
+[2,]    3    1
+[3,]    1    4
+```
+```r
+m[idx]
+[1] 14  3 10
+```
++ But
+```r
+m[ c(2, 3, 1), c(5, 1, 4)]
+
+     [,1] [,2] [,3]
+[1,]   14    2   11
+[2,]   15    3   12
+[3,]   13    1   10
+```
++ Same as
+```
+m[ c(2, 3, 1), ][, c(5, 1, 4)]
+```
+
++ Returns a matrix
+
++ Again, repeated indices can be useful
+```
+m[ c(2, 3, 1, 2, 1), ][, c(5, 1, 1, 4)]
+```
+---
+# Vectorization
+
++ element-wise operations
+  + implicit, not explicit, loop
+  + `x + y`,  `x > 0 & x < 2`,
+  + `sum(x, y, z)`, `min(x, y, z)`, `cumsum(x)`
+
++ Compare
+```
+N  = 1e6; x = rnorm(N); y = rnorm(N)
+system.time(x+y)
+system.time(mapply(`+`, x, y))
+```
+   + N = 1e6 - .007 seconds versus 2.054 seconds - 293 factor
+   + N = 1e7 - .057 versus 21.36 - 374 factor
+   + N = 1e8 - .916 versus 368.5  - 402 factor
+
++ Why
+   + 1 function call versus N function calls
+     + accessing each pair of elements, call frames, matching arguments, evaluating body, 
+   + for mapply, looping done in C so not cause of slowdown
+
+---
+# Vectorization Example
+
++ Revisit from last day. 18 million pairs of "words"
+  + Saw how to avoid loop using two subsets
+```
+w = x[,1] < x[,2]
+x[w, 3] = paste(x[w, 1], x[w, 2], sep = "_")
+x[!w, 3] = paste(x[ !w, 2], x[!w, 1], sep = "_")
+```
+
++ How do we create a sample data.set of two columns of "words"?
+
+```
+mkWord0 =
+function()
+{
+    wordLen = sample(3:8, 1)
+    chars = sample(c(letters, 0:9), wordLen, replace = TRUE)
+    paste(chars, collapse = "")
+}
+```
+
+```
+col1 = replicate(N, mkWord0())
+col2 = replicate(N, mkWord0())
+```
++ N * 2 *2  calls to sample
++ 2 * N calls to paste
+
+
+---
+# Vectorized Word Generation
+
+```
+mkWord1 =
+function(n)    
+{
+    wordLen = sample(3:8, n, replace = TRUE)
+    chars = sample(c(letters, 0:9), sum(wordLen), replace = TRUE)
+    tapply(chars, rep(1:n, wordLen), paste, collapse = "")
+}  
+```
+
++ Note can generate values for both columns in single call 
+```r
+tmp = mkWord1( 2 * N)
+x = matrix(tmp, , 2)
+```
+
++ 2 calls to sample
++ n calls to paste
+
++ 4 times faster for N = 1e6
+
++ can we do better? 
+   + does it matter?
+
+
+
+
+---
+# Recycling Rule
+
++ R extends the shorter vector to the same length as the longer one.
+  + warning if shorter one's length is not an exact integer multiple of longer one's length.
+  + repeats elements using rep() operations
+    + combines copies of the shorter matrix as many times as needed and omits any excess elements
+```
+rep(c(1, 2, 3), len = 5)
+[1] 1 2 3 1 2
+```   
+
++ Pay attention to warnings about no integer multiple lengths.
+  + Nearly always an error in earlier computations.
+
+
+---
+# Writing Functions
+
++ Keep functions in separate file from script that uses them.
+   + Can `source()` separately.
+   + Byte-compile once, not each time.
+   + Easier to test separate from entire script.
+   + Can create alternative versions with same names and substitute these.
+
++ Short functions that do one specific task
+   + Then short functions that call several of these to do higher-level task.
+
++ Create simple, "obvious" version
+  + Then alternative "clever" version.
+  + Compare results with first, gold-standard.
+
+---
+# Group Related Lines of Code to a separate Function
+
++ From .check_packages function in tools package.
+```r
+  now_local <- Sys.time()
+  any <- FALSE
+  checkingLog(Log, "for future file timestamps")
+  ## allow skipping clock check on CRAN incoming systems
+  if(config_val_to_logical(Sys.getenv("_R_CHECK_SYSTEM_CLOCK_", "TRUE"))) {
+      ## First check time on system running 'check',
+      ## by reading an external source in UTC
+      now <- tryCatch({
+          foo <- suppressWarnings(readLines("https://worldtimeapi.org/api/timezone/etc/UTC",
+                                            warn = FALSE))
+          ## gives time in sub-secs
+          as.POSIXct(gsub(".*\"datetime\":\"([^Z]*).*", "\\1", foo),
+                     "UTC", "%Y-%m-%dT%H:%M:%S")
+      }, error = function(e) NA)
+      if (is.na(now)) {
+          now <- tryCatch({
+              foo <- suppressWarnings(readLines("http://worldtimeapi.org/api/timezone/etc/UTC",
+                                                warn = FALSE))
+              ## gives time in sub-secs
+              as.POSIXct(gsub(".*\"datetime\":\"([^Z]*).*", "\\1", foo),
+                         "UTC", "%Y-%m-%dT%H:%M:%S")
+          }, error = function(e) NA)
+      }
+      if (FALSE && is.na(now)) { ## seems permanently stopped
+          now <- tryCatch({
+              foo <- suppressWarnings(readLines("http://worldclockapi.com/api/json/utc/now",
+                                                warn = FALSE))
+              ## gives time in mins
+              as.POSIXct(gsub(".*\"currentDateTime\":\"([^Z]*).*", "\\1", foo),
+                         "UTC", "%Y-%m-%dT%H:%M")
+          }, error = function(e) NA)
+      }
+```
+---
+# Improve code
+
++ Move entire block of code in `if()` to a function
+  + Combines to get the official time
+  + Name/action - `getUTCTime()`, `getOfficialTime()`, `getNow()`, `now()`?
+
++ 3 tryCatch() calls.
+   + 1 is never run.
+   + all 3 look remarkably similar
+     + only difference is URL being used.
+     + make single function
+
++ See [getUTC.R](getUTC.R)
+
+---
+# Simplified Code
+
+```r
+now = tryCatch(getUTC(), error = function(e) NA)
+if(is.na(now))
+  now = tryCatch(getUTC("http://worldtimeapi.org/api/timezone/etc/UTC"), error = function(e) NA)
+```
+
++ 3rd tryCatch() has slightly different pattern in gsub() call
+   + can add make getUTC() flexible to handle that.
+      + add parameter and conditional regexp pattern
+      + or single regexp pattern that handles both cases
+
+  
+---
+# Better use of `tryCatch( error = function(e) NA)`
+
++ First tryCatch() returns NA if fails
++ Then check for NA and call second tryCatch().
++ Instead, do the second tryCatch() in the error handler of the first tryCatch()
+
+```r
+now = tryCatch(getUTC(),
+               error = function(e) {
+                  tryCatch(getUTC("http://worldtimeapi.org/api/timezone/etc/UTC"),
+                          error = function(e) NA)
+                        })
+
+```
++ caveat - if getUTC() can return NA without it being an error, then not the same thing and need two separate, sequential calls, with test for NA.
+
++ Why not have getUTC() do the 3 tryCatch() calls
+
+---
+# Create Test Suite
+
++ Whenever you change a line of code, can run tests to ensure same results.
++ Code that can be source()/evaluated programmatically
++ Checks result against expected result
+   + Raises an error (`stopifnot()`, `if(cond) stop()`) if wrong result.
+   + R packages testthat
+
+---
+# Parameter Default values &
+   
+  + lifting/hoisting/elevating expressions in body to parameters
+  + allows caller more control & flexibility
+    + can pass a subset
+```r
+f = function(dir) {
+    file = list.files(dir, pattern = "csv$", full.names = TRUE)
+    file = file[ !file.info(file)$isdir ]
+    lapply(file, foo)
+}
+```
+
+
+---
+# Alternative
+
++ What if
+  + already computed the list of files and it is time consuming?
+  + want to operate on a subset, e.g., for testing while developing function
+     + will recompute list.files() each time
+     + like to be able to give command
+```
+f ( file = myFiles[1:3] )
+```
+
+
+--
+```r
+f = function(dir, file = list.files(dir, pattern = "csv$", full.names = TRUE)) {
+    file = file[ !file.info(file)$isdir ]
+    lapply(file, foo)
+}
+```
+
+---
+# Avoid checking directories
+
++ How do we allow the caller indicate no need to check for directories?
+
+--
+  + an extra argument `checkDir = TRUE`
+```
+f(file = myFiles, checkDir = FALSE)
+
+if(checkDir)
+      file = file[ !file.info(file)$isdir ]
+```
+
+---
+
+  + on.exit
+     + close connections
+	 + reset options(), par(), environment variables
+	 + delete temporary files (or use tempfile())
+	 + remove temporary files
+  + specifying functions by package prefix.
+  + checking for non-local variables
+     + codetools::findGlobals, CodeAnalysis::getGlobals  
+	 
+  +  x = if() ... else	... rather than
+         if() x = .. else x = ...
+
+---
+# Debugging Functions
+  + browser(), recover(), debug, trace, 
+  + traceback
+  + options(error = recover)
+  + graphical interface.
+  + debugging a function defined inside a function call.
+    ¿example?
+
+
+    </textarea>
+    <script src="https://remarkjs.com/downloads/remark-latest.min.js">
+    </script>
+    <script src="remark-toc/index.js">     </script>   
+    <script>
+     var slideshow = remark.create();
+//     var toc = require('remark-toc');
+//     slideshow.use(toc);
+    </script>
+  </body>
+</html>
