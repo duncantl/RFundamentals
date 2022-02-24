@@ -148,6 +148,15 @@ tb = table(sample(LETTERS, 200, replace = TRUE))
 as.data.frame(tb)
 
 ```
+
+
+Aside, here is how we got these letters.
+```r
+txt = RCurl::getURLContent("https://en.wikipedia.org/wiki/List_of_Unicode_characters#Greek_and_Coptic")
+tt = XML::readHTMLTable(htmlParse(txt))
+tbl = tt$Table_Greek_and_Coptic
+tbl[[2]][ grepl("Capital", tbl[[4]]) ]
+```
 -->
 
 
