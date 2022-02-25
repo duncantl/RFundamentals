@@ -1,0 +1,144 @@
+Delivered-To: dtemplelang@gmx.ucdavis.edu
+Received: by 10.107.175.35 with SMTP id y35csp274892ioe;
+        Thu, 20 Nov 2014 08:55:15 -0800 (PST)
+X-Received: by 10.68.201.130 with SMTP id ka2mr8832236pbc.112.1416502515274;
+        Thu, 20 Nov 2014 08:55:15 -0800 (PST)
+Return-Path: <>
+Received: from smtp2.ucdavis.edu (smtp2.ucdavis.edu. [128.120.32.219])
+        by mx.google.com with ESMTPS id pf8si3726837pbc.233.2014.11.20.08.55.14
+        for <dtemplelang@gmx.ucdavis.edu>
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Nov 2014 08:55:15 -0800 (PST)
+Received-SPF: none (google.com: imapssl.cs.ucdavis.edu does not designate permitted sender hosts) client-ip=169.237.6.5;
+Authentication-Results: mx.google.com;
+       spf=none (google.com: imapssl.cs.ucdavis.edu does not designate permitted sender hosts) smtp.mail=
+Received: from imapssl.cs.ucdavis.edu (imapssl.cs.ucdavis.edu [169.237.6.5])
+	by smtp2.ucdavis.edu (8.14.4/8.14.5/it-oel6-mimedefang-smtp-1.9) with ESMTP id sAKGtDVY039019
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=FAIL)
+	for <dtemplelang@ucdavis.edu>; Thu, 20 Nov 2014 08:55:14 -0800
+Received: from localhost (localhost)
+	by imapssl.cs.ucdavis.edu (8.13.8/8.13.8) id sAKGr6Tu023551;
+	Thu, 20 Nov 2014 08:55:13 -0800 (PST)
+Date: Thu, 20 Nov 2014 08:55:13 -0800 (PST)
+From: Mail Delivery Subsystem <MAILER-DAEMON@cs.ucdavis.edu>
+Message-Id: <201411201655.sAKGr6Tu023551@imapssl.cs.ucdavis.edu>
+To: <dtemplelang@ucdavis.edu>
+MIME-Version: 1.0
+Content-Type: multipart/report; report-type=delivery-status;
+	boundary="sAKGr6Tu023551.1416502513/imapssl.cs.ucdavis.edu"
+Subject: Returned mail: see transcript for details
+Auto-Submitted: auto-generated (failure)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.4.3 (smtp2.ucdavis.edu [128.120.32.8]); Thu, 20 Nov 2014 08:55:14 -0800 (PST)
+X-Virus-Scanned: clamav-milter 0.98.1 at smtp2
+X-Virus-Status: Clean
+X-Scanned-By: MIMEDefang 2.74
+
+This is a MIME-encapsulated message
+
+--sAKGr6Tu023551.1416502513/imapssl.cs.ucdavis.edu
+
+The original message was received at Sat, 15 Nov 2014 08:41:01 -0800 (PST)
+from baton.cs.ucdavis.edu [169.237.6.6]
+
+   ----- The following addresses had permanent fatal errors -----
+\n
+    (reason: Deferred)
+    (expanded from: <n@imapssl.cs.ucdavis.edu>)
+
+   ----- Transcript of session follows -----
+procmail: Error while writing to "/var/mail/n"
+\n... Deferred: local mailer (/usr/bin/procmail) exited with EX_TEMPFAIL
+Message could not be delivered for 5 days
+Message will be deleted from queue
+
+--sAKGr6Tu023551.1416502513/imapssl.cs.ucdavis.edu
+Content-Type: message/delivery-status
+
+Reporting-MTA: dns; imapssl.cs.ucdavis.edu
+Arrival-Date: Sat, 15 Nov 2014 08:41:01 -0800 (PST)
+
+Final-Recipient: RFC822; n@imapssl.cs.ucdavis.edu
+Action: failed
+Status: 4.4.7
+Diagnostic-Code: X-Unix; 75
+Last-Attempt-Date: Thu, 20 Nov 2014 08:55:13 -0800 (PST)
+
+--sAKGr6Tu023551.1416502513/imapssl.cs.ucdavis.edu
+Content-Type: message/rfc822
+
+Return-Path: <dtemplelang@ucdavis.edu>
+Received: from baton.cs.ucdavis.edu (baton.cs.ucdavis.edu [169.237.6.6])
+	by imapssl.cs.ucdavis.edu (8.13.8/8.13.8) with ESMTP id sAFGf1Og014834
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO)
+	for <n@imapssl.cs.ucdavis.edu>; Sat, 15 Nov 2014 08:41:01 -0800 (PST)
+Received: from spam400.cs.ucdavis.edu (spam400.cs.ucdavis.edu [169.237.4.6])
+	by baton.cs.ucdavis.edu (8.14.4/8.14.4/Debian-2ubuntu2.1) with ESMTP id sAFGhvMx017103
+	for <n@cs.ucdavis.edu>; Sat, 15 Nov 2014 08:43:57 -0800
+X-ASG-Debug-ID: 1416069659-0313cd39659bfdc0001-nNjOhv
+Received: from resqmta-ch2-02v.sys.comcast.net (resqmta-ch2-02v.sys.comcast.net [69.252.207.34]) by spam400.cs.ucdavis.edu with ESMTP id 1KIlA2ynlZYohatv for <n@cs.ucdavis.edu>; Sat, 15 Nov 2014 08:41:00 -0800 (PST)
+X-Barracuda-Envelope-From: dtemplelang@ucdavis.edu
+X-Barracuda-Apparent-Source-IP: 69.252.207.34
+Received: from resomta-ch2-03v.sys.comcast.net ([69.252.207.99])
+	by resqmta-ch2-02v.sys.comcast.net with comcast
+	id Fsgb1p00329Cfhx01sgzuF; Sat, 15 Nov 2014 16:40:59 +0000
+Received: from Duncans-MacBook-Pro-2.local ([98.210.224.197])
+	by resomta-ch2-03v.sys.comcast.net with comcast
+	id Fsgx1p00g4G9fHu01sgy7t; Sat, 15 Nov 2014 16:40:59 +0000
+Message-ID: <54678216.1000903@ucdavis.edu>
+Date: Sat, 15 Nov 2014 08:40:54 -0800
+From: Duncan Temple Lang <dtemplelang@ucdavis.edu>
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:24.0) Gecko/20100101 Thunderbird/24.6.0
+MIME-Version: 1.0
+To: AAAA
+Subject: Re: Akaike information criterion for graphs?
+References: <CAG7dpBWr8i3uFLpN7JLMZ-TQtB9yf_ZHfPUXZHaE_vYHp8kORg@mail.gmail.com>
+X-ASG-Orig-Subj: Re: Akaike information criterion for graphs?
+In-Reply-To: <CAG7dpBWr8i3uFLpN7JLMZ-TQtB9yf_ZHfPUXZHaE_vYHp8kORg@mail.gmail.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=comcast.net;
+	s=q20140121; t=1416069659;
+	bh=WJjMsXxYBQ8fCcaTR0KV3jVNfc0165zVXCJWXDDI6KQ=;
+	h=Received:Received:Message-ID:Date:From:MIME-Version:To:Subject:
+	 Content-Type;
+	b=Dh7n2QpWsqLEuSGeq18ZP59SoxqHv2trVEtq2HaBA78l0kaExSUJOvlPDz+Bg64t9
+	 Lsf8DMVSWWuXEBBSXzLZVAegYbypxoUe7JAOkZMBue6746vrvfuDi2FFKdfn9LDPYl
+	 zCWc0e+WgIOvS37YC5yLHUWiT/r8gsdwgKtcKOGfb28FqaAWEbYa/1fUBneTq2WkQ5
+	 JI3Ci2SFAFEXY9lUB+iaURYiIFL7QQp+jAQ9pieeTwsAYJN8QoqMfqX5nIn0abd/VV
+	 GS4be+FrYyZeJ/n0b/aBqit8mHw6ZQQdwEeppOqoXa3YKSe98pdDcGxNDUA/jGY4fz
+	 Chx2+9AHTz0QQ==
+X-Barracuda-Connect: resqmta-ch2-02v.sys.comcast.net[69.252.207.34]
+X-Barracuda-Start-Time: 1416069660
+X-Barracuda-URL: http://169.237.4.6:8000/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at cs.ucdavis.edu
+X-Barracuda-Spam-Score: 0.00
+X-Barracuda-Spam-Status: No, SCORE=0.00 using global scores of TAG_LEVEL=3.5 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=6.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.11627
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------------------------
+
+Hi N
+
+ Ken Joy tells me you are having a good time in a startup as part of your sabbatical.
+Hope you're going to come back :-)
+
+ Presumably there is some statistical model here
+that underlines the observed graph, and
+that introduces the parameters and a likelihood needed for 
+computing AIC.   There are, of course, many possible
+models. So I think you have to specify the model.
+It could be the non-parsimonious/"full model" with a parameter for every element of
+the graph (all elements of V, E, W). But presumably you'll chose
+some more succinct models.
+
+So in short, I think you have to specify a model.
+
+Sorry I can't be more specific. Happy to chat more.
+
+ D.
+
+
+
+--sAKGr6Tu023551.1416502513/imapssl.cs.ucdavis.edu--
+
