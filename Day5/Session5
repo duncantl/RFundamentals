@@ -1,0 +1,1627 @@
+]0;Debugging~/RFundamentals/Debugging> cp ~/GMail/read.dcf.R .
+]0;Debugging~/RFundamentals/Debugging> cp ~/GMail/readEML.R .
+]0;Debugging~/RFundamentals/Debugging> git add readEML.R read.dcf.R 
+]0;Debugging~/RFundamentals/Debugging> git commit -m "debugging examples"
+[master f846f84] debugging examples
+ 2 files changed, 345 insertions(+)
+ create mode 100644 Debugging/read.dcf.R
+ create mode 100644 Debugging/readEML.R
+]0;Debugging~/RFundamentals/Debugging> R
+
+R Under development (unstable) (2021-10-20 r81081) -- "Unsuffered Consequences"
+Copyright (C) 2021 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin19.0.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+PID = 1564 
+Time = 2022-02-24 15:38:08 
+Dir = /Users/duncan/RFundamentals/Debugging 
+1> source("read.dcf.R"); source("readEML.R")
+[38:59] 3> 
+[38:59] 3> 
+[38:59] 3> 
+
+[13:37] 17> 
+[13:37] 17> m = readEmailMsg("sample.eml")
+Error in read.dcf(lines = lines[2:(br - 1)], all = all) : 
+  Invalid DCF format.
+Regular lines must have a tag.
+Offending lines start with:
+  --sAKGr6Tu023551.1416502513/imapssl.cs.ucdavis.ed
+
+Enter a frame number, or 0 to exit   
+
+1: readEmailMsg("sample.eml")
+2: readEML.R#28: mkAttachments(m, all = all)
+3: readEML.R#77: lapply(att[w], make, bndry)
+4: FUN(X[[i]], ...)
+5: readEML.R#105: read.dcf(lines = lines[2:(br - 1)], all = all)
+
+Selection: 0
+[13:37] 17> options(error  = NULL)
+[39:27] 18> m = readEmailMsg("sample.eml")
+
+[39:27] 18> 
+[39:27] 18> traceback()
+6: stop(gettextf("Invalid DCF format.\nRegular lines must have a tag.\nOffending lines start with:\n%s", 
+       paste0("  ", lines, collapse = "\n")), domain = NA) at read.dcf.R#49
+5: read.dcf(lines = lines[2:(br - 1)], all = all) at readEML.R#105
+4: FUN(X[[i]], ...)
+3: lapply(att[w], make, bndry) at readEML.R#77
+2: mkAttachments(m, all = all) at readEML.R#28
+1: readEmailMsg("sample.eml")
+[41:35] 19> options(error = recover)
+[47:02] 20> m = readEmailMsg("sample.eml")
+Error in read.dcf(lines = lines[2:(br - 1)], all = all) : 
+  Invalid DCF format.
+Regular lines must have a tag.
+Offending lines start with:
+  --sAKGr6Tu023551.1416502513/imapssl.cs.ucdavis.ed
+
+Enter a frame number, or 0 to exit   
+
+1: readEmailMsg("sample.eml")
+2: readEML.R#28: mkAttachments(m, all = all)
+3: readEML.R#77: lapply(att[w], make, bndry)
+4: FUN(X[[i]], ...)
+5: readEML.R#105: read.dcf(lines = lines[2:(br - 1)], all = all)
+
+Selection: 5
+Enter an item from the menu, or 0 to exit
+Selection: Enter an item from the menu, or 0 to exit
+Selection: Enter an item from the menu, or 0 to exit
+Selection: Enter an item from the menu, or 0 to exit
+Selection: Enter an item from the menu, or 0 to exit
+Selection: Enter an item from the menu, or 0 to exit
+Selection: Enter an item from the menu, or 0 to exit
+Selection: Enter an item from the menu, or 0 to exit
+Selection: Called from: lapply(att[w], make, bndry)
+Browse[1]> Error during wrapup: object 'readEML.R' not found
+Error: no more error handlers available (recursive errors?); invoking 'abort' restart
+Browse[1]> Error during wrapup: object 'readEML.R' not found
+Error: no more error handlers available (recursive errors?); invoking 'abort' restart
+Browse[1]> Error during wrapup: could not find function "FUN"
+Error: no more error handlers available (recursive errors?); invoking 'abort' restart
+Browse[1]> Error during wrapup: object 'readEML.R' not found
+Error: no more error handlers available (recursive errors?); invoking 'abort' restart
+Browse[1]> 
+Enter a frame number, or 0 to exit   
+
+1: readEmailMsg("sample.eml")
+2: readEML.R#28: mkAttachments(m, all = all)
+3: readEML.R#77: lapply(att[w], make, bndry)
+4: FUN(X[[i]], ...)
+5: readEML.R#105: read.dcf(lines = lines[2:(br - 1)], all = all)
+
+Selection: Enter an item from the menu, or 0 to exit
+Selection: 5
+*** output flushed ***
+Browse[2]> ls()
+[1] "all"        "ctype"      "fields"     "file"       "ind"       
+[6] "keep.white" "lines"     
+Browse[2]> find("read.dcf")
+[1] ".GlobalEnv"   "package:base"
+Browse[2]> body()
+
+Browse[2]> all
+[1] TRUE
+Browse[2]> ind
+[1] 2
+Browse[2]> lines[2]
+[1] NA
+Browse[2]> head(lines)
+[1] "--sAKGr6Tu023551.1416502513/imapssl.cs.ucdavis.ed"
+Browse[2]> sys.call()
+eval(substitute(browser(skipCalls = skip), list(skip = 7 - which)), 
+    envir = sys.frame(which))
+Browse[2]> sys.calls()
+[[1]]
+readEmailMsg("sample.eml")
+
+[[2]]
+if(attachments)
+        mkAttachments(m, all = all)
+    else
+        m
+
+[[3]]
+attachments = lapply(att[w], make, bndry)
+
+[[4]]
+FUN(X[[i]], ...)
+
+[[5]]
+h = read.dcf(lines = lines[2:(br-1)], all = all)
+
+[[6]]
+stop(gettextf("Invalid DCF format.\nRegular lines must have a tag.\nOffending lines start with:\n%s", 
+            paste0("  ", lines, collapse = "\n")), domain = NA)
+
+[[7]]
+(function () 
+{
+    if (.isMethodsDispatchOn()) {
+        tState <- tracingState(FALSE)
+        on.exit(tracingState(tState))
+    }
+    calls <- sys.calls()
+    from <- 0L
+    n <- length(calls)
+    if (identical(sys.function(n), recover)) 
+        n <- n - 1L
+    for (i in rev(seq_len(n))) {
+        calli <- calls[[i]]
+        fname <- calli[[1L]]
+        if (!is.na(match(deparse(fname)[1L], c("methods::.doTrace", 
+            ".doTrace")))) {
+            from <- i - 1L
+            break
+        }
+    }
+    if (from == 0L) 
+        for (i in rev(seq_len(n))) {
+            calli <- calls[[i]]
+            fname <- calli[[1L]]
+            if (!is.name(fname) || is.na(match(as.character(fname), 
+                c("recover", "stop", "Stop")))) {
+                from <- i
+                break
+            }
+        }
+    if (from > 0L) {
+        if (!interactive()) {
+            try(dump.frames())
+            cat(gettext("recover called non-interactively; frames dumped, use debugger() to view\n"))
+            return(NULL)
+        }
+        calls <- limitedLabels(calls[1L:from])
+        repeat {
+            which <- menu(calls, title = "\nEnter a frame number, or 0 to exit  ")
+            if (which) 
+                eval(substitute(browser(skipCalls = skip), list(skip = 7 - 
+                  which)), envir = sys.frame(which))
+            else break
+        }
+    }
+    else cat(gettext("No suitable frames for recover()\n"))
+})()
+
+[[8]]
+eval(substitute(browser(skipCalls = skip), list(skip = 7 - which)), 
+    envir = sys.frame(which))
+
+[[9]]
+eval(substitute(browser(skipCalls = skip), list(skip = 7 - which)), 
+    envir = sys.frame(which))
+
+Browse[2]> 
+debug: which <- menu(calls, title = "\nEnter a frame number, or 0 to exit  ")
+Browse[3]> 
+
+Enter a frame number, or 0 to exit   
+
+1: readEmailMsg("sample.eml")
+2: readEML.R#28: mkAttachments(m, all = all)
+3: readEML.R#77: lapply(att[w], make, bndry)
+4: FUN(X[[i]], ...)
+5: readEML.R#105: read.dcf(lines = lines[2:(br - 1)], all = all)
+
+Selection: 4
+debug: if (which) eval(substitute(browser(skipCalls = skip), list(skip = 7 - 
+    which)), envir = sys.frame(which)) else break
+Browse[3]> ls()
+[1] "calli"  "calls"  "fname"  "from"   "i"      "n"      "tState"
+[8] "which" 
+Browse[3]> body()
+*** output flushed ***
+Browse[3]> 
+debug: eval(substitute(browser(skipCalls = skip), list(skip = 7 - which)), 
+    envir = sys.frame(which))
+Browse[3]> 
+Called from: stop(gettextf("Invalid DCF format.\nRegular lines must have a tag.\nOffending lines start with:\n%s", 
+    paste0("  ", lines, collapse = "\n")), domain = NA)
+Browse[3]> 
+debug: which <- menu(calls, title = "\nEnter a frame number, or 0 to exit  ")
+Browse[4]> 
+
+Enter a frame number, or 0 to exit   
+
+1: readEmailMsg("sample.eml")
+2: readEML.R#28: mkAttachments(m, all = all)
+3: readEML.R#77: lapply(att[w], make, bndry)
+4: FUN(X[[i]], ...)
+5: readEML.R#105: read.dcf(lines = lines[2:(br - 1)], all = all)
+
+Selection: 4
+debug: if (which) eval(substitute(browser(skipCalls = skip), list(skip = 7 - 
+    which)), envir = sys.frame(which)) else break
+Browse[4]> body()
+*** output flushed ***
+Browse[4]> 
+debug: eval(substitute(browser(skipCalls = skip), list(skip = 7 - which)), 
+    envir = sys.frame(which))
+Browse[4]> 
+Called from: stop(gettextf("Invalid DCF format.\nRegular lines must have a tag.\nOffending lines start with:\n%s", 
+    paste0("  ", lines, collapse = "\n")), domain = NA)
+Browse[4]> 
+debug: which <- menu(calls, title = "\nEnter a frame number, or 0 to exit  ")
+Browse[4]> 
+
+Enter a frame number, or 0 to exit   
+
+1: readEmailMsg("sample.eml")
+2: readEML.R#28: mkAttachments(m, all = all)
+3: readEML.R#77: lapply(att[w], make, bndry)
+4: FUN(X[[i]], ...)
+5: readEML.R#105: read.dcf(lines = lines[2:(br - 1)], all = all)
+
+Selection: 1
+debug: if (which) eval(substitute(browser(skipCalls = skip), list(skip = 7 - 
+    which)), envir = sys.frame(which)) else break
+Browse[4]> body()
+{
+    if (.isMethodsDispatchOn()) {
+        tState <- tracingState(FALSE)
+        on.exit(tracingState(tState))
+    }
+    calls <- sys.calls()
+    from <- 0L
+    n <- length(calls)
+    if (identical(sys.function(n), recover)) 
+        n <- n - 1L
+    for (i in rev(seq_len(n))) {
+        calli <- calls[[i]]
+        fname <- calli[[1L]]
+        if (!is.na(match(deparse(fname)[1L], c("methods::.doTrace", 
+            ".doTrace")))) {
+            from <- i - 1L
+            break
+        }
+    }
+    if (from == 0L) 
+        for (i in rev(seq_len(n))) {
+            calli <- calls[[i]]
+            fname <- calli[[1L]]
+            if (!is.name(fname) || is.na(match(as.character(fname), 
+                c("recover", "stop", "Stop")))) {
+                from <- i
+                break
+            }
+        }
+    if (from > 0L) {
+        if (!interactive()) {
+            try(dump.frames())
+            cat(gettext("recover called non-interactively; frames dumped, use debugger() to view\n"))
+            return(NULL)
+        }
+        calls <- limitedLabels(calls[1L:from])
+        repeat {
+            which <- menu(calls, title = "\nEnter a frame number, or 0 to exit  ")
+            if (which) 
+                eval(substitute(browser(skipCalls = skip), list(skip = 7 - 
+                  which)), envir = sys.frame(which))
+            else break
+        }
+    }
+    else cat(gettext("No suitable frames for recover()\n"))
+}
+Browse[4]> 
+debug: eval(substitute(browser(skipCalls = skip), list(skip = 7 - which)), 
+    envir = sys.frame(which))
+Browse[4]> 
+Called from: lapply(att[w], make, bndry)
+Browse[4]> 
+debug: which <- menu(calls, title = "\nEnter a frame number, or 0 to exit  ")
+Browse[4]> 
+
+Enter a frame number, or 0 to exit   
+
+1: readEmailMsg("sample.eml")
+2: readEML.R#28: mkAttachments(m, all = all)
+3: readEML.R#77: lapply(att[w], make, bndry)
+4: FUN(X[[i]], ...)
+5: readEML.R#105: read.dcf(lines = lines[2:(br - 1)], all = all)
+
+Selection: 0
+debug: if (which) eval(substitute(browser(skipCalls = skip), list(skip = 7 - 
+    which)), envir = sys.frame(which)) else break
+Browse[4]> Q
+[39:42] 33> readEmailMsg("sample.eml")
+Error in read.dcf(lines = lines[2:(br - 1)], all = all) : 
+  Invalid DCF format.
+Regular lines must have a tag.
+Offending lines start with:
+  --sAKGr6Tu023551.1416502513/imapssl.cs.ucdavis.ed
+
+Enter a frame number, or 0 to exit   
+
+1: readEmailMsg("sample.eml")
+2: readEML.R#28: mkAttachments(m, all = all)
+3: readEML.R#77: lapply(att[w], make, bndry)
+4: FUN(X[[i]], ...)
+5: readEML.R#105: read.dcf(lines = lines[2:(br - 1)], all = all)
+
+Selection: 4
+Called from: stop(gettextf("Invalid DCF format.\nRegular lines must have a tag.\nOffending lines start with:\n%s", 
+    paste0("  ", lines, collapse = "\n")), domain = NA)
+Browse[1]> ls()
+[1] "all"      "boundary" "br"       "lines"   
+Browse[1]> 
+Browse[1]> lines
+ [1] "--sAKGr6Tu023551.1416502513/imapssl.cs.ucdavis.edu"                        
+ [2] ""                                                                          
+ [3] "The original message was received at Sat, 15 Nov 2014 08:41:01 -0800 (PST)"
+ [4] "from baton.cs.ucdavis.edu [169.237.6.6]"                                   
+ [5] ""                                                                          
+ [6] "   ----- The following addresses had permanent fatal errors -----"         
+ [7] "\\n"                                                                       
+ [8] "    (reason: Deferred)"                                                    
+ [9] "    (expanded from: <n@imapssl.cs.ucdavis.edu>)"                           
+[10] ""                                                                          
+[11] "   ----- Transcript of session follows -----"                              
+[12] "procmail: Error while writing to \"/var/mail/n\""                          
+[13] "\\n... Deferred: local mailer (/usr/bin/procmail) exited with EX_TEMPFAIL" 
+[14] "Message could not be delivered for 5 days"                                 
+[15] "Message will be deleted from queue"                                        
+[16] ""                                                                          
+Browse[1]> body()
+{
+    if (lines[1] == paste0(boundary, "--") & length(lines[lines != 
+        ""]) == 1) 
+        return(NULL)
+    br = which(lines == "")[1]
+    h = read.dcf(lines = lines[2:(br - 1)], all = all)
+    list(header = h, body = lines[-(1:br)])
+}
+Browse[1]> br
+[1] 2
+Browse[1]> br
+[1] 2
+Browse[1]> c
+
+Enter a frame number, or 0 to exit   
+
+1: readEmailMsg("sample.eml")
+2: readEML.R#28: mkAttachments(m, all = all)
+3: readEML.R#77: lapply(att[w], make, bndry)
+4: FUN(X[[i]], ...)
+5: readEML.R#105: read.dcf(lines = lines[2:(br - 1)], all = all)
+
+Selection: 5
+*** output flushed ***
+Browse[2]> ls()
+[1] "all"        "ctype"      "fields"     "file"       "ind"       
+[6] "keep.white" "lines"     
+Browse[2]> c
+debug: which <- menu(calls, title = "\nEnter a frame number, or 0 to exit  ")
+Browse[3]> c
+
+Enter a frame number, or 0 to exit   
+
+1: readEmailMsg("sample.eml")
+2: readEML.R#28: mkAttachments(m, all = all)
+3: readEML.R#77: lapply(att[w], make, bndry)
+4: FUN(X[[i]], ...)
+5: readEML.R#105: read.dcf(lines = lines[2:(br - 1)], all = all)
+
+Selection: 4
+Called from: stop(gettextf("Invalid DCF format.\nRegular lines must have a tag.\nOffending lines start with:\n%s", 
+    paste0("  ", lines, collapse = "\n")), domain = NA)
+Browse[2]> ls()
+[1] "all"      "boundary" "br"       "lines"   
+Browse[2]> c
+
+Enter a frame number, or 0 to exit   
+
+1: readEmailMsg("sample.eml")
+2: readEML.R#28: mkAttachments(m, all = all)
+3: readEML.R#77: lapply(att[w], make, bndry)
+4: FUN(X[[i]], ...)
+5: readEML.R#105: read.dcf(lines = lines[2:(br - 1)], all = all)
+
+Selection: 3
+Called from: read.dcf(lines = lines[2:(br - 1)], all = all)
+Browse[2]> ls()
+[1] "FUN" "i"   "X"  
+Browse[2]> c
+
+Enter a frame number, or 0 to exit   
+
+1: readEmailMsg("sample.eml")
+2: readEML.R#28: mkAttachments(m, all = all)
+3: readEML.R#77: lapply(att[w], make, bndry)
+4: FUN(X[[i]], ...)
+5: readEML.R#105: read.dcf(lines = lines[2:(br - 1)], all = all)
+
+Selection: 1
+Called from: lapply(att[w], make, bndry)
+Browse[3]> ls()
+[1] "all"         "attachments" "br"          "f"          
+[5] "hdr"         "m"           "x"          
+Browse[3]> c
+
+Enter a frame number, or 0 to exit   
+
+1: readEmailMsg("sample.eml")
+2: readEML.R#28: mkAttachments(m, all = all)
+3: readEML.R#77: lapply(att[w], make, bndry)
+4: FUN(X[[i]], ...)
+5: readEML.R#105: read.dcf(lines = lines[2:(br - 1)], all = all)
+
+Selection: 1
+Called from: lapply(att[w], make, bndry)
+Browse[4]> ls()
+[1] "all"         "attachments" "br"          "f"          
+[5] "hdr"         "m"           "x"          
+Browse[4]> body()
+{
+    br = which(x == "")[1]
+    if (is.na(br)) 
+        return(x)
+    hdr = read.dcf(f, all = all, lines = x[1:br])
+    m = list(header = hdr, body = x[-(1:br)])
+    if (attachments) 
+        mkAttachments(m, all = all)
+    else m
+}
+Browse[4]> m$body
+*** output flushed ***
+Browse[4]> c
+
+Enter a frame number, or 0 to exit   
+
+1: readEmailMsg("sample.eml")
+2: readEML.R#28: mkAttachments(m, all = all)
+3: readEML.R#77: lapply(att[w], make, bndry)
+4: FUN(X[[i]], ...)
+5: readEML.R#105: read.dcf(lines = lines[2:(br - 1)], all = all)
+
+Selection: 0
+[05:50] 46> pi = 3
+[31:14] 47> isR
+Error: object 'isR' not found
+No suitable frames for recover()
+[31:14] 47> is.R
+function () 
+exists("version") && !is.null(vl <- version$language) && vl == 
+    "R"
+<bytecode: 0x7fee8849fa10>
+<environment: namespace:base>
+[31:25] 48> version = "1.0"
+[31:31] 49> base::version
+*** output flushed ***
+[31:36] 50> debug(is.R)
+[31:43] 51> is.R()
+debugging in: is.R()
+debug: exists("version") && !is.null(vl <- version$language) && vl == 
+    "R"
+Browse[2]> version
+*** output flushed ***
+Browse[2]> c
+exiting from: is.R()
+[1] TRUE
+[47:23] 53> env
+Error: object 'env' not found
+No suitable frames for recover()
+[47:23] 53> as.list(1)
+[[1]]
+[1] 1
+
+[12:23] 54> as.numeric(list(1, 2))
+[1] 1 2
+[12:39] 55> library(dplyr); library(tidyr); library(stringr)
+*** output flushed ***
+[16:25] 58> separate_rows
+function (data, ..., sep = "[^[:alnum:].]+", convert = FALSE) 
+{
+    ellipsis::check_dots_unnamed()
+    UseMethod("separate_rows")
+}
+<environment: namespace:tidyr>
+[16:32] 59> ?separate_rows
+WARNING: terminal is not fully functional
+-  (press RETURN)
+separate_rows              package:tidyr               R Documentation
+
+Separate a collapsed column into multiple rows
+
+Description:
+
+     If a variable contains observations with multiple delimited
+     values, this separates the values and places each one in its own
+     row.
+
+Usage:
+
+     separate_rows(data, ..., sep = "[^[:alnum:].]+", convert = FALSE)
+     
+Arguments:
+
+    data: A data frame.
+
+     ...: <‘tidy-select’> Columns to separate across multiple rows
+
+:q
+[16:45] 60> 
+[16:45] 60> separate_rows("a;b;c", sep = ";")
+Error in UseMethod("separate_rows") : 
+  no applicable method for 'separate_rows' applied to an object of class "character"
+
+Enter a frame number, or 0 to exit   
+
+1: separate_rows("a;b;c", sep = ";")
+
+Selection: 0
+[16:45] 60> separate_rows(data.frame(x = "a;b;c"), x, sep = ";")
+# A tibble: 3 × 1
+  x    
+  <chr>
+1 a    
+2 b    
+3 c    
+[17:13] 61> separate_rows(data.frame(x = "a;b;c", y = "x;y"), c(x, y), sep = ";")
+Error: In row 1, can't recycle input of size 3 to size 2.
+Run `rlang::last_error()` to see where the error occurred.
+
+Enter a frame number, or 0 to exit   
+
+1: separate_rows(data.frame(x = "a;b;c", y = "x;y"), c(x, y), sep = 
+2: separate_rows.data.frame(data.frame(x = "a;b;c", y = "x;y"), c(x,
+3: unchop(as_tibble(out), any_of(vars))
+4: df_unchop(cols, ptype = ptype, keep_empty = keep_empty)
+5: reduce(x_sizes, unchop_sizes2)
+6: reduce_impl(.x, .f, ..., .init = .init, .dir = .dir)
+7: fn(out, elt, ...)
+8: abort(glue("In row {row}, can't recycle input of size {x} to size
+9: signal_abort(cnd)
+
+Selection: 0
+[17:13] 61> 
+# A tibble: 3 × 2
+  x     y    
+  <chr> <chr>
+1 a     x    
+2 b     y    
+3 c     z    
+[29:10] 62> separate_rows(data.frame(x = c("a;b;c", "1;2"), y = c("x;y;z", "101;109"), c(x, y), sep = ";")
++ )  C-c C-c^C
+No suitable frames for recover()
+[29:10] 62> separate_rows(data.frame(x = c("a;b;c", "1;2"), y = c("x;y;z", "101;109")), c(x, y), sep = ";")
+# A tibble: 5 × 2
+  x     y    
+  <chr> <chr>
+1 a     x    
+2 b     y    
+3 c     z    
+4 1     101  
+5 2     109  
+[31:05] 63> iris
+*** output flushed ***
+[31:29] 64> source("../varnames.R")
+[32:28] 65>     current_values(mtcars, c("mpg", "wt") )
+Error: Can't subset columns that don't exist.
+✖ Column `item` doesn't exist.
+Run `rlang::last_error()` to see where the error occurred.
+
+Enter a frame number, or 0 to exit   
+
+ 1: current_values(mtcars, c("mpg", "wt"))
+ 2: varnames.R#20: df %>% select(item = {
+    {
+        id
+    }
+}) %>% s
+ 3: arrange(., item)
+ 4: distinct(.)
+ 5: mutate(., item = str_trim(item))
+ 6: separate_rows(., item, sep = ";")
+ 7: separate_rows.data.frame(., item, sep = ";")
+ 8: tidyselect::eval_select(expr(c(...)), data)
+ 9: eval_select_impl(data, names(data), as_quosure(expr, env), includ
+10: with_subscript_errors(vars_select_eval(vars, expr, strict, data =
+11: tryCatch(instrument_base_errors(expr), vctrs_error_subscript = fu
+12: tryCatchList(expr, classes, parentenv, handlers)
+13: tryCatchOne(expr, names, parentenv, handlers[[1]])
+14: value[[3]](cond)
+15: cnd_signal(cnd)
+16: rlang:::signal_abort(x)
+
+Selection: 
+Enter an item from the menu, or 0 to exit
+Selection: 0
+[32:28] 65> 
+[32:28] 65> 
+[32:28] 65> 
+[32:28] 65> 
+[32:28] 65> source("rw1.R")
+[45:58] 66> ls()
+ [1] "current_values"    "d"                 "getAttachmentName"
+ [4] "getContentType"    "ghis"              "mkAttachment"     
+ [7] "mkAttachment.orig" "mkAttachments"     "mkDateTime"       
+[10] "mkInfoDF"          "pi"                "read.dcf"         
+[13] "readDCF"           "readEmailMsg"      "readEmailMsg.orig"
+[16] "readHeader"        "readMessages"      "rw2d1"            
+[19] "rw2d2"             "rw2d2.5"           "rw2d3"            
+[22] "rw2d4"             "rw2d5"             "saveAttachment"   
+[25] "version"          
+[45:59] 67> 
+[46:28] 68> rw2d1(N)
+  C-c C-c^C
+
+Enter a frame number, or 0 to exit   
+
+1: rw2d1(N)
+
+Selection: 0
+[46:28] 68> z = rw2d1(N)
+[46:41] 69> [46:41] 69> profile
+*** output flushed ***
+[46:51] 70> profile = function(expr){ Rprof(tf <- tempfile()) ; expr; Rprof(NULL); summaryRprof(tf)}
+[47:05] 71> system.time(rw2d1(N))
+   user  system elapsed 
+  2.523   0.023   2.561 
+[47:37] 72> system.time(profile(rw2d1(N)))
+
+[48:05] 73> system.time(p<-profile(rw2d1(N)))
+   user  system elapsed 
+  2.570   0.031   2.618 
+[48:20] 74> head(p$by.self, 20)
+             self.time self.pct total.time total.pct
+"sample.int"      1.54    64.17       1.70     70.83
+"sample"          0.46    19.17       2.18     90.83
+"rw2d1"           0.22     9.17       2.40    100.00
+"/"               0.04     1.67       0.04      1.67
+">"               0.04     1.67       0.04      1.67
+"is.null"         0.04     1.67       0.04      1.67
+"!"               0.02     0.83       0.02      0.83
+"<="              0.02     0.83       0.02      0.83
+"length"          0.02     0.83       0.02      0.83
+[48:32] 75> 
+[49:20] 76> 
+[49:20] 76> system.time(p<-profile(rw2d2(N)))
+   user  system elapsed 
+  1.242   0.048   1.296 
+[51:29] 77> head(p$by.self, 20)
+
+[51:35] 78> system.time(p<-profile(rw2d2.5(N)))
+   user  system elapsed 
+  0.086   0.001   0.088 
+[52:35] 79> system.time(p<-profile(rw2d3(N)))
+   user  system elapsed 
+  0.036   0.004   0.041 
+[23:23] 80> system.time(p<-profile(rw2d4(N)))
+   user  system elapsed 
+  0.033   0.002   0.036 
+[23:31] 81> system.time(p<-profile(rw2d5(N)))
+   user  system elapsed 
+  0.015   0.000   0.016 
+[23:45] 82> 2.561/.016
+[1] 160.0625
+[29:01] 83> e = new.env()
+[39:00] 84> source("rw1.R", e)
+[39:09] 85> as.list(e)
+*** output flushed ***
+[39:15] 86> names(as.list(e))
+[1] "rw2d1"   "rw2d2"   "rw2d3"   "rw2d4"   "rw2d2.5" "rw2d5"  
+[39:19] 87> tm = lapply(as.list(e), function(f) system.time(f(N)))
+[40:13] 88> tm
+$rw2d1
+   user  system elapsed 
+  2.879   0.021   2.916 
+
+$rw2d2
+   user  system elapsed 
+  1.762   0.022   1.794 
+
+$rw2d3
+   user  system elapsed 
+  0.032   0.003   0.035 
+
+$rw2d4
+   user  system elapsed 
+  0.030   0.000   0.031 
+
+$rw2d2.5
+   user  system elapsed 
+  0.480   0.003   0.485 
+
+$rw2d5
+   user  system elapsed 
+  0.014   0.000   0.013 
+
+[40:16] 89> sapply(tm, `[`, 3)
+  rw2d1.elapsed   rw2d2.elapsed   rw2d3.elapsed   rw2d4.elapsed 
+          2.916           1.794           0.035           0.031 
+rw2d2.5.elapsed   rw2d5.elapsed 
+          0.485           0.013 
+[42:46] 90> e = new.env()
+source("rw1.R", e)
+tm = lapply(as.list(e), function(f) system.time(f(N)))
+o = order(as.numeric(gsub("rw2d", "", names(tm))))
+tm = tm[o]
+e = sapply(tm, `[`, 3)
+plot(e)
+[44:32] 91> [44:32] 92> 
+[44:38] 93> [44:38] 94> [44:38] 95> [44:38] 96> [44:38] 97> [44:38] 97> 
+[44:38] 97> tm
+$rw2d1
+   user  system elapsed 
+  2.897   0.020   2.933 
+
+$rw2d2
+   user  system elapsed 
+  1.839   0.025   1.875 
+
+$rw2d2.5
+   user  system elapsed 
+  0.493   0.004   0.499 
+
+$rw2d3
+   user  system elapsed 
+  0.031   0.001   0.031 
+
+$rw2d4
+   user  system elapsed 
+  0.031   0.001   0.031 
+
+$rw2d5
+   user  system elapsed 
+  0.013   0.000   0.013 
+
+[45:14] 98> e
+  rw2d1.elapsed   rw2d2.elapsed rw2d2.5.elapsed   rw2d3.elapsed 
+          2.933           1.875           0.499           0.031 
+  rw2d4.elapsed   rw2d5.elapsed 
+          0.031           0.013 
+[45:19] 99> rapply(tm, function(a, b) a/b)
+Error in (function (a, b)  : argument "b" is missing, with no default
+
+Enter a frame number, or 0 to exit   
+
+1: rapply(tm, function(a, b) a/b)
+2: (function (a, b) 
+a/b)(X, ...)
+
+Selection: 0
+[45:19] 99> ?rapply
+WARNING: terminal is not fully functional
+-  (press RETURN)
+rapply                  package:base                   R Documentation
+
+Recursively Apply a Function to a List
+
+Description:
+
+     ‘rapply’ is a recursive version of ‘lapply’ with flexibility in
+     _how_ the result is structured (‘how = ".."’).
+
+Usage:
+
+     rapply(object, f, classes = "ANY", deflt = NULL,
+            how = c("unlist", "replace", "list"), ...)
+     
+Arguments:
+
+  object: a ‘list’ or ‘expression’, i.e., “list-like”.
+
+       f: a ‘function’ of one “principal” argument, passing further
+          arguments via ‘...’.
+: 
+
+ classes: character vector of ‘class’ names, or ‘"ANY"’ to match any
+          class.
+
+   deflt: The default result (not used if ‘how = "replace"’).
+
+     how: character string partially matching the three possibilities
+          given: see ‘Details’.
+
+     ...: additional arguments passed to the call to ‘f’.
+
+Details:
+
+     This function has two basic modes.  If ‘how = "replace"’, each
+     element of ‘object’ which is not itself list-like and has a class
+     included in ‘classes’ is replaced by the result of applying ‘f’ to
+     the element.
+
+     Otherwise, with mode ‘how = "list"’ or ‘how = "unlist"’,
+     conceptually ‘object’ is copied, all non-list elements which have
+     a class included in ‘classes’ are replaced by the result of
+:q
+[46:09] 100> 
+[46:09] 100> 
+[46:09] 100> mapply(`/`, e[1:(length(e)-1)], [2:length(e)])
+Error: unexpected '[' in "mapply(`/`, e[1:(length(e)-1)], ["
+No suitable frames for recover()
+[46:09] 100> mapply(`/`, e[1:(length(e)-1)], e[2:length(e)])
+  rw2d1.elapsed   rw2d2.elapsed rw2d2.5.elapsed   rw2d3.elapsed 
+       1.564267        3.757515       16.096774        1.000000 
+  rw2d4.elapsed 
+       2.384615 
+[47:00] 101> e
+  rw2d1.elapsed   rw2d2.elapsed rw2d2.5.elapsed   rw2d3.elapsed 
+          2.933           1.875           0.499           0.031 
+  rw2d4.elapsed   rw2d5.elapsed 
+          0.031           0.013 
+[47:36] 102> mapply(`/`, e[1:(length(e)-1)], e[2:length(e)])
+*** output flushed ***
+[53:48] 103> q()
+Save workspace image? [y/n/c]: n
+]0;Debugging~/RFundamentals/Debugging> cd ..
+]0;RFundamentals~/RFundamentals> git mv Debugging Day5
+]0;RFundamentals~/RFundamentals> ls Day5
+EgStackTrace  Prof.md  R2llvm/  eg1.R  read.dcf.R  readEML.R  rw1.R  sample.eml  simple.R
+]0;RFundamentals~/RFundamentals> cd Day5/
+]0;Day5~/RFundamentals/Day5> s
+bash: s: command not found
+]0;Day5~/RFundamentals/Day5> ls Rl
+ls: cannot access 'Rl': No such file or directory
+]0;Day5~/RFundamentals/Day5>cd R2llvm/
+]0;R2llvm~/RFundamentals/Day5/R2llvm> ls
+]0;R2llvm~/RFundamentals/Day5/R2llvm> cd ..
+]0;Day5~/RFundamentals/Day5> git rm R2llvm/
+error: the following file has changes staged in the index:
+    Day5/R2llvm
+(use --cached to keep the file, or -f to force removal)
+]0;Day5~/RFundamentals/Day5> git rm - R2llvm/
+fatal: pathspec '-' did not match any files
+]0;Day5~/RFundamentals/Day5> git rm -f R2llvm/
+rm 'Day5/R2llvm'
+]0;Day5~/RFundamentals/Day5> ls
+EgStackTrace  Prof.md  eg1.R  read.dcf.R  readEML.R  rw1.R  sample.eml  simple.R
+]0;Day5~/RFundamentals/Day5> R
+
+R Under development (unstable) (2021-10-20 r81081) -- "Unsuffered Consequences"
+Copyright (C) 2021 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin19.0.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+PID = 2161 
+Time = 2022-02-25 09:41:43 
+Dir = /Users/duncan/RFundamentals/Day5 
+1> ls()
+character(0)
+[45:49] 2> source("readEML.R")
+[45:52] 3> ls()
+[1] "getAttachmentName" "getContentType"    "mkAttachment"     
+[4] "mkAttachments"     "mkDateTime"        "mkInfoDF"         
+[7] "readEmailMsg"      "readMessages"      "saveAttachment"   
+[45:56] 4> readEmailMsg("sample.eml")
+Error in read.dcf(f, all = all, lines = x[1:br]) : 
+  unused argument (lines = x[1:br])
+
+Enter a frame number, or 0 to exit   
+
+1: readEmailMsg("sample.eml")
+
+Selection: 0
+[45:56] 4> find("read.dcf")
+[1] "package:base"
+[48:05] 5> options()$error
+*** output flushed ***
+[48:40] 6> options(error = recover)
+[48:59] 7> readEmailMsg("sample.eml")
+Error in read.dcf(f, all = all, lines = x[1:br]) : 
+  unused argument (lines = x[1:br])
+
+Enter a frame number, or 0 to exit   
+
+1: readEmailMsg("sample.eml")
+
+Selection: 0
+[48:59] 7> readEmailMsg("sample.eml")
+Error in read.dcf(f, all = all, lines = x[1:br]) : 
+  unused argument (lines = x[1:br])
+
+Enter a frame number, or 0 to exit   
+
+1: readEmailMsg("sample.eml")
+
+Selection: 1
+Called from: top level 
+Browse[1]> body()
+{
+    br = which(x == "")[1]
+    if (is.na(br)) 
+        return(x)
+    hdr = read.dcf(f, all = all, lines = x[1:br])
+    m = list(header = hdr, body = x[-(1:br)])
+    if (attachments) 
+        mkAttachments(m, all = all)
+    else m
+}
+Browse[1]>  ls()
+[1] "all"         "attachments" "br"          "f"          
+[5] "x"          
+Browse[1]> match.call(read.dcf, quote( read.dcf(f, all = all, lines = x[1:br]) ))
+Error during wrapup: unused argument (lines = x[1:br])
+Error: no more error handlers available (recursive errors?); invoking 'abort' restart
+Browse[1]> formals(read.dcf)
+*** output flushed ***
+Browse[1]> names(formals(read.dcf))
+[1] "file"       "fields"     "all"        "keep.white"
+Browse[1]> Q
+[55:21] 11> find("read.dcf")
+[1] "package:base"
+[55:42] 12> source("read.dcf.R")
+[55:45] 13> find("read.dcf")
+*** output flushed ***
+[55:49] 14> readEmailMsg("sample.eml")
+Error in read.dcf(lines = lines[2:(br - 1)], all = all) : 
+  Invalid DCF format.
+Regular lines must have a tag.
+Offending lines start with:
+  --sAKGr6Tu023551.1416502513/imapssl.cs.ucdavis.ed
+
+Enter a frame number, or 0 to exit   
+
+1: readEmailMsg("sample.eml")
+2: readEML.R#10: mkAttachments(m, all = all)
+3: readEML.R#41: lapply(att[w], make, bndry)
+4: FUN(X[[i]], ...)
+5: readEML.R#56: read.dcf(lines = lines[2:(br - 1)], all = all)
+
+Selection: 5
+*** output flushed ***
+Browse[1]> ls()
+[1] "all"        "ctype"      "fields"     "file"       "ind"       
+[6] "keep.white" "lines"     
+Browse[1]> body()
+{
+    if (missing(lines)) {
+        if (is.character(file)) {
+            file <- gzfile(file)
+            on.exit(close(file))
+        }
+        if (!inherits(file, "connection")) 
+            stop("'file' must be a character string or connection")
+    }
+    else file = textConnection(lines, local = TRUE, name = "bob")
+    if (!all) 
+        return(.Internal(readDCF(file, fields, keep.white)))
+    .assemble_things_into_a_data_frame <- function(tags, vals, 
+        nums) {
+        tf <- factor(tags, levels = unique(tags))
+        cnts <- table(nums, tf)
+        out <- array(NA_character_, dim = dim(cnts), dimnames = list(NULL, 
+            levels(tf)))
+        if (all(cnts <= 1L)) {
+            out[cbind(nums, tf)] <- vals
+            out <- as.data.frame(out, optional = TRUE, stringsAsFactors = FALSE)
+        }
+        else {
+            levs <- colSums(cnts > 1L) == 0L
+            if (any(levs)) {
+                inds <- tf %in% levels(tf)[levs]
+                out[cbind(nums[inds], tf[inds])] <- vals[inds]
+            }
+            out <- as.data.frame(out, optional = TRUE, stringsAsFactors = FALSE)
+            for (l in levels(tf)[!levs]) {
+                out[[l]] <- rep.int(list(NA_character_), nrow(cnts))
+                i <- tf == l
+                out[[l]][unique(nums[i])] <- split(vals[i], nums[i])
+            }
+        }
+        out
+    }
+    ctype <- Sys.getlocale("LC_CTYPE")
+    on.exit(Sys.setlocale("LC_CTYPE", ctype), add = TRUE)
+    Sys.setlocale("LC_CTYPE", "C")
+    ind <- grep("^[^[:blank:]][^:]*$", lines)
+    if (length(ind)) {
+        lines <- substr(lines[ind], 1L, 0.7 * getOption("width"))
+        stop(gettextf("Invalid DCF format.\nRegular lines must have a tag.\nOffending lines start with:\n%s", 
+            paste0("  ", lines, collapse = "\n")), domain = NA)
+    }
+    line_is_not_empty <- !grepl("^[[:space:]]*$", lines)
+    nums <- cumsum(diff(c(FALSE, line_is_not_empty) > 0L) > 0L)
+    nums <- nums[line_is_not_empty]
+    lines <- lines[line_is_not_empty]
+    line_is_escaped_blank <- grepl("^[[:space:]]+\\.[[:space:]]*$", 
+        lines)
+    if (any(line_is_escaped_blank)) 
+        lines[line_is_escaped_blank] <- ""
+    line_has_tag <- grepl("^[^[:blank:]][^:]*:", lines)
+    pos <- c(1L, which(diff(nums) > 0L) + 1L)
+    ind <- !line_has_tag[pos]
+    if (any(ind)) {
+        lines <- substr(lines[pos[ind]], 1L, 0.7 * getOption("width"))
+        stop(gettextf("Invalid DCF format.\nContinuation lines must not start a record.\nOffending lines start with:\n%s", 
+            paste0("  ", lines, collapse = "\n")), domain = NA)
+    }
+    lengths <- rle(cumsum(line_has_tag))$lengths
+    pos <- cumsum(lengths)
+    tags <- sub(":.*", "", lines[line_has_tag])
+    lines[line_has_tag] <- sub("[^:]*:[[:space:]]*", "", lines[line_has_tag])
+    fold <- is.na(match(tags, keep.white))
+    foldable <- rep.int(fold, lengths)
+    lines[foldable] <- sub("^[[:space:]]*", "", lines[foldable])
+    lines[foldable] <- sub("[[:space:]]*$", "", lines[foldable])
+    vals <- mapply(function(from, to) paste(lines[from:to], collapse = "\n"), 
+        c(1L, pos[-length(pos)] + 1L), pos)
+    vals[fold] <- trimws(vals[fold])
+    out <- .assemble_things_into_a_data_frame(tags, vals, nums[pos])
+    if (!is.null(fields)) 
+        out <- out[fields]
+    out
+}
+Browse[1]> ls()
+[1] "all"        "ctype"      "fields"     "file"       "ind"       
+[6] "keep.wahite" "lines"     
+Browse[1]> all
+[1] TRUE
+Browse[1]> ind
+[1] 2
+Browse[1]> length(lines)
+[1] 1
+Browse[1]> lines[ind]
+[1] NA
+Browse[1]> lines
+[1] "--sAKGr6Tu023551.1416502513/imapssl.cs.ucdavis.ed"
+Browse[1]> 
+debug: which <- menu(calls, title = "\nEnter a frame number, or 0 to exit  ")
+Browse[2]> c
+
+Enter a frame number, or 0 to exit   
+
+1: readEmailMsg("sample.eml")
+2: readEML.R#10: mkAttachments(m, all = all)
+3: readEML.R#41: lapply(att[w], make, bndry)
+4: FUN(X[[i]], ...)
+5: readEML.R#56: read.dcf(lines = lines[2:(br - 1)], all = all)
+
+Selection: 4
+Called from: stop(gettextf("Invalid DCF format.\nRegular lines must have a tag.\nOffending lines start with:\n%s", 
+    paste0("  ", lines, collapse = "\n")), domain = NA)
+Browse[1]> body()
+{
+    if (lines[1] == paste0(boundary, "--") & length(lines[lines != 
+        ""]) == 1) 
+        return(NULL)
+    br = which(lines == "")[1]
+    h = read.dcf(lines = lines[2:(br - 1)], all = all)
+    list(header = h, body = lines[-(1:br)])
+}
+Browse[1]> br
+[1] 2
+Browse[1]> lines
+ [1] "--sAKGr6Tu023551.1416502513/imapssl.cs.ucdavis.edu"                        
+ [2] ""                                                                          
+ [3] "The original message was received at Sat, 15 Nov 2014 08:41:01 -0800 (PST)"
+ [4] "from baton.cs.ucdavis.edu [169.237.6.6]"                                   
+ [5] ""                                                                          
+ [6] "   ----- The following addresses had permanent fatal errors -----"         
+ [7] "\\n"                                                                       
+ [8] "    (reason: Deferred)"                                                    
+ [9] "    (expanded from: <n@imapssl.cs.ucdavis.edu>)"                           
+[10] ""                                                                          
+[11] "   ----- Transcript of session follows -----"                              
+[12] "procmail: Error while writing to \"/var/mail/n\""                          
+[13] "\\n... Deferred: local mailer (/usr/bin/procmail) exited with EX_TEMPFAIL" 
+[14] "Message could not be delivered for 5 days"                                 
+[15] "Message will be deleted from queue"                                        
+[16] ""                                                                          
+Browse[1]> 2:(br-1)
+[1] 2 1
+Browse[1]> body()
+{
+    if (lines[1] == paste0(boundary, "--") & length(lines[lines != 
+        ""]) == 1) 
+        return(NULL)
+    br = which(lines == "")[1]
+    h = read.dcf(lines = lines[2:(br - 1)], all = all)
+    list(header = h, body = lines[-(1:br)])
+}
+Browse[1]> br
+[1] 2
+Browse[1]> Q
+[08:13] 28> source("readEML.R")
+[08:50] 29> readEmailMsg("sample.eml")
+Error in FUN(X[[i]], ...) : object 'h' not found
+
+Enter a frame number, or 0 to exit   
+
+1: readEmailMsg("sample.eml")
+2: readEML.R#10: mkAttachments(m, all = all)
+3: readEML.R#41: lapply(att[w], make, bndry)
+4: FUN(X[[i]], ...)
+
+Selection: 0
+[08:50] 29> h = 2
+[09:37] 30> h = pi
+[09:39] 31> readEmailMsg("sample.eml")
+*** output flushed ***
+[09:44] 32> source("readEML.R")
+[11:39] 33> debug(mkAttachment)
+[11:55] 34> readEmailMsg("sample.eml")
+debugging in: FUN(X[[i]], ...)
+debug at readEML.R#49: {
+    if (lines[1] == paste0(boundary, "--") & length(lines[lines != 
+        ""]) == 1) 
+        return(NULL)
+    br = which(lines == "")[1]
+    if (br > 2) 
+        h = read.dcf(lines = lines[2:(br - 1)], all = all)
+    list(header = h, body = lines[-(1:br)])
+}
+Browse[2]> sys.calls()
+[[1]]
+readEmailMsg("sample.eml")
+
+[[2]]
+if(attachments)
+        mkAttachments(m, all = all)
+    else
+        m
+
+[[3]]
+attachments = lapply(att[w], make, bndry)
+
+[[4]]
+FUN(X[[i]], ...)
+
+Browse[2]> n
+debug at readEML.R#51: if (lines[1] == paste0(boundary, "--") & length(lines[lines != 
+    ""]) == 1) return(NULL)
+Browse[2]> n
+debug at readEML.R#54: br = which(lines == "")[1]
+Browse[2]> 
+debug at readEML.R#57: if (br > 2) h = read.dcf(lines = lines[2:(br - 1)], all = all)
+Browse[2]> 
+debug at readEML.R#60: list(header = h, body = lines[-(1:br)])
+Browse[2]> h
+[1] 3.141593
+Browse[2]> ls()
+[1] "all"      "boundary" "br"       "lines"   
+Browse[2]> cf = sys.frame(sys.nframe())
+Browse[2]> parent.env(cf)
+<environment: R_GlobalEnv>
+Browse[2]> ls(parent.env(cf))
+ [1] "getAttachmentName" "getContentType"    "h"                
+ [4] "mkAttachment"      "mkAttachments"     "mkDateTime"       
+ [7] "mkInfoDF"          "read.dcf"          "readEmailMsg"     
+[10] "readMessages"      "saveAttachment"   
+Browse[2]> Q
+[14:34] 40> codetools::findGlobals(mkAttachment, FALSE)
+$functions
+ [1] "-"        ":"        "!="       "("        "["        "{"       
+ [7] "&"        "="        "=="       ">"        "if"       "length"  
+[13] "list"     "paste0"   "read.dcf" "return"   "which"   
+
+$variables
+character(0)
+
+[15:15] 41> library(CodeAnalysis)
+[15:36] 42> getGlobals(mkAttachment)$variables
+character(0)
+[15:48] 43> x = 1:10
+[22:30] 44> x = c()
+[22:58] 45> 1:length(x)
+[1] 1 0
+[23:01] 46> seq(along.with = x)
+integer(0)
+[23:13] 47> x = 1:10
+[23:17] 48> seq(along.with = x)
+ [1]  1  2  3  4  5  6  7  8  9 10
+[23:18] 49> seq_len(x)
+[1] 1
+Warning message:
+In seq_len(x) : first element used of 'length.out' argument
+[23:32] 50> readEmailMsg
+function(f, x = readLines(f, warn = FALSE), attachments = TRUE, all = TRUE)
+{
+    br = which(x == "")[1]
+    if(is.na(br)) return(x)
+    hdr = read.dcf(f, all = all, lines = x[1:br])
+    m = list(header = hdr, body = x[-(1:br)])
+    if(attachments)
+        mkAttachments(m, all = all)
+    else
+        m
+}
+[40:12] 51> formals(readEmailMsg)
+$f
+
+
+$x
+readLines(f, warn = FALSE)
+
+$attachments
+[1] TRUE
+
+$all
+[1] TRUE
+
+[40:24] 52> body(readEmailMsg)
+{
+    br = which(x == "")[1]
+    if (is.na(br)) 
+        return(x)
+    hdr = read.dcf(f, all = all, lines = x[1:br])
+    m = list(header = hdr, body = x[-(1:br)])
+    if (attachments) 
+        mkAttachments(m, all = all)
+    else m
+}
+[40:42] 53> body()
+{
+    if (is.character(fun)) 
+        fun <- get(fun, mode = "function", envir = parent.frame())
+    .Internal(body(fun))
+}
+[41:04] 54> readEmailMsg("sample.eml")
+debugging in: FUN(X[[i]], ...)
+debug at readEML.R#49: {
+    if (lines[1] == paste0(boundary, "--") & length(lines[lines != 
+        ""]) == 1) 
+        return(NULL)
+    br = which(lines == "")[1]
+    if (br > 2) 
+        h = read.dcf(lines = lines[2:(br - 1)], all = all)
+    list(header = h, body = lines[-(1:br)])
+}
+Browse[2]> body()
+{
+    if (lines[1] == paste0(boundary, "--") & length(lines[lines != 
+        ""]) == 1) 
+        return(NULL)
+    br = which(lines == "")[1]
+    if (br > 2) 
+        h = read.dcf(lines = lines[2:(br - 1)], all = all)
+    list(header = h, body = lines[-(1:br)])
+}
+Browse[2]> sys.call()
+FUN(X[[i]], ...)
+Browse[2]> match.call()
+FUN(lines = X[[i]], boundary = ..1)
+Browse[2]> q
+function (save = "default", status = 0, runLast = TRUE) 
+.Internal(quit(save, status, runLast))
+<bytecode: 0x7fd6db37c808>
+<environment: namespace:base>
+Browse[2]> Q
+[42:14] 58> a = lapply(files, readFiles)
+Error in match.fun(FUN) : object 'readFiles' not found
+
+Enter a frame number, or 0 to exit   
+
+1: lapply(files, readFiles)
+2: match.fun(FUN)
+
+Selection: 0
+[42:14] 58> #a = lapply(files, readFiles)
+[42:14] 58> #rbind(a[[1]], a[[2]], a[[3]], ..., a[[length(a) ]]])
+[42:14] 58> #do.call(rbind, a)
+[42:14] 58> x = 2
+[53:53] 59> ifelse(x < 1, "abc", "def")
+[1] "def"
+[54:07] 60> rpIter = 4
+Error: unexpected ')' in "if(x < 1)  "abc" else "def")"
+No suitable frames for recover()
+[54:07] 60> if(x < 1)  "abc" else "def"
+[1] "def"
+[54:22] 61> rpIter = 4
+rpIter = 4
+[58:48] 62> 
+[58:48] 62> rpIter
+[1] 4
+[58:54] 63> source("~/Ranswers/Heise/origFuns.R")
+[59:13] 64> dfMissing = readRDS("~/Ranswers/Heise/dfMissing.R")
+Error in gzfile(file, "rb") : cannot open the connection
+In addition: Warning message:
+In gzfile(file, "rb") :
+  cannot open compressed file '/Users/duncan/Ranswers/Heise/dfMissing.R', probable reason 'No such file or directory'
+
+Enter a frame number, or 0 to exit   
+
+1: readRDS("~/Ranswers/Heise/dfMissing.R")
+2: gzfile(file, "rb")
+
+Selection: 0
+[59:13] 64> dfMissing = readRDS("~/Ranswers/Heise/dfMissing.rds")
+[00:05] 65> dim(dfMissing)
+[1] 5000    8
+[00:09] 66> source("~/Ranswers/Heise/origScript_noFuns.R")
+Loading required package: Matrix
+
+Attaching package: ‘lmerTest’
+
+The following object is masked from ‘package:lme4’:
+
+    lmer
+
+The following object is masked from ‘package:stats’:
+
+    step
+
+Loading required package: proto
+data.table 1.14.2 using 1 threads (see ?getDTthreads).  Latest news: r-datatable.com
+**********
+This installation of data.table has not detected OpenMP support. It should still work but in single-threaded mode.
+This is a Mac. Please read https://mac.r-project.org/openmp/. Please engage with Apple and ask them for support. Check r-datatable.com for updates, and our Mac instructions here: https://github.com/Rdatatable/data.table/wiki/Installation. After several years of many reports of installation problems on Mac, it's time to gingerly point out that there have been no similar problems on Windows or Linux.
+**********
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:data.table’:
+
+    between, first, last
+
+The following objects are masked from ‘package:plyr’:
+
+    arrange, count, desc, failwith, id, mutate, rename,
+    summarise, summarize
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+************
+Welcome to afex. For support visit: http://afex.singmann.science/
+- Functions for ANOVAs: aov_car(), aov_ez(), and aov_4()
+- Methods for calculating p-values with mixed(): 'S', 'KR', 'LRT', and 'PB'
+- 'afex_aov' and 'mixed' objects can be passed to emmeans() for follow-up tests
+- NEWS: emmeans() for ANOVA models now uses model = 'multivariate' as default.
+- Get and set global package options with: afex_options()
+- Set orthogonal sum-to-zero contrasts globally: set_sum_contrasts()
+- For example analyses see: browseVignettes("afex")
+************
+
+Attaching package: ‘afex’
+
+The following object is masked from ‘package:lme4’:
+
+    lmer
+
+Loading required package: carData
+
+Attaching package: ‘car’
+
+The following object is masked from ‘package:dplyr’:
+
+    recode
+
+
+Attaching package: ‘tidyr’
+
+The following objects are masked from ‘package:Matrix’:
+
+    expand, pack, unpack
+
+Error in fread(filename) : 
+  File 'Sample0751-NCMeanAmpOutput.csv' does not exist or is non-readable. getwd()=='/Users/duncan/RFundamentals/Day5'
+
+Enter a frame number, or 0 to exit   
+
+1: source("~/Ranswers/Heise/origScript_noFuns.R")
+2: withVisible(eval(ei, envir))
+3: eval(ei, envir)
+4: eval(ei, envir)
+5: origScript_noFuns.R#72: fread(filename)
+
+Selection: 0
+[00:09] 66> source("~/Ranswers/Heise/origScript_noFuns.R")
+boundary (singular) fit: see ?isSingular
+boundary (singular) fit: see ?isSingular
+boundary (singular) fit: see ?isSingular
+boundary (singular) fit: see ?isSingular
+[02:47] 67> source("~/Ranswers/Heise/origScript_noFuns.R")
+boundary (singular) fit: see ?isSingular
+boundary (singular) fit: see ?isSingular
+boundary (singular) fit: see ?isSingular
+boundary (singular) fit: see ?isSingular
+[03:09] 68> system.time(source("~/Ranswers/Heise/origScript_noFuns.R"))
+boundary (singular) fit: see ?isSingular
+boundary (singular) fit: see ?isSingular
+boundary (singular) fit: see ?isSingular
+boundary (singular) fit: see ?isSingular
+   user  system elapsed 
+ 11.524   0.946  12.945 
+[04:06] 69> #CallCounter
+[04:06] 69> Rprof("prof")
+[05:38] 70> system.time(source("~/Ranswers/Heise/origScript_noFuns.R"))
+boundary (singular) fit: see ?isSingular
+boundary (singular) fit: see ?isSingular
+boundary (singular) fit: see ?isSingular
+boundary (singular) fit: see ?isSingular
+   user  system elapsed 
+ 10.721   0.946  12.013 
+[06:17] 71> Rprof(NULL)
+[06:23] 72> p = summaryRProf("prof")
+Error in summaryRProf("prof") : could not find function "summaryRProf"
+No suitable frames for recover()
+[06:23] 72> p = summaryRprof("prof")
+[07:59] 73> names(p)
+[1] "by.self"         "by.total"        "sample.interval"
+[4] "sampling.time"  
+[08:04] 74> p$sampling.time
+[1] 11.68
+[08:21] 75> head(p$by.self, 20)
+*** output flushed ***
+[10:33] 76> options(width = 200)
+[10:39] 77> head(p$by.self, 20)
+                               self.time self.pct total.time total.pct
+"<Anonymous>"                       0.90     7.71       2.74     23.46
+"map"                               0.58     4.97       0.64      5.48
+".External2"                        0.56     4.79       8.22     70.38
+"withCallingHandlers"               0.48     4.11       4.72     40.41
+"chop_rectangular_df"               0.38     3.25       0.48      4.11
+"ls"                                0.38     3.25       0.38      3.25
+"stopifnot"                         0.36     3.08       0.40      3.42
+"data.frame"                        0.32     2.74       0.60      5.14
+"gc"                                0.32     2.74       0.32      2.74
+"[<-.factor"                        0.28     2.40       0.30      2.57
+"$"                                 0.20     1.71       0.26      2.23
+"is_quosure"                        0.20     1.71       0.20      1.71
+"propagate_names"                   0.18     1.54       0.70      5.99
+".Call"                             0.14     1.20       0.66      5.65
+"vec_match"                         0.14     1.20       0.64      5.48
+"is_negated_colon"                  0.14     1.20       0.28      2.40
+"rlang_as_list_from_list_impl"      0.14     1.20       0.16      1.37
+"[.data.frame"                      0.12     1.03       0.26      2.23
+"$<-.data.frame"                    0.12     1.03       0.22      1.88
+"as_indices_impl"                   0.12     1.03       0.16      1.37
+[10:40] 78> head(p$by.total, 20)
+                          total.time total.pct self.time self.pct
+"system.time"                  11.68    100.00      0.00     0.00
+"eval"                         11.36     97.26      0.00     0.00
+"source"                       11.36     97.26      0.00     0.00
+"withVisible"                  11.36     97.26      0.00     0.00
+"pairTrials_RandomPerm"         9.50     81.34      0.02     0.17
+".External2"                    8.22     70.38      0.56     4.79
+"%>%"                           8.02     68.66      0.00     0.00
+"pivot_wider.data.frame"        8.02     68.66      0.00     0.00
+"pivot_wider"                   8.02     68.66      0.00     0.00
+"withCallingHandlers"           4.72     40.41      0.48     4.11
+"tryCatch"                      4.36     37.33      0.00     0.00
+"doTryCatch"                    4.34     37.16      0.02     0.17
+"tryCatchList"                  4.34     37.16      0.00     0.00
+"tryCatchOne"                   4.34     37.16      0.00     0.00
+"tidyselect::eval_select"       4.12     35.27      0.02     0.17
+"eval_select_impl"              4.10     35.10      0.02     0.17
+"with_subscript_errors"         3.96     33.90      0.00     0.00
+"instrument_base_errors"        3.92     33.56      0.00     0.00
+"pivot_wider_spec"              3.90     33.39      0.06     0.51
+"vars_select_eval"              3.86     33.05      0.02     0.17
+[13:59] 79> source("rw1.R")
+[26:48] 80> N = 1e5
+[27:53] 81> Rprof("prof"); z = rw2d1(N); Rprof(NULL);   p = summaryRprof("prof")
+[28:29] 85> summary(p$by.self)
+*** output flushed ***
+[29:03] 86> head(p$by.self, 20)
+                         self.time self.pct total.time total.pct
+"sample.int"                  3.68    79.31       3.68     79.31
+"sample"                      0.64    13.79       4.32     93.10
+"rw2d1"                       0.26     5.60       4.64    100.00
+"findCenvVar"                 0.04     0.86       0.04      0.86
+"checkSkipLoopCntxtList"      0.02     0.43       0.02      0.43
+[29:32] 87> p$sampling.time
+[1] 4.64
+[32:27] 88> Rprof("prof"); print(system.time(rw2d2(N))); Rprof(NULL);   p = summaryRprof("prof")
+   user  system elapsed 
+  2.636   0.130   2.848 
+[32:54] 92> head(p$by.self, 20)
+                  self.time self.pct total.time total.pct
+"runif"                2.00    66.23       2.00     66.23
+"rw2d2"                0.60    19.87       2.68     88.74
+"gc"                   0.34    11.26       0.34     11.26
+"findCenvVar"          0.06     1.99       0.06      1.99
+"dots.or.missing"      0.02     0.66       0.02      0.66
+[33:08] 93> getAnywhere("findCenvVar")
+*** output flushed ***
+[34:05] 94> Rprof("prof"); print(system.time(rw2d2.5(N))); Rprof(NULL);   p = summaryRprof("prof")
+   user  system elapsed 
+  0.181   0.027   0.221 
+[36:24] 98> head(p$by.self, 20)
+                     self.time self.pct total.time total.pct
+"gc"                      0.32    61.54       0.32     61.54
+"rw2d2.5"                 0.10    19.23       0.20     38.46
+"any.dots"                0.02     3.85       0.02      3.85
+"cmpIndices"              0.02     3.85       0.02      3.85
+"mayCallBrowserList"      0.02     3.85       0.02      3.85
+"runif"                   0.02     3.85       0.02      3.85
+"trySetterInline"         0.02     3.85       0.02      3.85
+[36:43] 99> Rprof("prof"); print(system.time(rw2d3(N))); Rprof(NULL);   p = summaryRprof("prof")
+   user  system elapsed 
+  0.050   0.003   0.055 
+[41:31] 103> head(p$by.self, 20)
+         self.time self.pct total.time total.pct
+"gc"          0.30    83.33       0.30     83.33
+"ifelse"      0.04    11.11       0.04     11.11
+"runif"       0.02     5.56       0.02      5.56
+[42:31] 104> Rprof("prof"); print(system.time(rw2d4(N))); Rprof(NULL);   p = summaryRprof("prof")
+   user  system elapsed 
+  0.047   0.004   0.053 
+[43:21] 108> head(p$by.self, 20)
+                    self.time self.pct total.time total.pct
+"gc"                     0.32    84.21       0.32     84.21
+"ifelse"                 0.02     5.26       0.02      5.26
+"sample.int"             0.02     5.26       0.02      5.26
+"summary.proc_time"      0.02     5.26       0.02      5.26
+[43:37] 109> Rprof("prof"); print(system.time(rw2d5(N))); Rprof(NULL);   p = summaryRprof("prof")
+   user  system elapsed 
+  0.019   0.001   0.021 
+[45:30] 113> 4.6/.021
+[1] 219.0476
+[45:40] 114> f = function(x, vars) {  lapply(x[vars], unique) }
+[54:58] 115> f(iris, "Species")
+$Species
+[1] setosa     versicolor virginica 
+Levels: setosa versicolor virginica
+
+[55:09] 116> f(iris, c("Species", "sepal.length"))
+Error in `[.data.frame`(x, vars) : undefined columns selected
+
+Enter a frame number, or 0 to exit   
+
+1: f(iris, c("Species", "sepal.length"))
+2: #1: lapply(x[vars], unique)
+3: #1: x[vars]
+4: #1: `[.data.frame`(x, vars)
+
+Selection: 0
+[55:09] 116> names(iris)
+[1] "Sepal.Length" "Sepal.Width"  "Petal.Length" "Petal.Width"  "Species"     
+[55:37] 117> f(iris, c("Species", "Sepal.Length"))
+$Species
+[1] setosa     versicolor virginica 
+Levels: setosa versicolor virginica
+
+$Sepal.Length
+ [1] 5.1 4.9 4.7 4.6 5.0 5.4 4.4 4.8 4.3 5.8 5.7 5.2 5.5 4.5 5.3 7.0 6.4 6.9 6.5 6.3 6.6 5.9 6.0 6.1 5.6 6.7 6.2 6.8 7.1 7.6 7.3 7.2 7.7 7.4 7.9
+
+[55:45] 118> f2 = function(x, vars) {  v = substitute(vars); browser(); lapply(x[vars], unique) }
+[56:12] 119> f2(iris, c(Species, Sepal.Length))
+Called from: f2(iris, c(Species, Sepal.Length))
+Browse[1]> v
+c(Species, Sepal.Length)
+Browse[1]> Q
+[56:28] 120> 
+[56:28] 120> f2(iris, c(Species, Sepal.Length))
+Called from: f2(iris, c(Species, Sepal.Length))
+Browse[1]> v
+c(Species, Sepal.Length)
+Browse[1]> v[[2]]
+Species
+Browse[1]> class(v[[2]])
+[1] "name"
+Browse[1]> Q
+[57:24] 123> f2(iris, c(Species, log(Sepal.Length)))
+Called from: f2(iris, c(Species, log(Sepal.Length)))
+Browse[1]> v[[3]]
+log(Sepal.Length)
+Browse[1]> class(v[[3]])
+[1] "call"
+Browse[1]> Q
+[57:45] 125> 
