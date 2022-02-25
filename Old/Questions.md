@@ -20,7 +20,7 @@ a = rnorm(10)
 a[c(3, 9)] = NA
 f(a)
 ```
-What is the value of `n` in `sum(x)/n`?
+What is the value of `len` in `sum(x)/len`?
 
 And in
 ```

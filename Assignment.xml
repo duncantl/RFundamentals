@@ -2,6 +2,156 @@
 	 xmlns:r="http://www.r-project.org">
 <title>Evaluating Assignments</title>
 
+<note>
+
+<para>
+Five assignment operators: `=`, <![CDATA[`<-`]]>, <![CDATA[`<<-`]]> and both <![CDATA[`->`]]> and <![CDATA[`->>`]]>.
+The parser transforms the latter two to calls to <![CDATA[`<-`]]> and <![CDATA[`<<-`]]> respectively.
+So we only need to consider the first three.
+To verify this
+<r:code>
+e = quote( foo(x) -> y)
+<r:output><![CDATA[
+y <- foo(x)
+]]></r:output>
+e[[1]]
+<r:output><![CDATA[
+`<-`
+]]></r:output>
+e = quote( foo(x) ->> y)
+<r:output><![CDATA[
+y <<- foo(x)
+]]></r:output>
+e[[1]]
+<r:output><![CDATA[
+`<<-`
+]]></r:output>
+</r:code>
+</para>
+
+
+<para>
+All three `=`, <![CDATA[`<-`]]>, <![CDATA[`<<-`]]> are functions:
+<r:code>
+sapply(list(`=`, `<-`, `<<-`), class)
+<r:output><![CDATA[
+[1] "function" "function" "function"
+]]></r:output>
+sapply(list(`=`, `<-`, `<<-`), typeof)
+<r:output><![CDATA[
+[1] "special" "special" "special"
+]]></r:output>
+</r:code>
+So they are functions, but special to the interpreter, i.e., not evaluated in the usual manner.
+Instead they immediately pass control to <c/> code in the interpreter.
+</para>
+<para>
+What routines in the <c/> code correspond to these functions?
+In <file>src/main/names.c</file>, we have
+<programlisting><![CDATA[
+{"<-",		do_set,		1,	100,	-1,	{PP_ASSIGN,  PREC_LEFT,	  1}},
+{"=",		do_set,		3,	100,	-1,	{PP_ASSIGN,  PREC_EQ,	  1}},
+{"<<-",		do_set,		2,	100,	-1,	{PP_ASSIGN2, PREC_LEFT,	  1}},
+]]></programlisting>
+All three call the routine <c:func>do_set</c:func> but with different values for the offset - the third value (1, 3, 2).
+</para>
+<para>
+<c:func>do_set</c:func> is defined in <file>eval.c</file>. It is a short routine.
+It handles the left-hand-side, i.e. the target of the assignment, being a string, a symbol/name, or a language object
+(e.g., <r:expr>x$foo[[1]]</r:expr>).
+For a name, if the call uses non-local assignment (<![CDATA[ <<- ]]>), <c:func>do_set</c:func> calls <r:func>setVar</r:func>;
+otherwise, for local assignments, <c:func>do_set</c:func> calls <c:func>defineVar</c:func>.
+</para>
+
+<para>
+<c:func>setVar</c:func> consists of a loop that calls <c:func>setVarInFrame</c:func>.
+If it returns with a non-<r:null/> value, the assignment has been completed in the current frame.
+Otherwise, we continue to the next frame.
+Basically, <c:func>setVarInFrame</c:func> checks for the existence of a variable with the specified name in the given
+environment.
+If it is present, it performs the assignment and returns a non-<r:null/> value. However, if there is no entry with the
+given variable name, it returns <r:null/>.
+So <c:func>setVar</c:func>  tries to assign in the earliest environment in the environment chain
+in which the variable name exists.
+However, if it ultimately never finds a environment in the chain with that variable name, it calls
+<c:code><![CDATA[
+defineVar(symbol, value, R_GlobalEnv);
+]]></c:code>
+which assigns the value to the variable name in the global environment.
+So, if the variable doesn't already exist, it is defined in the global environment.
+</para>
+
+<para>
+Let's think this through
+<r:code>
+find("x")
+env1 = new.env(parent = baseenv())
+env2 = new.env(parent = e1)
+eval(quote( x <<- 1), env2)
+find("x")
+<r:output><![CDATA[
+[1] ".GlobalEnv"
+]]></r:output>
+</r:code>
+Starting again
+<r:code>
+rm("x")
+env1 = new.env(parent = baseenv())
+env2 = new.env(parent = env1)
+env1$x = 2
+eval(quote( x <<- 1), env2)
+find("x")
+<r:output><![CDATA[
+character(0)
+]]></r:output>
+ls(env2)
+<r:output><![CDATA[
+character(0)
+]]></r:output>
+ls(env1)
+<r:output><![CDATA[
+[1] "x"
+]]></r:output>
+env1$x
+<r:output><![CDATA[
+[1] 1
+]]></r:output>
+</r:code>
+So we replaced the original value of the variable <r:var>x</r:var> in <r:var>e1</r:var> with the value 1, from the
+previous value 2.
+</para>
+
+
+<para>
+This rule of assigning to the global environment is true, but not
+necessarily sensible. We can further simplify the first example above
+to have a single environment <r:var>env1</r:var> whose parent is the base environment
+and then make an non-local assignment to <r:var>x</r:var>:
+<r:code>
+env = new.env(parent = baseenv())
+eval( quote( x <<- 2), env)
+</r:code>
+While the evaluation makes no reference to the global environment and
+explicitly bypasses/avoids it, the non-local assignment uses the global environment.
+I would argue <r:var>x</r:var> should be assigned in <r:var>env</r:var>.
+However, <r>'s implementation doesn't do this and it would require
+passing the top-level evaluation environment through the <c/> calls stack,
+and indeed both the <r:arg>local</r:arg> and <r:arg>enclos</r:arg> arguments
+of the call to <r:var>eval</r:var>.
+</para>
+
+
+
+<para>
+For local assignments, i.e.,  `=` and <![CDATA[<-]]>,
+<c:func>do_set</c:func> calls <c:func>defineVar</c:func> which is in <file>envir.c</file>.
+This does some checks, and then handles the base namespace/package specially with <c:func>gsetVar</c:func>
+</para>
+
+
+</note>
+
+
 <para>
 Simple assignment to variables is straightforward.
 When we assign to a variable 
